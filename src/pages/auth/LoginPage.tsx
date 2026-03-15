@@ -15,7 +15,6 @@ import api from '@/lib/api'
 const schema = z.object({
   email: z.string().email('Invalid email'),
   password: z.string().min(1, 'Required'),
-  tenantId: z.string().min(1, 'Tenant ID required'),
 })
 
 type FormData = z.infer<typeof schema>
@@ -29,9 +28,8 @@ export default function LoginPage() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      localStorage.setItem('tenantId', data.tenantId)
       const res = await api.post('/auth/login', { email: data.email, password: data.password })
-      login(res.data.token, res.data.user, data.tenantId)
+      login(res.data.token, res.data.user)
       toast.success('Welcome back!')
       navigate('/dashboard')
     } catch (error: unknown) {
@@ -53,11 +51,6 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-1">
-              <Label>Tenant ID</Label>
-              <Input placeholder="your-school-id" {...register('tenantId')} />
-              {errors.tenantId && <p className="text-xs text-destructive">{errors.tenantId.message}</p>}
-            </div>
             <div className="space-y-1">
               <Label>Email</Label>
               <Input type="email" placeholder="admin@school.com" {...register('email')} />

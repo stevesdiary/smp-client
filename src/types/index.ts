@@ -7,6 +7,7 @@ export interface User {
   lastName?: string
   roleId?: string
   role?: Role
+  tenantId?: string
 }
 
 export interface Role {

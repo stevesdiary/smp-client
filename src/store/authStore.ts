@@ -5,7 +5,7 @@ interface AuthStore {
   user: User | null
   token: string | null
   tenantId: string | null
-  login: (token: string, user: User, tenantId: string) => void
+  login: (token: string, user: User) => void
   logout: () => void
 }
 
@@ -21,9 +21,10 @@ export const useAuthStore = create<AuthStore>((set) => ({
   })(),
   token: localStorage.getItem('token'),
   tenantId: localStorage.getItem('tenantId'),
-  login: (token, user, tenantId) => {
+  login: (token, user) => {
+    const tenantId = user.tenantId ?? null
     localStorage.setItem('token', token)
-    localStorage.setItem('tenantId', tenantId)
+    if (tenantId) localStorage.setItem('tenantId', tenantId)
     localStorage.setItem('user', JSON.stringify(user))
     set({ token, user, tenantId })
   },
