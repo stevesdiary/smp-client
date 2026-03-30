@@ -22,7 +22,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   token: localStorage.getItem('token'),
   tenantId: localStorage.getItem('tenantId'),
   login: (token, user) => {
-    const tenantId = user.tenantId ?? null
+    const tenantId = user.tenantSubdomain ?? user.tenantId ?? null
     localStorage.setItem('token', token)
     if (tenantId) localStorage.setItem('tenantId', tenantId)
     localStorage.setItem('user', JSON.stringify(user))

@@ -3,11 +3,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
-import { Mail } from 'lucide-react'
+import { Mail, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { AuthShell } from '@/components/auth/AuthShell'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -26,32 +26,50 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
-            <Mail className="h-6 w-6 text-primary-foreground" />
-          </div>
-          <CardTitle className="text-2xl">Forgot Password</CardTitle>
-          <CardDescription>Request a password reset link</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-1">
-              <Label>Email</Label>
-              <Input type="email" placeholder="you@school.com" {...register('email')} />
-              {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+    <AuthShell
+      eyebrow="Recovery"
+      title="Reset your password"
+      description="Enter the email attached to your school account and we will send reset instructions if it exists."
+      sideTitle="Recover access without reopening school setup."
+      sideDescription="Password recovery stays lightweight but now fits the same visual system as the rest of the auth flow."
+      icon={<Mail className="h-7 w-7" />}
+      highlights={[
+        'Uses the existing email-based recovery placeholder flow.',
+        'Keeps the school workspace and setup paths separate.',
+        'Designed to feel consistent with the richer portal experience.',
+      ]}
+      footer={(
+        <p className="text-center text-sm text-muted-foreground">
+          Remembered your password?{' '}
+          <Link to="/login" className="font-medium text-primary hover:underline">Back to login</Link>
+        </p>
+      )}
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Email</Label>
+          <Input className="h-12 rounded-2xl bg-background/85" type="email" placeholder="you@school.com" {...register('email')} />
+          {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+        </div>
+
+        <div className="rounded-2xl bg-secondary/55 p-4">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <ShieldCheck className="h-5 w-5" />
             </div>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Send Reset Link'}
-            </Button>
-            <p className="text-center text-sm text-muted-foreground">
-              Remembered your password?{' '}
-              <Link to="/login" className="text-primary hover:underline">Back to login</Link>
-            </p>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+            <div>
+              <p className="font-medium">Private account recovery</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                The form does not confirm whether an email exists, which keeps account recovery discreet.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <Button type="submit" className="h-12 w-full rounded-2xl text-base" disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Send Reset Link'}
+        </Button>
+      </form>
+    </AuthShell>
   )
 }

@@ -1,8 +1,8 @@
 const stats = [
-  { value: '500+', label: 'Schools Worldwide' },
-  { value: '120K+', label: 'Active Students' },
-  { value: '99.9%', label: 'Uptime SLA' },
-  { value: '30+', label: 'Countries' },
+  { value: '50+', label: 'Schools in Nigeria' },
+  { value: '100%', label: 'Mobile-first workflows' },
+  { value: '3', label: 'Terms pre-loaded' },
+  { value: '2', label: 'School levels supported' },
   { value: '4.9★', label: 'Average Rating' },
 ]
 

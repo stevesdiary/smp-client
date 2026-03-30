@@ -1,10 +1,10 @@
 import { GraduationCap, Twitter, Linkedin, Github } from 'lucide-react'
 
 const footerLinks = {
-  Product: ['Features', 'Modules', 'Pricing', 'Changelog', 'Roadmap'],
-  Company: ['About', 'Blog', 'Careers', 'Press', 'Contact'],
-  Resources: ['Documentation', 'API Reference', 'Status', 'Support', 'Community'],
-  Legal: ['Privacy Policy', 'Terms of Service', 'Cookie Policy', 'GDPR'],
+  Product: ['Features', 'Modules', 'Pricing', 'Setup'],
+  Schools: ['Primary Schools', 'Secondary Schools', 'Parents', 'Teachers'],
+  Resources: ['Demo', 'Support', 'Setup Guide', 'FAQs'],
+  Legal: ['Privacy Policy', 'Terms of Service'],
 }
 
 export default function Footer() {
@@ -18,10 +18,10 @@ export default function Footer() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
                 <GraduationCap className="h-5 w-5 text-white" />
               </div>
-              SchoolMS
+              SchoolApp
             </a>
             <p className="text-sm leading-relaxed mb-6">
-              The complete school management platform for modern institutions. Manage everything from one place.
+              A mobile-first school management platform built for Nigerian primary and secondary schools.
             </p>
             <div className="flex gap-4">
               {[Twitter, Linkedin, Github].map((Icon, i) => (
@@ -48,8 +48,8 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm">© {new Date().getFullYear()} SchoolMS. All rights reserved.</p>
-          <p className="text-sm">Built with ❤️ for educators worldwide</p>
+          <p className="text-sm">© {new Date().getFullYear()} SchoolApp. All rights reserved.</p>
+          <p className="text-sm">Built for schools across Nigeria.</p>
         </div>
       </div>
     </footer>

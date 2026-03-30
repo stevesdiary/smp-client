@@ -1,6 +1,6 @@
 import { ArrowRight, Play, CheckCircle } from 'lucide-react'
 
-const highlights = ['Multi-tenant SaaS', 'E-Learning built-in', 'Parent Portal', 'Real-time Analytics']
+const highlights = ['100% mobile-first', 'Nigerian classes ready', 'Term-based grading', 'Parent and teacher portals']
 
 export default function Hero() {
   return (
@@ -17,20 +17,19 @@ export default function Hero() {
         {/* Badge */}
         <div className="inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/20 px-4 py-1.5 text-sm text-blue-100 mb-8 animate-fade-in">
           <span className="flex h-2 w-2 rounded-full bg-green-400" />
-          Now with E-Learning & Parent Portal
+          Built for Nigerian primary and secondary schools
         </div>
 
         {/* Headline */}
         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white leading-tight tracking-tight mb-6 animate-fade-up">
-          The Complete
+          Your School Deserves
           <span className="block bg-gradient-to-r from-blue-200 to-cyan-200 bg-clip-text text-transparent">
-            School Management
+            Better Than Spreadsheets
           </span>
-          Platform
         </h1>
 
         <p className="max-w-2xl mx-auto text-lg sm:text-xl text-blue-100 mb-10 animate-fade-up animate-delay-100">
-          Run your entire school from one platform — students, teachers, attendance, grades, payments, e-learning, and more. Built for modern schools.
+          Set up your school in minutes with Nigerian classes, subjects, grading, and term language already in place. Every feature works fully on mobile phones.
         </p>
 
         {/* Highlights */}
@@ -45,21 +44,21 @@ export default function Hero() {
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up animate-delay-300">
-          <a href="#pricing"
+          <a href="/setup-school"
             className="flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-brand-700 hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
-            Start Free Trial
+            Get Started for Free
             <ArrowRight className="h-4 w-4" />
           </a>
-          <a href="#features"
+          <a href="#setup"
             className="flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-4 text-base font-semibold text-white hover:bg-white/20 transition-all backdrop-blur">
             <Play className="h-4 w-4" />
-            Watch Demo
+            See How Setup Works
           </a>
         </div>
 
         {/* Social proof */}
         <p className="mt-12 text-sm text-blue-200 animate-fade-up animate-delay-400">
-          Trusted by <span className="font-semibold text-white">500+</span> schools across <span className="font-semibold text-white">30</span> countries
+          Trusted by <span className="font-semibold text-white">50+</span> schools across <span className="font-semibold text-white">Nigeria</span>
         </p>
 
         {/* Dashboard preview */}
@@ -72,16 +71,16 @@ export default function Hero() {
                 <span className="h-3 w-3 rounded-full bg-yellow-500" />
                 <span className="h-3 w-3 rounded-full bg-green-500" />
                 <div className="flex-1 mx-4 h-5 rounded bg-gray-700 text-xs text-gray-400 flex items-center px-3">
-                  app.schoolms.io/dashboard
+                  app.schoolapp.ng/dashboard
                 </div>
               </div>
               {/* Dashboard mockup */}
               <div className="p-6 grid grid-cols-4 gap-4">
                 {[
-                  { label: 'Students', value: '1,248', color: 'bg-blue-500' },
-                  { label: 'Teachers', value: '86', color: 'bg-purple-500' },
-                  { label: 'Attendance', value: '94%', color: 'bg-green-500' },
-                  { label: 'Revenue', value: '$48K', color: 'bg-orange-500' },
+                  { label: 'Students', value: '482', color: 'bg-blue-500' },
+                  { label: 'Teachers', value: '24', color: 'bg-purple-500' },
+                  { label: 'Attendance', value: '96%', color: 'bg-green-500' },
+                  { label: 'Fees Collected', value: 'N4.8M', color: 'bg-orange-500' },
                 ].map(stat => (
                   <div key={stat.label} className="rounded-lg bg-gray-800 p-4">
                     <div className={`h-2 w-8 rounded-full ${stat.color} mb-3`} />

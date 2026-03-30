@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DataTable } from '@/components/shared/DataTable'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
+import { ModuleHero } from '@/components/shared/ModuleHero'
 
 const liveClassSchema = z.object({
   title: z.string().min(1),
@@ -44,6 +45,7 @@ export default function ELearningPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['live-classes'] }); toast.success('Class scheduled'); setOpen(false); reset() },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Failed'),
   })
+  const liveNow = liveClasses.filter((liveClass: any) => liveClass.status === 'LIVE').length
 
   const classColumns: ColumnDef<any>[] = [
     { accessorKey: 'title', header: 'Title' },
@@ -53,7 +55,7 @@ export default function ELearningPage() {
     { accessorKey: 'status', header: 'Status', cell: ({ getValue }) => <Badge variant={statusVariant[getValue() as string]}>{getValue() as string}</Badge> },
     { id: 'join', cell: ({ row }) => row.original.meetingUrl && (
       <a href={row.original.meetingUrl} target="_blank" rel="noreferrer">
-        <Button size="sm" variant="outline"><ExternalLink className="h-3 w-3 mr-1" />Join</Button>
+        <Button size="sm" variant="outline" className="rounded-xl"><ExternalLink className="h-3 w-3 mr-1" />Join</Button>
       </a>
     )},
   ]
@@ -69,31 +71,42 @@ export default function ELearningPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      <ModuleHero
+        eyebrow="Live learning"
+        title="Coordinate live classes and submissions from a sharper e-learning surface."
+        description="Live sessions and submissions still use the current e-learning APIs while the screen now inherits the richer interface treatment."
+        stats={[
+          { label: 'Live classes', value: liveClasses.length, detail: 'Scheduled classes currently available.' },
+          { label: 'Live now', value: liveNow, detail: 'Classes actively marked as live.' },
+          { label: 'Submissions', value: submissions.length, detail: 'Learner submissions currently visible.' },
+        ]}
+      />
+
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-semibold">E-Learning</h1></div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />Schedule Class</Button></DialogTrigger>
-          <DialogContent>
+          <DialogTrigger asChild><Button className="h-12 rounded-2xl px-5"><Plus className="h-4 w-4 mr-2" />Schedule Class</Button></DialogTrigger>
+          <DialogContent className="rounded-[28px]">
             <DialogHeader><DialogTitle>Schedule Live Class</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit(d => mutation.mutate(d))} className="space-y-4">
-              <div className="space-y-1"><Label>Title</Label><Input {...register('title')} placeholder="Math Live Session" /></div>
+              <div className="space-y-1"><Label>Title</Label><Input className="h-11 rounded-2xl" {...register('title')} placeholder="Math Live Session" /></div>
               <div className="space-y-1">
                 <Label>Teacher</Label>
                 <Select onValueChange={v => setValue('teacherId', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select teacher" /></SelectTrigger>
+                  <SelectTrigger className="h-11 rounded-2xl"><SelectValue placeholder="Select teacher" /></SelectTrigger>
                   <SelectContent>{teachers.map((t: any) => <SelectItem key={t.id} value={t.id}>{t.firstName} {t.lastName}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1"><Label>Date & Time</Label><Input type="datetime-local" {...register('scheduledAt')} /></div>
-                <div className="space-y-1"><Label>Duration (min)</Label><Input type="number" {...register('duration')} defaultValue={60} /></div>
+                <div className="space-y-1"><Label>Date & Time</Label><Input className="h-11 rounded-2xl" type="datetime-local" {...register('scheduledAt')} /></div>
+                <div className="space-y-1"><Label>Duration (min)</Label><Input className="h-11 rounded-2xl" type="number" {...register('duration')} defaultValue={60} /></div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label>Platform</Label>
                   <Select onValueChange={v => setValue('platform', v)}>
-                    <SelectTrigger><SelectValue placeholder="Platform" /></SelectTrigger>
+                    <SelectTrigger className="h-11 rounded-2xl"><SelectValue placeholder="Platform" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Zoom">Zoom</SelectItem>
                       <SelectItem value="Google Meet">Google Meet</SelectItem>
@@ -101,18 +114,18 @@ export default function ELearningPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-1"><Label>Meeting URL</Label><Input {...register('meetingUrl')} placeholder="https://..." /></div>
+                <div className="space-y-1"><Label>Meeting URL</Label><Input className="h-11 rounded-2xl" {...register('meetingUrl')} placeholder="https://..." /></div>
               </div>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>{isSubmitting ? 'Scheduling...' : 'Schedule'}</Button>
+              <Button type="submit" className="h-11 w-full rounded-2xl" disabled={isSubmitting}>{isSubmitting ? 'Scheduling...' : 'Schedule'}</Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
 
-      <Tabs defaultValue="live">
-        <TabsList>
-          <TabsTrigger value="live"><Video className="h-4 w-4 mr-2" />Live Classes</TabsTrigger>
-          <TabsTrigger value="submissions">Submissions</TabsTrigger>
+      <Tabs defaultValue="live" className="space-y-4">
+        <TabsList className="h-auto rounded-2xl bg-white/70 p-1 shadow-sm dark:bg-card/70">
+          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="live"><Video className="h-4 w-4 mr-2" />Live Classes</TabsTrigger>
+          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="submissions">Submissions</TabsTrigger>
         </TabsList>
         <TabsContent value="live"><DataTable data={liveClasses} columns={classColumns} isLoading={isLoading} /></TabsContent>
         <TabsContent value="submissions"><DataTable data={submissions} columns={submissionColumns} /></TabsContent>

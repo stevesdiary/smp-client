@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { Check, X, Clock, AlertCircle } from 'lucide-react'
+import { AlertCircle, Check, Clock, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import api from '@/lib/api'
 import type { Student } from '@/types'
+import { ModuleHero } from '@/components/shared/ModuleHero'
 
 type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED'
 
@@ -53,7 +54,18 @@ export default function AttendancePage() {
   const present = Object.values(attendance).filter(s => s === 'PRESENT').length
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      <ModuleHero
+        eyebrow="Attendance desk"
+        title="Mark daily attendance from a clearer classroom operations view."
+        description="Attendance still saves through the same bulk endpoint, but the page now follows the richer interface direction."
+        stats={[
+          { label: 'Students', value: students.length, detail: 'Learners visible for this attendance session.' },
+          { label: 'Marked', value: marked, detail: 'Students already assigned a status.' },
+          { label: 'Present', value: present, detail: 'Students currently marked present.' },
+        ]}
+      />
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Attendance</h1>
@@ -64,9 +76,9 @@ export default function AttendancePage() {
             type="date"
             value={date}
             onChange={e => setDate(e.target.value)}
-            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
+            className="h-12 rounded-2xl border border-input bg-background/80 px-4 text-sm"
           />
-          <Button onClick={submit} disabled={bulkMutation.isPending}>
+          <Button className="h-12 rounded-2xl px-5" onClick={submit} disabled={bulkMutation.isPending}>
             {bulkMutation.isPending ? 'Saving...' : 'Save'}
           </Button>
         </div>
@@ -74,20 +86,20 @@ export default function AttendancePage() {
 
       <div className="flex gap-2 flex-wrap">
         {(Object.keys(statusConfig) as AttendanceStatus[]).map(status => (
-          <Button key={status} variant="outline" size="sm" onClick={() => markAll(status)}>
+          <Button key={status} variant="outline" size="sm" className="rounded-xl" onClick={() => markAll(status)}>
             Mark All {statusConfig[status].label}
           </Button>
         ))}
       </div>
 
       {isLoading ? (
-        <div className="space-y-2">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-16" />)}</div>
+        <div className="space-y-2">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}</div>
       ) : (
-        <Card>
+        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
           <CardHeader><CardTitle>Students</CardTitle></CardHeader>
           <CardContent className="p-0">
             {students.map((student) => (
-              <div key={student.id} className="flex items-center justify-between px-6 py-3 border-b last:border-0">
+              <div key={student.id} className="flex items-center justify-between border-b border-border/70 px-6 py-4 last:border-0">
                 <div>
                   <p className="font-medium">{student.firstName} {student.lastName}</p>
                   {attendance[student.id] && (
@@ -104,7 +116,7 @@ export default function AttendancePage() {
                         key={status}
                         variant={attendance[student.id] === status ? 'default' : 'outline'}
                         size="icon"
-                        className="h-8 w-8"
+                        className="h-9 w-9 rounded-xl"
                         onClick={() => setAttendance(prev => ({ ...prev, [student.id]: status }))}
                         title={statusConfig[status].label}
                       >

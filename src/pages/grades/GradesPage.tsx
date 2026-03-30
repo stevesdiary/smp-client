@@ -16,6 +16,8 @@ import { DataTable } from '@/components/shared/DataTable'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
 import { fetchAllGradesByStudent } from '@/lib/moduleQueries'
+import type { Student, Subject } from '@/types'
+import { ModuleHero } from '@/components/shared/ModuleHero'
 
 const schema = z.object({
   studentId: z.string().min(1, 'Required'),
@@ -34,8 +36,8 @@ export default function GradesPage() {
     queryKey: ['grades', 'all-by-student'],
     queryFn: fetchAllGradesByStudent,
   })
-  const { data: students = [] } = useQuery({ queryKey: ['students'], queryFn: () => api.get('/students').then(r => r.data) })
-  const { data: subjects = [] } = useQuery({ queryKey: ['subjects'], queryFn: () => api.get('/subjects').then(r => r.data) })
+  const { data: students = [] } = useQuery<Student[]>({ queryKey: ['students'], queryFn: () => api.get('/students').then(r => r.data) })
+  const { data: subjects = [] } = useQuery<Subject[]>({ queryKey: ['subjects'], queryFn: () => api.get('/subjects').then(r => r.data) })
 
   const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) as any })
 
@@ -44,6 +46,9 @@ export default function GradesPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['grades', 'all-by-student'] }); toast.success('Grade recorded'); setOpen(false); reset() },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Failed'),
   })
+  const averagePercent = grades.length > 0
+    ? Math.round(grades.reduce((sum: number, grade: any) => sum + ((grade.score / grade.maxScore) * 100), 0) / grades.length)
+    : 0
 
   const columns: ColumnDef<any>[] = [
     { id: 'student', header: 'Student', cell: ({ row }) => `${row.original.student?.firstName ?? ''} ${row.original.student?.lastName ?? ''}` },
@@ -61,36 +66,47 @@ export default function GradesPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      <ModuleHero
+        eyebrow="Assessment desk"
+        title="Record and review grades from a more deliberate academic surface."
+        description="Grade recording still uses the existing gradebook endpoint while the interface now aligns with the richer app shell."
+        stats={[
+          { label: 'Records', value: grades.length, detail: 'Grade entries currently visible in the system.' },
+          { label: 'Students', value: students.length, detail: 'Students available for grade entry.' },
+          { label: 'Average', value: `${averagePercent}%`, detail: 'Mean score percentage across visible grade records.' },
+        ]}
+      />
+
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-semibold">Grades</h1><p className="text-muted-foreground">{grades.length} records</p></div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />Record Grade</Button></DialogTrigger>
-          <DialogContent>
+          <DialogTrigger asChild><Button className="h-12 rounded-2xl px-5"><Plus className="h-4 w-4 mr-2" />Record Grade</Button></DialogTrigger>
+          <DialogContent className="rounded-[28px]">
             <DialogHeader><DialogTitle>Record Grade</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit(d => mutation.mutate(d))} className="space-y-4">
               <div className="space-y-1">
                 <Label>Student</Label>
                 <Select onValueChange={v => setValue('studentId', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
-                  <SelectContent>{students.map((s: unknown) => <SelectItem key={s.id} value={s.id}>{s.firstName} {s.lastName}</SelectItem>)}</SelectContent>
+                  <SelectTrigger className="h-11 rounded-2xl"><SelectValue placeholder="Select student" /></SelectTrigger>
+                  <SelectContent>{students.map((s) => <SelectItem key={s.id} value={s.id}>{s.firstName} {s.lastName}</SelectItem>)}</SelectContent>
                 </Select>
                 {errors.studentId && <p className="text-xs text-destructive">{errors.studentId.message}</p>}
               </div>
               <div className="space-y-1">
                 <Label>Subject</Label>
                 <Select onValueChange={v => setValue('subjectId', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select subject" /></SelectTrigger>
-                  <SelectContent>{subjects.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
+                  <SelectTrigger className="h-11 rounded-2xl"><SelectValue placeholder="Select subject" /></SelectTrigger>
+                  <SelectContent>{subjects.map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
                 </Select>
                 {errors.subjectId && <p className="text-xs text-destructive">{errors.subjectId.message}</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1"><Label>Score</Label><Input type="number" {...register('score')} /></div>
-                <div className="space-y-1"><Label>Max Score</Label><Input type="number" {...register('maxScore')} defaultValue={100} /></div>
+                <div className="space-y-1"><Label>Score</Label><Input className="h-11 rounded-2xl" type="number" {...register('score')} /></div>
+                <div className="space-y-1"><Label>Max Score</Label><Input className="h-11 rounded-2xl" type="number" {...register('maxScore')} defaultValue={100} /></div>
               </div>
-              <div className="space-y-1"><Label>Remarks</Label><Input {...register('remarks')} placeholder="Optional" /></div>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save Grade'}</Button>
+              <div className="space-y-1"><Label>Remarks</Label><Input className="h-11 rounded-2xl" {...register('remarks')} placeholder="Optional" /></div>
+              <Button type="submit" className="h-11 w-full rounded-2xl" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save Grade'}</Button>
             </form>
           </DialogContent>
         </Dialog>

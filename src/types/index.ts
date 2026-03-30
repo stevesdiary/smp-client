@@ -8,6 +8,7 @@ export interface User {
   roleId?: string
   role?: Role
   tenantId?: string
+  tenantSubdomain?: string
 }
 
 export interface Role {

@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DataTable } from '@/components/shared/DataTable'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
+import { ModuleHero } from '@/components/shared/ModuleHero'
 
 const schema = z.object({
   studentId: z.string().min(1, 'Required'),
@@ -44,6 +45,7 @@ export default function DisciplinaryPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['disciplinary'] }); toast.success('Record created'); setOpen(false); reset() },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Failed'),
   })
+  const unresolved = records.filter((record: any) => record.status !== 'Resolved').length
 
   const columns: ColumnDef<any>[] = [
     { id: 'student', header: 'Student', cell: ({ row }) => {
@@ -58,28 +60,39 @@ export default function DisciplinaryPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      <ModuleHero
+        eyebrow="Behaviour desk"
+        title="Track disciplinary records from a clearer oversight surface."
+        description="Incident creation and review still use the current disciplinary APIs while the interface now matches the richer admin shell."
+        stats={[
+          { label: 'Records', value: records.length, detail: 'Disciplinary incidents currently logged.' },
+          { label: 'Open', value: unresolved, detail: 'Incidents not yet resolved.' },
+          { label: 'Students', value: students.length, detail: 'Students available for record creation.' },
+        ]}
+      />
+
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-semibold">Disciplinary</h1><p className="text-muted-foreground">{records.length} records</p></div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />New Record</Button></DialogTrigger>
-          <DialogContent>
+          <DialogTrigger asChild><Button className="h-12 rounded-2xl px-5"><Plus className="h-4 w-4 mr-2" />New Record</Button></DialogTrigger>
+          <DialogContent className="rounded-[28px]">
             <DialogHeader><DialogTitle>Create Disciplinary Record</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit(d => mutation.mutate(d))} className="space-y-4">
               <div className="space-y-1">
                 <Label>Student</Label>
                 <Select onValueChange={v => setValue('studentId', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
+                  <SelectTrigger className="h-11 rounded-2xl"><SelectValue placeholder="Select student" /></SelectTrigger>
                   <SelectContent>{students.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.firstName} {s.lastName}</SelectItem>)}</SelectContent>
                 </Select>
                 {errors.studentId && <p className="text-xs text-destructive">{errors.studentId.message}</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1"><Label>Incident Date</Label><Input type="date" {...register('incidentDate')} /></div>
+                <div className="space-y-1"><Label>Incident Date</Label><Input className="h-11 rounded-2xl" type="date" {...register('incidentDate')} /></div>
                 <div className="space-y-1">
                   <Label>Severity</Label>
                   <Select onValueChange={v => setValue('severity', v)}>
-                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectTrigger className="h-11 rounded-2xl"><SelectValue placeholder="Select" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Minor">Minor</SelectItem>
                       <SelectItem value="Major">Major</SelectItem>
@@ -88,9 +101,9 @@ export default function DisciplinaryPage() {
                   </Select>
                 </div>
               </div>
-              <div className="space-y-1"><Label>Description</Label><Input {...register('description')} />{errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}</div>
-              <div className="space-y-1"><Label>Action Taken</Label><Input {...register('actionTaken')} placeholder="Suspension, Warning..." /></div>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save Record'}</Button>
+              <div className="space-y-1"><Label>Description</Label><Input className="h-11 rounded-2xl" {...register('description')} />{errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}</div>
+              <div className="space-y-1"><Label>Action Taken</Label><Input className="h-11 rounded-2xl" {...register('actionTaken')} placeholder="Suspension, Warning..." /></div>
+              <Button type="submit" className="h-11 w-full rounded-2xl" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save Record'}</Button>
             </form>
           </DialogContent>
         </Dialog>

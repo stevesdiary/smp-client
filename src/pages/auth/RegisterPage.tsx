@@ -3,13 +3,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { UserPlus } from 'lucide-react'
+import { ShieldCheck, UserPlus, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { getApiErrorMessage } from '@/lib/utils'
 import api from '@/lib/api'
+import { AuthShell } from '@/components/auth/AuthShell'
 
 const schema = z.object({
   tenantId: z.string().min(1, 'Tenant ID is required'),
@@ -46,65 +46,87 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-lg">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary">
-            <UserPlus className="h-6 w-6 text-primary-foreground" />
+    <AuthShell
+      eyebrow="Team onboarding"
+      title="Create a staff account"
+      description="Join an existing school portal with the invitation details provided by your administrator."
+      sideTitle="Bring staff into the platform without exposing admin setup."
+      sideDescription="This flow keeps onboarding inside an existing tenant while preserving the live API-backed registration path."
+      icon={<UserPlus className="h-7 w-7" />}
+      highlights={[
+        'Use the school portal code already assigned to your institution.',
+        'Paste the invitation or role ID from the admin who provisioned access.',
+        'After registration, sign in to enter the richer live workspace.',
+      ]}
+      footer={(
+        <p className="text-center text-sm text-muted-foreground">
+          Already have school access?{' '}
+          <Link to="/login" className="font-medium text-primary hover:underline">Sign in</Link>
+        </p>
+      )}
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">School Portal Code</Label>
+          <Input className="h-12 rounded-2xl bg-background/85" placeholder="greenwood-college" {...register('tenantId')} />
+          {errors.tenantId && <p className="text-xs text-destructive">{errors.tenantId.message}</p>}
+          <p className="text-xs text-muted-foreground">Use the school code or portal ID your administrator shared with you.</p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">First Name</Label>
+            <Input className="h-12 rounded-2xl bg-background/85" {...register('firstName')} />
+            {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
           </div>
-          <CardTitle className="text-2xl">Create Account</CardTitle>
-          <CardDescription>Register a user in your tenant</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-1">
-              <Label>Tenant ID</Label>
-              <Input placeholder="your-school-id" {...register('tenantId')} />
-              {errors.tenantId && <p className="text-xs text-destructive">{errors.tenantId.message}</p>}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Last Name</Label>
+            <Input className="h-12 rounded-2xl bg-background/85" {...register('lastName')} />
+            {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Email</Label>
+          <Input className="h-12 rounded-2xl bg-background/85" type="email" {...register('email')} />
+          {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Password</Label>
+          <Input className="h-12 rounded-2xl bg-background/85" type="password" {...register('password')} />
+          {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Invitation / Role ID</Label>
+          <Input className="h-12 rounded-2xl bg-background/85" placeholder="Paste the role ID from your school admin" {...register('roleId')} />
+          {errors.roleId && <p className="text-xs text-destructive">{errors.roleId.message}</p>}
+        </div>
+
+        <div className="rounded-2xl bg-secondary/55 p-4">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <Users className="h-5 w-5" />
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Label>First Name</Label>
-                <Input {...register('firstName')} />
-                {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
-              </div>
-              <div className="space-y-1">
-                <Label>Last Name</Label>
-                <Input {...register('lastName')} />
-                {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
-              </div>
+            <div>
+              <p className="font-medium">Portal membership</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Registration adds your account to the existing school tenant rather than creating a new one.
+              </p>
             </div>
+          </div>
+        </div>
 
-            <div className="space-y-1">
-              <Label>Email</Label>
-              <Input type="email" {...register('email')} />
-              {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
-            </div>
+        <Button type="submit" className="h-12 w-full rounded-2xl text-base" disabled={isSubmitting}>
+          {isSubmitting ? 'Creating...' : 'Create Staff Account'}
+        </Button>
 
-            <div className="space-y-1">
-              <Label>Password</Label>
-              <Input type="password" {...register('password')} />
-              {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
-            </div>
-
-            <div className="space-y-1">
-              <Label>Role ID</Label>
-              <Input placeholder="Paste role UUID" {...register('roleId')} />
-              {errors.roleId && <p className="text-xs text-destructive">{errors.roleId.message}</p>}
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Create Account'}
-            </Button>
-
-            <p className="text-center text-sm text-muted-foreground">
-              Already have an account?{' '}
-              <Link to="/login" className="text-primary hover:underline">Sign in</Link>
-            </p>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <ShieldCheck className="h-4 w-4 text-primary" />
+          Registration is still handled by the current `smp-client` auth API.
+        </div>
+      </form>
+    </AuthShell>
   )
 }

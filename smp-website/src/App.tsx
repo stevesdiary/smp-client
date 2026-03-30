@@ -5,6 +5,7 @@ import Features from './components/Features'
 import Modules from './components/Modules'
 import Pricing from './components/Pricing'
 import Testimonials from './components/Testimonials'
+import Setup from './components/Setup'
 import FAQ from './components/FAQ'
 import CTA from './components/CTA'
 import Footer from './components/Footer'
@@ -19,6 +20,7 @@ export default function App() {
       <Modules />
       <Pricing />
       <Testimonials />
+      <Setup />
       <FAQ />
       <CTA />
       <Footer />

@@ -3,36 +3,36 @@ import { ChevronDown } from 'lucide-react'
 
 const faqs = [
   {
-    q: 'How does the multi-tenant architecture work?',
-    a: 'Each school gets a completely isolated environment with its own data, subdomain, and configuration. There is zero data leakage between tenants. You can also use a custom domain for your school.',
+    q: 'Is SchoolApp really mobile-first?',
+    a: 'Yes. The core workflows are designed to work on phones first, so admins and teachers can take attendance, enter scores, and review records without needing a computer.',
   },
   {
-    q: 'Can parents and students access the system?',
-    a: 'Yes. Parents have a dedicated portal to view their children\'s attendance, grades, and payments. Students can access their courses, assignments, and grades. Each role has carefully scoped permissions.',
+    q: 'Do all plans include every feature?',
+    a: 'Yes. We do not lock features behind higher tiers. Pricing changes only with your student count, and annual payment gets a 20% discount.',
   },
   {
-    q: 'Is the e-learning platform included in all plans?',
-    a: 'E-Learning is included from the Growth plan onwards. It includes course creation, video lessons, quizzes, live class scheduling (Zoom/Google Meet), discussion forums, and completion certificates.',
+    q: 'Can it handle Nigerian terms, classes, and grading?',
+    a: 'That is the point. SchoolApp is positioned around Nigerian school workflows, including term-based language and local class structures, so schools spend less time translating foreign software concepts.',
   },
   {
-    q: 'How secure is the health records data?',
-    a: 'Health records are encrypted at rest using AES-256-GCM encryption. Only authorized staff with the Health Records permission can access this data. All access is logged.',
+    q: 'How quickly can we get started?',
+    a: 'Most schools can complete setup in minutes. Once your school details are in place, your portal is ready for adding students, teachers, fees, and records right away.',
   },
   {
-    q: 'Can I migrate from my existing school management system?',
-    a: 'Yes. We provide CSV import tools for students, teachers, and historical data. Our onboarding team will assist with data migration at no extra cost for Growth and Enterprise plans.',
+    q: 'Can parents and teachers each have their own portal?',
+    a: 'Yes. SchoolApp supports separate access experiences for admins, teachers, parents, and other staff, so each group sees only the workflows relevant to them.',
   },
   {
-    q: 'What payment methods do you support for school fees?',
-    a: 'SchoolMS integrates with Stripe, Paystack, and Flutterwave for online fee collection. You can also record offline payments (cash, bank transfer) manually.',
+    q: 'What about school fee payments?',
+    a: 'You can track fees and payments per student, including online collections where configured and manual recording for offline payments such as cash or transfer.',
   },
   {
-    q: 'Is there a mobile app?',
-    a: 'The web application is fully responsive and works great on mobile browsers. Native iOS and Android apps are on our roadmap for Q3 2025.',
+    q: 'Can we move from spreadsheets or an older system?',
+    a: 'Yes. The intended onboarding path is simple: bring over your school details, classes, and records, then start operating from one portal instead of scattered sheets and notebooks.',
   },
   {
-    q: 'What kind of support do you offer?',
-    a: 'Starter plans get email support with 48h response time. Growth plans get priority support with 12h response. Enterprise plans get a dedicated account manager and phone support.',
+    q: 'Can we use our own school identity?',
+    a: 'Yes. The platform supports school-specific branding and custom domain setups so the parent and staff experience feels like your school, not a generic shared portal.',
   },
 ]
 

@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import type { ColumnDef } from '@tanstack/react-table'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,6 +17,7 @@ import api from '@/lib/api'
 import { getApiErrorMessage } from '@/lib/utils'
 import { fetchHealthRecordsByStudent, type HealthRecordWithStudent } from '@/lib/moduleQueries'
 import type { Student } from '@/types'
+import { ModuleHero } from '@/components/shared/ModuleHero'
 
 const schema = z.object({
   studentId: z.string().min(1, 'Required'),
@@ -45,6 +47,7 @@ export default function HealthPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['health-records'] }); toast.success('Health record created'); setOpen(false); reset() },
     onError: (error: unknown) => toast.error(getApiErrorMessage(error, 'Failed')),
   })
+  const recordsWithConditions = records.filter((record: any) => record.conditions)
 
   const columns: ColumnDef<HealthRecordWithStudent>[] = [
     { id: 'student', header: 'Student', cell: ({ row }) => {
@@ -58,28 +61,39 @@ export default function HealthPage() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      <ModuleHero
+        eyebrow="Student wellbeing"
+        title="Keep health records visible from a cleaner care operations surface."
+        description="Medical data still uses the current health record endpoints while the screen now fits the richer interface system."
+        stats={[
+          { label: 'Records', value: records.length, detail: 'Health records currently available.' },
+          { label: 'Students', value: students.length, detail: 'Students eligible for record creation.' },
+          { label: 'Conditions', value: recordsWithConditions.length, detail: 'Records with stored medical conditions.' },
+        ]}
+      />
+
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-semibold">Health Records</h1><p className="text-muted-foreground">{records.length} records</p></div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />New Record</Button></DialogTrigger>
-          <DialogContent>
+          <DialogTrigger asChild><Button className="h-12 rounded-2xl px-5"><Plus className="h-4 w-4 mr-2" />New Record</Button></DialogTrigger>
+          <DialogContent className="rounded-[28px]">
             <DialogHeader><DialogTitle>Create Health Record</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit(d => mutation.mutate(d))} className="space-y-4">
               <div className="space-y-1">
                 <Label>Student</Label>
                 <Select onValueChange={v => setValue('studentId', v)}>
-                  <SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
+                  <SelectTrigger className="h-11 rounded-2xl"><SelectValue placeholder="Select student" /></SelectTrigger>
                   <SelectContent>{students.map((student) => <SelectItem key={student.id} value={student.id}>{student.firstName} {student.lastName}</SelectItem>)}</SelectContent>
                 </Select>
                 {errors.studentId && <p className="text-xs text-destructive">{errors.studentId.message}</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1"><Label>Blood Group</Label><Input {...register('bloodGroup')} placeholder="A+" /></div>
-                <div className="space-y-1"><Label>Allergies</Label><Input {...register('allergies')} placeholder="Peanuts, Dust..." /></div>
+                <div className="space-y-1"><Label>Blood Group</Label><Input className="h-11 rounded-2xl" {...register('bloodGroup')} placeholder="A+" /></div>
+                <div className="space-y-1"><Label>Allergies</Label><Input className="h-11 rounded-2xl" {...register('allergies')} placeholder="Peanuts, Dust..." /></div>
               </div>
-              <div className="space-y-1"><Label>Medical Conditions</Label><Input {...register('conditions')} placeholder="Asthma, Diabetes..." /></div>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save Record'}</Button>
+              <div className="space-y-1"><Label>Medical Conditions</Label><Input className="h-11 rounded-2xl" {...register('conditions')} placeholder="Asthma, Diabetes..." /></div>
+              <Button type="submit" className="h-11 w-full rounded-2xl" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save Record'}</Button>
             </form>
           </DialogContent>
         </Dialog>

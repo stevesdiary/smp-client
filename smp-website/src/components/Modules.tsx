@@ -1,104 +1,63 @@
 import { useState } from 'react'
 import {
-  Library, Bus, Package, Calendar, Heart,
-  Building2, Trophy, Video, Users
+  FileCheck, DollarSign, ClipboardList, Users, Globe
 } from 'lucide-react'
 
 const modules = [
   {
-    id: 'elearning',
-    icon: Video,
-    label: 'E-Learning',
-    title: 'Full E-Learning Platform',
-    desc: 'Deliver courses with video lessons, PDFs, quizzes, and live classes. Track student progress, auto-grade assessments, and issue completion certificates.',
-    bullets: ['Course builder with modules & lessons', 'Live classes (Zoom, Google Meet)', 'Auto-graded quizzes & assignments', 'Discussion forums & Q&A', 'Completion certificates'],
-    color: 'text-red-600 bg-red-50',
-    accent: 'bg-red-600',
-  },
-  {
-    id: 'parent',
-    icon: Users,
-    label: 'Parent Portal',
-    title: 'Keep Parents in the Loop',
-    desc: 'Give parents real-time visibility into their children\'s attendance, grades, payments, and school announcements — all in one secure portal.',
-    bullets: ['View attendance history', 'Track grades by subject', 'Payment history & receipts', 'School announcements', 'Multiple children support'],
+    id: 'admissions',
+    icon: FileCheck,
+    label: 'Admissions',
+    title: 'Admission and Enrollment Management',
+    desc: 'Capture applicant details, manage admissions, and move students into the right class and session without spreadsheet back-and-forth.',
+    bullets: ['Track applicants and admissions', 'Manage class placement', 'Keep enrollment history', 'Support session roll-over', 'Reduce manual paperwork'],
     color: 'text-blue-600 bg-blue-50',
     accent: 'bg-blue-600',
   },
   {
-    id: 'library',
-    icon: Library,
-    label: 'Library',
-    title: 'Smart Library Management',
-    desc: 'Manage your entire book catalog, track borrowing and returns, calculate fines, and get overdue alerts automatically.',
-    bullets: ['Book catalog with ISBN search', 'Borrow & return workflow', 'Overdue alerts & fines', 'Transaction history', 'Student & staff borrowing'],
-    color: 'text-amber-600 bg-amber-50',
-    accent: 'bg-amber-600',
+    id: 'fees',
+    icon: DollarSign,
+    label: 'Fees',
+    title: 'Fees, Invoices, and Payment Tracking',
+    desc: 'Set up school fees and levies, monitor who has paid, and give parents a clearer record of transactions and outstanding balances.',
+    bullets: ['Create fees and levies', 'Track payment status per student', 'Monitor collections in real time', 'Support online and recorded offline payments', 'Reduce payment disputes'],
+    color: 'text-emerald-600 bg-emerald-50',
+    accent: 'bg-emerald-600',
   },
   {
-    id: 'transport',
-    icon: Bus,
-    label: 'Transport',
-    title: 'Fleet & Route Management',
-    desc: 'Manage buses, define routes with stops, assign students, and track driver information — all from one dashboard.',
-    bullets: ['Bus fleet management', 'Route & stop configuration', 'Student route assignment', 'Driver contact info', 'Capacity tracking'],
-    color: 'text-green-600 bg-green-50',
-    accent: 'bg-green-600',
-  },
-  {
-    id: 'hostel',
-    icon: Building2,
-    label: 'Hostel',
-    title: 'Hostel & Boarding',
-    desc: 'Manage rooms, assign students to beds, track meal plans, and log visitor entries with full audit trails.',
-    bullets: ['Room & bed assignment', 'Meal plan management', 'Visitor log & check-in', 'Occupancy reports', 'Building & floor management'],
-    color: 'text-indigo-600 bg-indigo-50',
-    accent: 'bg-indigo-600',
-  },
-  {
-    id: 'health',
-    icon: Heart,
-    label: 'Health',
-    title: 'Student Health Records',
-    desc: 'Securely store health records with AES-256 encryption. Track medical incidents, vaccinations, allergies, and emergency contacts.',
-    bullets: ['Encrypted health records', 'Medical incident tracking', 'Vaccination schedules', 'Allergy & condition alerts', 'Emergency contact info'],
-    color: 'text-rose-600 bg-rose-50',
-    accent: 'bg-rose-600',
-  },
-  {
-    id: 'sports',
-    icon: Trophy,
-    label: 'Sports',
-    title: 'Sports & Extracurricular',
-    desc: 'Manage activities, enroll students, schedule practices, and track competition results across all sports and clubs.',
-    bullets: ['Activity & club management', 'Student enrollment', 'Competition tracking', 'Results & standings', 'Instructor assignment'],
+    id: 'records',
+    icon: ClipboardList,
+    label: 'Records',
+    title: 'Student Records and Report Cards',
+    desc: 'Manage attendance, assessments, and end-of-term reports in one place so teachers can work from phones instead of loose sheets.',
+    bullets: ['Daily attendance recording', 'Assessment and exam score entry', 'Term-based report cards', 'Academic history per student', 'Cleaner end-of-term workflow'],
     color: 'text-orange-600 bg-orange-50',
     accent: 'bg-orange-600',
   },
   {
-    id: 'inventory',
-    icon: Package,
-    label: 'Inventory',
-    title: 'Asset & Inventory Control',
-    desc: 'Track school assets from purchase to disposal. Manage allocations, maintenance schedules, and generate inventory reports.',
-    bullets: ['Asset catalog & categories', 'Purchase & allocation tracking', 'Maintenance records', 'Disposal management', 'Location tracking'],
-    color: 'text-teal-600 bg-teal-50',
-    accent: 'bg-teal-600',
+    id: 'portals',
+    icon: Users,
+    label: 'Portals',
+    title: 'Admin, Teacher, and Parent Portals',
+    desc: 'Different users see the tools that matter to them, from admin oversight to teacher workflows to parent visibility.',
+    bullets: ['Admin portal for school operations', 'Teacher portal for attendance and scores', 'Parent portal for fees and progress', 'Role-based access control', 'Cleaner communication across roles'],
+    color: 'text-violet-600 bg-violet-50',
+    accent: 'bg-violet-600',
   },
   {
-    id: 'events',
-    icon: Calendar,
-    label: 'Events',
-    title: 'Event Management',
-    desc: 'Plan and manage school events, track participants, and keep the whole school community informed.',
-    bullets: ['Event calendar view', 'Participant management', 'Event types & categories', 'Venue management', 'Announcement integration'],
-    color: 'text-purple-600 bg-purple-50',
-    accent: 'bg-purple-600',
+    id: 'branding',
+    icon: Globe,
+    label: 'Branding',
+    title: 'Your School Brand, Not Ours',
+    desc: 'Present a portal that feels like your school with your domain, your identity, and a cleaner parent-facing experience.',
+    bullets: ['Custom school identity', 'School-specific portal access', 'Custom domain support', 'Branded parent experience', 'Consistent communication touchpoints'],
+    color: 'text-cyan-600 bg-cyan-50',
+    accent: 'bg-cyan-600',
   },
 ]
 
 export default function Modules() {
-  const [active, setActive] = useState('elearning')
+  const [active, setActive] = useState('admissions')
   const current = modules.find(m => m.id === active)!
 
   return (
@@ -106,9 +65,9 @@ export default function Modules() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="text-sm font-semibold text-brand-600 uppercase tracking-wider">All-in-One Platform</span>
-          <h2 className="mt-2 text-4xl font-extrabold text-gray-900">Every module your school needs</h2>
+          <h2 className="mt-2 text-4xl font-extrabold text-gray-900">The modules schools ask for first</h2>
           <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
-            Tier 1, 2, and 3 modules — all included. No add-ons, no hidden fees.
+            Every plan includes the same product. You only pay based on how many students your school has.
           </p>
         </div>
 

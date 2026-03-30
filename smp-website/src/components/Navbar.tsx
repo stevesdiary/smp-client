@@ -5,6 +5,7 @@ const links = [
   { label: 'Features', href: '#features' },
   { label: 'Modules', href: '#modules' },
   { label: 'Pricing', href: '#pricing' },
+  { label: 'Setup', href: '#setup' },
   { label: 'Testimonials', href: '#testimonials' },
   { label: 'FAQ', href: '#faq' },
 ]
@@ -27,7 +28,7 @@ export default function Navbar() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
               <GraduationCap className="h-5 w-5 text-white" />
             </div>
-            SchoolMS
+            SchoolApp
           </a>
 
           <nav className="hidden md:flex items-center gap-8">
@@ -39,8 +40,8 @@ export default function Navbar() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
-            <a href="#" className="text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">Sign In</a>
-            <a href="#pricing" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors">
+            <a href="/login" className="text-sm font-medium text-gray-600 hover:text-brand-600 transition-colors">Sign In</a>
+            <a href="/setup-school" className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors">
               Get Started
             </a>
           </div>
@@ -59,7 +60,7 @@ export default function Navbar() {
               {l.label}
             </a>
           ))}
-          <a href="#pricing" onClick={() => setOpen(false)}
+          <a href="/setup-school" onClick={() => setOpen(false)}
             className="block w-full text-center rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white">
             Get Started
           </a>

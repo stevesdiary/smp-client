@@ -1,50 +1,26 @@
 const testimonials = [
   {
-    name: 'Dr. Sarah Mensah',
-    role: 'Principal, Greenwood Academy',
-    avatar: 'SM',
+    name: 'John I.',
+    role: 'Proprietor, Pinnacle International Academy - Anambra State',
+    avatar: 'JI',
     color: 'bg-blue-500',
-    quote: 'SchoolMS transformed how we run our school. Attendance, grades, and payments are now fully automated. Our teachers spend more time teaching, less time on admin.',
+    quote: 'Before SchoolApp, we used software with terms like sophomore and fall semester. This one finally speaks the language our school actually uses.',
     rating: 5,
   },
   {
-    name: 'James Okafor',
-    role: 'IT Director, Sunrise International School',
-    avatar: 'JO',
-    color: 'bg-purple-500',
-    quote: 'The multi-tenant architecture is rock solid. We manage 3 campuses from one dashboard. The e-learning module was a game changer during remote learning.',
-    rating: 5,
-  },
-  {
-    name: 'Amina Hassan',
-    role: 'Admin Manager, Al-Noor Academy',
+    name: 'Fatima M.',
+    role: 'Proprietress, Al-Iman Model School - Kano State',
     avatar: 'AH',
     color: 'bg-green-500',
-    quote: 'Parent engagement went up 60% after we launched the parent portal. Parents love seeing their children\'s attendance and grades in real time.',
+    quote: 'End-of-term used to be our most stressful period. Now teachers enter scores from their phones, and the workload is far more manageable.',
     rating: 5,
   },
   {
-    name: 'Michael Torres',
-    role: 'Head Teacher, St. Francis College',
-    avatar: 'MT',
+    name: 'Nyensomom B.',
+    role: 'Principal, Destiny Comprehensive College - Enugu State',
+    avatar: 'NB',
     color: 'bg-orange-500',
-    quote: 'The gradebook and report card generation saves us 2 days every term. The timetable conflict detection alone is worth the subscription.',
-    rating: 5,
-  },
-  {
-    name: 'Priya Sharma',
-    role: 'Finance Officer, Delhi Public School',
-    avatar: 'PS',
-    color: 'bg-pink-500',
-    quote: 'Fee collection and payment tracking is seamless. Outstanding balance reports are generated in seconds. Our collection rate improved by 35%.',
-    rating: 5,
-  },
-  {
-    name: 'Emmanuel Adeyemi',
-    role: 'Director, Covenant Schools',
-    avatar: 'EA',
-    color: 'bg-teal-500',
-    quote: 'We evaluated 5 school management systems. SchoolMS was the only one with hostel, health records, and e-learning all built in. No extra cost.',
+    quote: 'We set up classes in one evening and started using the portal the next morning. Having records across sessions has been invaluable.',
     rating: 5,
   },
 ]
@@ -56,7 +32,7 @@ export default function Testimonials() {
         <div className="text-center mb-16">
           <span className="text-sm font-semibold text-brand-600 uppercase tracking-wider">Loved by Schools</span>
           <h2 className="mt-2 text-4xl font-extrabold text-gray-900">What school leaders say</h2>
-          <p className="mt-4 text-lg text-gray-500">Join 500+ schools already running on SchoolMS.</p>
+          <p className="mt-4 text-lg text-gray-500">Join 50+ schools already running on SchoolApp across Nigeria.</p>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

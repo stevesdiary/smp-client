@@ -10,6 +10,7 @@ import { TeachersPage, ClassesPage, PaymentsPage } from '@/pages/shared/ModulePa
 
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
+const SchoolSetupPage = lazy(() => import('@/pages/auth/SchoolSetupPage'))
 const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'))
 const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'))
 const StudentsPage = lazy(() => import('@/pages/students/StudentsPage'))
@@ -60,6 +61,7 @@ export default function App() {
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
             <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
+            <Route path="/setup-school" element={<PublicOnlyRoute><SchoolSetupPage /></PublicOnlyRoute>} />
             <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPasswordPage /></PublicOnlyRoute>} />
             <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
