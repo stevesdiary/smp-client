@@ -3,7 +3,8 @@ import {
   LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList,
   DollarSign, Calendar, Library, Bus, Package, Trophy,
   Building2, Heart, AlertTriangle, Video, MessageSquare,
-  Award, Settings, LogOut, School, ShieldCheck, Sparkles
+  Award, Settings, LogOut, School, ShieldCheck, Sparkles,
+  CalendarDays, BookMarked, CalendarRange
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
@@ -12,9 +13,12 @@ import { Badge } from '@/components/ui/badge'
 
 const allNavItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', section: 'Command center', roles: ['ADMIN', 'PRINCIPAL', 'TEACHER', 'PARENT', 'STUDENT', 'STAFF'] },
+  { to: '/academic-years', icon: CalendarDays, label: 'Academic Years', section: 'Academic core', roles: ['ADMIN', 'PRINCIPAL'] },
   { to: '/students', icon: Users, label: 'Students', section: 'Academic core', roles: ['ADMIN', 'PRINCIPAL', 'TEACHER'] },
   { to: '/teachers', icon: GraduationCap, label: 'Teachers', section: 'Academic core', roles: ['ADMIN', 'PRINCIPAL'] },
   { to: '/classes', icon: School, label: 'Classes', section: 'Academic core', roles: ['ADMIN', 'PRINCIPAL', 'TEACHER'] },
+  { to: '/subjects', icon: BookMarked, label: 'Subjects', section: 'Academic core', roles: ['ADMIN', 'TEACHER'] },
+  { to: '/timetable', icon: CalendarRange, label: 'Timetable', section: 'Academic core', roles: ['ADMIN', 'TEACHER'] },
   { to: '/attendance', icon: ClipboardList, label: 'Attendance', section: 'Academic core', roles: ['ADMIN', 'TEACHER'] },
   { to: '/grades', icon: BookOpen, label: 'Grades', section: 'Academic core', roles: ['ADMIN', 'TEACHER'] },
   { to: '/payments', icon: DollarSign, label: 'Payments', section: 'Operations', roles: ['ADMIN'] },

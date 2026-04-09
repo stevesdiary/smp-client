@@ -130,9 +130,9 @@ export function TeachersPage() {
         title="Faculty records in one cleaner workspace."
         description="Teacher records remain live and editable while the page now matches the richer shell and dashboard direction."
         stats={[
-          { label: 'Teachers', value: teachers.length, detail: 'Current faculty profiles in the system.' },
-          { label: 'Editing', value: editing ? 'Open' : 'Ready', detail: 'Update records without leaving the page.' },
-          { label: 'Mode', value: 'Live', detail: 'All actions still hit the existing teacher API.' },
+          { label: 'Total faculty', value: teachers.length, detail: 'Current faculty profiles in the system.' },
+          { label: 'With subject', value: teachers.filter((t: any) => t.subject).length, detail: 'Teachers with a subject specialty on file.' },
+          { label: 'Unassigned', value: teachers.filter((t: any) => !t.subject).length, detail: 'Faculty not yet linked to a subject.' },
         ]}
         actions={
           <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setEditing(null) } }}>
@@ -174,7 +174,7 @@ export function TeachersPage() {
               <GraduationCap className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Faculty count</p>
+              <p className="text-sm text-muted-foreground">Total faculty</p>
               <p className="text-3xl font-semibold">{teachers.length}</p>
             </div>
           </CardContent>
@@ -185,8 +185,8 @@ export function TeachersPage() {
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">UX refresh</p>
-              <p className="text-3xl font-semibold">Applied</p>
+              <p className="text-sm text-muted-foreground">With subject assigned</p>
+              <p className="text-3xl font-semibold">{teachers.filter((t: any) => t.subject).length}</p>
             </div>
           </CardContent>
         </Card>
@@ -196,8 +196,8 @@ export function TeachersPage() {
               <Layers3 className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Records surface</p>
-              <p className="text-3xl font-semibold">Ready</p>
+              <p className="text-sm text-muted-foreground">Without subject</p>
+              <p className="text-3xl font-semibold">{teachers.filter((t: any) => !t.subject).length}</p>
             </div>
           </CardContent>
         </Card>
@@ -264,9 +264,9 @@ export function ClassesPage() {
         title="Organize classes with a stronger classroom operations view."
         description="Class creation stays simple, but the page now aligns visually with the richer client direction."
         stats={[
-          { label: 'Classes', value: classes.length, detail: 'Current class records available in the system.' },
-          { label: 'Homerooms', value: classes.filter((item: any) => item.teacher).length, detail: 'Classes already linked to a teacher.' },
-          { label: 'Status', value: 'Live', detail: 'Creation continues to use the current class API.' },
+          { label: 'Total classes', value: classes.length, detail: 'Current class records available in the system.' },
+          { label: 'Homeroom linked', value: classes.filter((item: any) => item.teacher).length, detail: 'Classes already assigned a homeroom teacher.' },
+          { label: 'Total students', value: classes.reduce((sum: number, c: any) => sum + (c._count?.enrollments ?? 0), 0), detail: 'Enrolled students across all classes.' },
         ]}
         actions={
           <Dialog open={open} onOpenChange={setOpen}>

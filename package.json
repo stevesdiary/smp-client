@@ -1,6 +1,7 @@
 {
   "name": "smp-client",
   "private": true,
+  "author": {"name": "Stephen Oyeyemi"},
   "version": "0.0.0",
   "type": "module",
   "scripts": {

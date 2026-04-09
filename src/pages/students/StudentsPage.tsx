@@ -123,19 +123,21 @@ export default function StudentsPage() {
 
           <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
             <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Total students</p>
+              <p className="text-sm text-white/70">Total enrolled</p>
               <p className="mt-2 text-3xl font-semibold">{students.length}</p>
-              <p className="mt-2 text-sm text-white/70">Current records available in the registry.</p>
+              <p className="mt-2 text-sm text-white/70">Active learner records in the registry.</p>
             </div>
             <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Enrollment status</p>
-              <p className="mt-2 text-3xl font-semibold">Live</p>
-              <p className="mt-2 text-sm text-white/70">Reads and writes are still connected to the backend.</p>
+              <p className="text-sm text-white/70">With DOB on file</p>
+              <p className="mt-2 text-3xl font-semibold">{students.filter(s => s.dob).length}</p>
+              <p className="mt-2 text-sm text-white/70">Students with a date of birth recorded.</p>
             </div>
             <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Actions</p>
-              <p className="mt-2 text-3xl font-semibold">CRUD</p>
-              <p className="mt-2 text-sm text-white/70">Create, update, and delete workflows remain intact.</p>
+              <p className="text-sm text-white/70">Added last 30 days</p>
+              <p className="mt-2 text-3xl font-semibold">
+                {students.filter(s => (Date.now() - new Date(s.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000).length}
+              </p>
+              <p className="mt-2 text-sm text-white/70">New enrollments in the past month.</p>
             </div>
           </div>
         </div>
@@ -148,7 +150,7 @@ export default function StudentsPage() {
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Student records</p>
+              <p className="text-sm text-muted-foreground">Total enrolled</p>
               <p className="text-3xl font-semibold">{students.length}</p>
             </div>
           </CardContent>
@@ -159,8 +161,8 @@ export default function StudentsPage() {
               <GraduationCap className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Admission flow</p>
-              <p className="text-3xl font-semibold">Ready</p>
+              <p className="text-sm text-muted-foreground">With DOB on file</p>
+              <p className="text-3xl font-semibold">{students.filter(s => s.dob).length}</p>
             </div>
           </CardContent>
         </Card>
@@ -170,8 +172,13 @@ export default function StudentsPage() {
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Workspace refresh</p>
-              <p className="text-3xl font-semibold">Applied</p>
+              <p className="text-sm text-muted-foreground">Added last 30 days</p>
+              <p className="text-3xl font-semibold">
+                {students.filter(s => {
+                  const d = new Date(s.createdAt)
+                  return (Date.now() - d.getTime()) < 30 * 24 * 60 * 60 * 1000
+                }).length}
+              </p>
             </div>
           </CardContent>
         </Card>
