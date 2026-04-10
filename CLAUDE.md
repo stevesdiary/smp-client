@@ -99,6 +99,7 @@ All routes under `AppLayout` are wrapped in `ProtectedRoute`. Role-restricted ro
 - `User.role` is `Role { id, name, description? }` — the RBAC role object, not the `UserRole` string enum
 - `UserRole` union type: `'ADMIN' | 'PRINCIPAL' | 'TEACHER' | 'STAFF' | 'PARENT' | 'STUDENT'`
 - Core domain interfaces in `src/types/index.ts`: `User`, `Role`, `AuthState`, `Student`, `Teacher`, `Class`, `Attendance`, `Grade`, `Subject`, `Assignment`, `Fee`, `Payment`, `AcademicYear`, `Term`, `Book`, `Course`, `CourseModule`, `Lesson`, `CourseEnrollment`, `LiveClass`, `Discussion`, `DiscussionReply`, `Certificate`, `Event`
+- `Subject` client type: `{ id, name, code?, description? }` — does **not** include `classId` or `academicYearId`; pages that need those fields define a local `SubjectRow` type extending `Subject` (e.g. `SubjectsPage` adds `class?: Class`, `teacher?: Teacher`, `academicYear?: AcademicYear`)
 - `AcademicYear`: `{ id, name, startDate, endDate, isCurrent }`; `Term`: `{ id, academicYearId, name, startDate, endDate, isCurrent }`
 - Utility types in `src/types/index.ts`: `ApiError` (`{ error: string }`), `PaginatedResponse<T>` (`{ data: T[], total, page, limit }`)
 <!-- END AUTO-MANAGED -->
@@ -106,6 +107,7 @@ All routes under `AppLayout` are wrapped in `ProtectedRoute`. Role-restricted ro
 <!-- AUTO-MANAGED: dependencies -->
 ## Key Dependencies
 
+- `VITE_API_URL` — required env var; Vite exposes it to the client as the API base URL (e.g. `http://localhost:3001`); set in `.env`
 - `src/store/authStore.ts` — `useAuthStore`: auth state, login/logout actions, localStorage persistence
 - `src/types/index.ts` — all shared TS interfaces; import from `@/types`
 - `src/lib/api.ts` — configured axios instance; use for all API calls
