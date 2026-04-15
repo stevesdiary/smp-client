@@ -6,7 +6,7 @@ React + TypeScript frontend for EDUPLUS — a multi-tenant SaaS school managemen
 ## Architecture
 
 - `src/pages/` - Route-level page components (e.g. `auth/LoginPage.tsx`)
-- `src/pages/shared/ModulePages.tsx` - Named exports: `TeachersPage`, `ClassesPage`, `PaymentsPage` (not lazy-loaded); also contains a local `ModuleHero` component distinct from `@/components/shared/ModuleHero`
+- `src/pages/shared/ModulePages.tsx` - Named exports: `TeachersPage`, `ClassesPage`, `PaymentsPage`, `PlaceholderPage` (not lazy-loaded); also contains a local `ModuleHero` component distinct from `@/components/shared/ModuleHero`
 - `src/store/` - Zustand state stores
 - `src/types/` - Shared TypeScript interfaces and types (`src/types/index.ts`)
 - `src/lib/` - Shared utilities (`api.ts` axios instance, `utils.ts`, `moduleQueries.ts`)
@@ -62,6 +62,7 @@ All routes under `AppLayout` are wrapped in `ProtectedRoute`. Role-restricted ro
 - Items grouped into sections: `"Command center"`, `"Academic core"`, `"Operations"`, `"Campus life"`, `"Digital learning"`, `"Family access"`, `"System"`
 - Sidebar shows `${tenantId}.eduplus` as workspace label; falls back to `"Multi-role workspace"` if no tenantId
 - `getUserRole` imported from `@/lib/auth`; `useAuthStore` provides `user`, `tenantId`, `logout`
+- Sidebar role visibility differs from route-level `allowedRoles`: sidebar shows `students`, `teachers`, `classes` to PRINCIPAL (nav items include PRINCIPAL); routes for `/students`, `/teachers`, `/classes` do **not** list PRINCIPAL in `allowedRoles` — PRINCIPAL sees the nav links but route guards only allow ADMIN/TEACHER for those paths
 
 ### Page Pattern (CRUD feature pages)
 
@@ -84,7 +85,7 @@ All routes under `AppLayout` are wrapped in `ProtectedRoute`. Role-restricted ro
 - Create requires `classId` (UUID) and `academicYearId` (UUID) — both mandatory
 - Update omits `classId` and `academicYearId` (immutable after creation)
 - Assign teacher via `PUT /subjects/{id}/assign-teacher` with `{ teacherId }` body
-- `SubjectRow` local type includes `class?: Class`, `teacher?: Teacher`, `academicYear?: AcademicYear` for display
+- `SubjectRow` local type: `{ id, name, code?, classId?, class?: Class, teacherId?, teacher?: Teacher, academicYearId?, academicYear?: AcademicYear }` — includes raw ID fields alongside relation objects for form pre-population
 
 ### TimetablePage
 
@@ -99,7 +100,7 @@ All routes under `AppLayout` are wrapped in `ProtectedRoute`. Role-restricted ro
 - `User.role` is `Role { id, name, description? }` — the RBAC role object, not the `UserRole` string enum
 - `UserRole` union type: `'ADMIN' | 'PRINCIPAL' | 'TEACHER' | 'STAFF' | 'PARENT' | 'STUDENT'`
 - Core domain interfaces in `src/types/index.ts`: `User`, `Role`, `AuthState`, `Student`, `Teacher`, `Class`, `Attendance`, `Grade`, `Subject`, `Assignment`, `Fee`, `Payment`, `AcademicYear`, `Term`, `Book`, `Course`, `CourseModule`, `Lesson`, `CourseEnrollment`, `LiveClass`, `Discussion`, `DiscussionReply`, `Certificate`, `Event`
-- `Subject` client type: `{ id, name, code?, description? }` — does **not** include `classId` or `academicYearId`; pages that need those fields define a local `SubjectRow` type extending `Subject` (e.g. `SubjectsPage` adds `class?: Class`, `teacher?: Teacher`, `academicYear?: AcademicYear`)
+- `Subject` client type: `{ id, name, code?, description? }` — does **not** include `classId` or `academicYearId`; pages that need those fields define a local `SubjectRow` type (e.g. `SubjectsPage` defines `SubjectRow` with `classId?`, `class?: Class`, `teacherId?`, `teacher?: Teacher`, `academicYearId?`, `academicYear?: AcademicYear`)
 - `AcademicYear`: `{ id, name, startDate, endDate, isCurrent }`; `Term`: `{ id, academicYearId, name, startDate, endDate, isCurrent }`
 - Utility types in `src/types/index.ts`: `ApiError` (`{ error: string }`), `PaginatedResponse<T>` (`{ data: T[], total, page, limit }`)
 <!-- END AUTO-MANAGED -->
