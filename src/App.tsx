@@ -28,10 +28,13 @@ const HostelPage = lazy(() => import('@/pages/hostel/HostelPage'))
 const HealthPage = lazy(() => import('@/pages/health/HealthPage'))
 const DisciplinaryPage = lazy(() => import('@/pages/disciplinary/DisciplinaryPage'))
 const CoursesPage = lazy(() => import('@/pages/courses/CoursesPage'))
+const CourseDetailPage = lazy(() => import('@/pages/courses/CourseDetailPage'))
 const ELearningPage = lazy(() => import('@/pages/elearning/ELearningPage'))
 const CertificatesPage = lazy(() => import('@/pages/certificates/CertificatesPage'))
 const ParentPage = lazy(() => import('@/pages/parent/ParentPage'))
 const SettingsPage = lazy(() => import('@/pages/settings/SettingsPage'))
+const WebsiteEditorPage = lazy(() => import('@/pages/admin/WebsiteEditor'))
+const CustomDomainSetupPage = lazy(() => import('@/pages/admin/CustomDomainSetup'))
 const UnauthorizedPage = lazy(() => import('@/pages/system/UnauthorizedPage'))
 const NotFoundPage = lazy(() => import('@/pages/system/NotFoundPage'))
 
@@ -88,10 +91,13 @@ export default function App() {
               <Route path="/health" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}><HealthPage /></ProtectedRoute>} />
               <Route path="/disciplinary" element={<ProtectedRoute allowedRoles={['ADMIN', 'PRINCIPAL', 'TEACHER']}><DisciplinaryPage /></ProtectedRoute>} />
               <Route path="/courses" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><CoursesPage /></ProtectedRoute>} />
+              <Route path="/courses/:id" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><CourseDetailPage /></ProtectedRoute>} />
               <Route path="/elearning" element={<ELearningPage />} />
               <Route path="/certificates" element={<CertificatesPage />} />
               <Route path="/parent" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentPage /></ProtectedRoute>} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/website-editor" element={<ProtectedRoute allowedRoles={['ADMIN']}><WebsiteEditorPage /></ProtectedRoute>} />
+              <Route path="/custom-domain-setup" element={<ProtectedRoute allowedRoles={['ADMIN']}><CustomDomainSetupPage /></ProtectedRoute>} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

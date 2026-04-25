@@ -4,7 +4,7 @@ import {
   DollarSign, Calendar, Library, Bus, Package, Trophy,
   Building2, Heart, AlertTriangle, Video, MessageSquare,
   Award, Settings, LogOut, School, ShieldCheck, Sparkles,
-  CalendarDays, BookMarked, CalendarRange
+  CalendarDays, BookMarked, CalendarRange, Globe
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
@@ -34,6 +34,8 @@ const allNavItems = [
   { to: '/elearning', icon: MessageSquare, label: 'E-Learning', section: 'Digital learning', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
   { to: '/certificates', icon: Award, label: 'Certificates', section: 'Digital learning', roles: ['ADMIN', 'STUDENT'] },
   { to: '/parent', icon: Users, label: 'Parent Portal', section: 'Family access', roles: ['PARENT'] },
+  { to: '/website-editor', icon: Globe, label: 'Website Editor', section: 'System', roles: ['ADMIN'] },
+  { to: '/custom-domain-setup', icon: Globe, label: 'Custom Domain', section: 'System', roles: ['ADMIN'] },
   { to: '/settings', icon: Settings, label: 'Settings', section: 'System', roles: ['ADMIN', 'PRINCIPAL', 'TEACHER', 'PARENT', 'STUDENT', 'STAFF'] },
 ]
 
