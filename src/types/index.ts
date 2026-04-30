@@ -153,6 +153,7 @@ export interface CourseModule {
   id: string
   courseId: string
   title: string
+  description?: string
   order: number
   lessons?: Lesson[]
 }
@@ -161,10 +162,18 @@ export interface Lesson {
   id: string
   moduleId: string
   title: string
+  content?: string
   type: 'VIDEO' | 'TEXT' | 'PDF' | 'QUIZ' | 'ASSIGNMENT'
   videoUrl?: string
   duration?: number
   order: number
+  progress?: LessonPlaybackProgress
+}
+
+export interface LessonPlaybackProgress {
+  completed: boolean
+  timeSpent: number
+  lastAccessed?: string | null
 }
 
 export interface CourseEnrollment {
@@ -176,6 +185,13 @@ export interface CourseEnrollment {
   status: 'ACTIVE' | 'COMPLETED' | 'DROPPED'
   enrollDate: string
   completedAt?: string
+}
+
+export interface RecordedCourse extends Course {
+  enrollmentId: string
+  enrollmentProgress: number
+  enrollmentStatus: 'ACTIVE' | 'COMPLETED' | 'DROPPED'
+  modules: CourseModule[]
 }
 
 export interface LiveClass {
