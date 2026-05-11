@@ -3,16 +3,16 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { GraduationCap, Pencil, Plus, Sparkles, Trash2, Users } from 'lucide-react'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { DataTable } from '@/components/shared/DataTable'
+import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
 import type { Student } from '@/types'
@@ -85,6 +85,7 @@ export default function StudentsPage() {
   })
 
   const columns: ColumnDef<Student>[] = [
+    { accessorKey: 'studentId', header: 'Student ID', cell: ({ getValue }) => getValue() || '—' },
     { accessorKey: 'firstName', header: 'First Name' },
     { accessorKey: 'lastName', header: 'Last Name' },
     { accessorKey: 'dob', header: 'Date of Birth', cell: ({ getValue }) => getValue() ? formatDate(getValue() as string) : '—' },
@@ -143,54 +144,21 @@ export default function StudentsPage() {
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <Users className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Total enrolled</p>
-              <p className="text-3xl font-semibold">{students.length}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700 dark:text-amber-300">
-              <GraduationCap className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">With DOB on file</p>
-              <p className="text-3xl font-semibold">{students.filter(s => s.dob).length}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500/10 text-teal-700 dark:text-teal-300">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Added last 30 days</p>
-              <p className="text-3xl font-semibold">
-                {students.filter(s => {
-                  const d = new Date(s.createdAt)
-                  return (Date.now() - d.getTime()) < 30 * 24 * 60 * 60 * 1000
-                }).length}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
       <section className="space-y-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-2xl font-semibold">Student records</h2>
             <p className="text-sm text-muted-foreground">Search, review, and maintain the school’s active learner list.</p>
           </div>
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(undefined) }}>
+          <div className="flex gap-2">
+            <CsvUploadDialog
+              title="Upload Students CSV"
+              uploadUrl="/students/upload-csv"
+              templateUrl="/students/csv-template"
+              templateFileName="students-template.csv"
+              invalidateKeys={[['students']]}
+            />
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(undefined) }}>
             <DialogTrigger asChild>
               <Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />Add Student</Button>
             </DialogTrigger>
@@ -201,6 +169,7 @@ export default function StudentsPage() {
               <StudentForm student={editing} onSuccess={() => { setOpen(false); setEditing(undefined) }} />
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         <DataTable data={students} columns={columns} searchKey="lastName" isLoading={isLoading} />
