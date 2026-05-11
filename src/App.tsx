@@ -41,6 +41,7 @@ const UnauthorizedPage = lazy(() => import('@/pages/system/UnauthorizedPage'))
 const NotFoundPage = lazy(() => import('@/pages/system/NotFoundPage'))
 const CandidatesPage = lazy(() => import('@/pages/candidates/CandidatesPage'))
 const BillingPage = lazy(() => import('@/pages/billing/BillingPage'))
+const StudentPortalPage = lazy(() => import('@/pages/student/StudentPortalPage'))
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000, refetchOnWindowFocus: false } },
@@ -106,6 +107,7 @@ export default function App() {
               <Route path="/billing" element={<ProtectedRoute allowedRoles={['ADMIN']}><BillingPage /></ProtectedRoute>} />
               <Route path="/website-editor" element={<ProtectedRoute allowedRoles={['ADMIN']}><WebsiteEditorPage /></ProtectedRoute>} />
               <Route path="/custom-domain-setup" element={<ProtectedRoute allowedRoles={['ADMIN']}><CustomDomainSetupPage /></ProtectedRoute>} />
+              <Route path="/student-portal" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentPortalPage /></ProtectedRoute>} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />
