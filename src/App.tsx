@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/authStore'
 import { TeachersPage, ClassesPage, PaymentsPage } from '@/pages/shared/ModulePages'
 
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
+const StudentLoginPage = lazy(() => import('@/pages/auth/StudentLoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
 const SchoolSetupPage = lazy(() => import('@/pages/auth/SchoolSetupPage'))
 const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'))
@@ -18,8 +19,9 @@ const AcademicYearsPage = lazy(() => import('@/pages/academic/AcademicYearsPage'
 const SubjectsPage = lazy(() => import('@/pages/subjects/SubjectsPage'))
 const TimetablePage = lazy(() => import('@/pages/timetable/TimetablePage'))
 const AttendancePage = lazy(() => import('@/pages/attendance/AttendancePage'))
-const GradesPage = lazy(() => import('@/pages/grades/GradesPage'))
+const GradebookPage = lazy(() => import('@/pages/grades/GradesPage'))
 const EventsPage = lazy(() => import('@/pages/events/EventsPage'))
+const NoticesPage = lazy(() => import('@/pages/notices/NoticesPage'))
 const LibraryPage = lazy(() => import('@/pages/library/LibraryPage'))
 const TransportPage = lazy(() => import('@/pages/transport/TransportPage'))
 const InventoryPage = lazy(() => import('@/pages/inventory/InventoryPage'))
@@ -37,6 +39,8 @@ const WebsiteEditorPage = lazy(() => import('@/pages/admin/WebsiteEditor'))
 const CustomDomainSetupPage = lazy(() => import('@/pages/admin/CustomDomainSetup'))
 const UnauthorizedPage = lazy(() => import('@/pages/system/UnauthorizedPage'))
 const NotFoundPage = lazy(() => import('@/pages/system/NotFoundPage'))
+const CandidatesPage = lazy(() => import('@/pages/candidates/CandidatesPage'))
+const BillingPage = lazy(() => import('@/pages/billing/BillingPage'))
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000, refetchOnWindowFocus: false } },
@@ -66,6 +70,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+            <Route path="/student-login" element={<PublicOnlyRoute><StudentLoginPage /></PublicOnlyRoute>} />
             <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
             <Route path="/setup-school" element={<PublicOnlyRoute><SchoolSetupPage /></PublicOnlyRoute>} />
             <Route path="/forgot-password" element={<PublicOnlyRoute><ForgotPasswordPage /></PublicOnlyRoute>} />
@@ -74,16 +79,18 @@ export default function App() {
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/students" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><StudentsPage /></ProtectedRoute>} />
+              <Route path="/candidates" element={<ProtectedRoute allowedRoles={['ADMIN']}><CandidatesPage /></ProtectedRoute>} />
               <Route path="/teachers" element={<ProtectedRoute allowedRoles={['ADMIN']}><TeachersPage /></ProtectedRoute>} />
               <Route path="/classes" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><ClassesPage /></ProtectedRoute>} />
               <Route path="/academic-years" element={<ProtectedRoute allowedRoles={['ADMIN', 'PRINCIPAL']}><AcademicYearsPage /></ProtectedRoute>} />
               <Route path="/subjects" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><SubjectsPage /></ProtectedRoute>} />
               <Route path="/timetable" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><TimetablePage /></ProtectedRoute>} />
               <Route path="/attendance" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><AttendancePage /></ProtectedRoute>} />
-              <Route path="/grades" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><GradesPage /></ProtectedRoute>} />
+              <Route path="/gradebook" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><GradebookPage /></ProtectedRoute>} />
               <Route path="/payments" element={<ProtectedRoute allowedRoles={['ADMIN']}><PaymentsPage /></ProtectedRoute>} />
               <Route path="/events" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><EventsPage /></ProtectedRoute>} />
-              <Route path="/library" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER', 'STAFF']}><LibraryPage /></ProtectedRoute>} />
+              <Route path="/notices" element={<NoticesPage />} />
+              <Route path="/library" element={<LibraryPage />} />
               <Route path="/transport" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}><TransportPage /></ProtectedRoute>} />
               <Route path="/inventory" element={<ProtectedRoute allowedRoles={['ADMIN', 'STAFF']}><InventoryPage /></ProtectedRoute>} />
               <Route path="/sports" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><SportsPage /></ProtectedRoute>} />
@@ -96,6 +103,7 @@ export default function App() {
               <Route path="/certificates" element={<CertificatesPage />} />
               <Route path="/parent" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentPage /></ProtectedRoute>} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/billing" element={<ProtectedRoute allowedRoles={['ADMIN']}><BillingPage /></ProtectedRoute>} />
               <Route path="/website-editor" element={<ProtectedRoute allowedRoles={['ADMIN']}><WebsiteEditorPage /></ProtectedRoute>} />
               <Route path="/custom-domain-setup" element={<ProtectedRoute allowedRoles={['ADMIN']}><CustomDomainSetupPage /></ProtectedRoute>} />
             </Route>

@@ -3,9 +3,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { LockKeyhole, School, ShieldCheck, Sparkles } from 'lucide-react'
+import { LockKeyhole, School, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
 import { getApiErrorMessage } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
@@ -38,7 +39,7 @@ export default function LoginPage() {
     try {
       localStorage.setItem('tenantId', data.schoolCode.trim().toLowerCase())
       const res = await api.post('/auth/login', { email: data.email, password: data.password })
-      login(res.data.token, res.data.user)
+      login(res.data.token, res.data.user, res.data.refreshToken)
       toast.success('Welcome back!')
       navigate('/dashboard')
     } catch (error: unknown) {
@@ -85,7 +86,7 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
-            <Input className="h-12 rounded-2xl bg-background/85" type="password" placeholder="••••••••" {...register('password')} />
+            <PasswordInput className="h-12 rounded-2xl bg-background/85" placeholder="••••••••" {...register('password')} />
             {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
           </div>
         </div>
@@ -117,6 +118,13 @@ export default function LoginPage() {
             Create staff account
           </Link>
         </div>
+
+        <p className="text-center text-sm text-muted-foreground">
+          Student?{' '}
+          <Link to="/student-login" className="font-medium text-primary hover:underline">
+            Sign in with Student ID
+          </Link>
+        </p>
       </form>
     </AuthShell>
   )
