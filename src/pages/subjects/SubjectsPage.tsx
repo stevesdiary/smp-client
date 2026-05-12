@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Pencil, Plus, Trash2, UserCheck } from 'lucide-react'
+import { Pencil, Plus, Trash2, Upload, UserCheck } from 'lucide-react'
 import { toast } from 'sonner'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DataTable } from '@/components/shared/DataTable'
 import { ModuleHero } from '@/components/shared/ModuleHero'
+import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import api from '@/lib/api'
 import type { Class, Teacher, AcademicYear } from '@/types'
 
@@ -139,7 +140,16 @@ export default function SubjectsPage() {
           { label: 'Classes covered', value: classCount, detail: 'Distinct classes with at least one subject.' },
         ]}
         actions={
-          <Dialog open={open} onOpenChange={v => { if (!v) closeDialog(); else setOpen(true) }}>
+          <div className="flex gap-2">
+            <CsvUploadDialog
+              title="Upload Subjects CSV"
+              uploadUrl="/subjects/upload-csv"
+              templateUrl="/subjects/csv-template"
+              templateFileName="subjects-template.csv"
+              invalidateKeys={[['subjects']]}
+              trigger={<Button className="h-12 rounded-2xl border border-white/30 bg-white/10 px-5 text-white hover:bg-white/20"><Upload className="mr-2 h-4 w-4" />CSV Upload</Button>}
+            />
+            <Dialog open={open} onOpenChange={v => { if (!v) closeDialog(); else setOpen(true) }}>
             <DialogTrigger asChild>
               <Button className="h-12 rounded-2xl px-5">
                 <Plus className="mr-2 h-4 w-4" />Add Subject
@@ -195,6 +205,7 @@ export default function SubjectsPage() {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         }
       />
 
