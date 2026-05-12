@@ -1,9 +1,10 @@
-import { Bell, Menu, Moon, Search, Sparkles, Sun } from 'lucide-react'
+import { Menu, Moon, Search, School, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useThemeStore } from '@/store/themeStore'
 import { useAuthStore } from '@/store/authStore'
 import { getInitials } from '@/lib/utils'
 import { getUserRole } from '@/lib/auth'
+import { NotificationBell } from './NotificationBell'
 
 interface HeaderProps {
   onMenuClick: () => void
@@ -24,7 +25,7 @@ export function Header({ onMenuClick }: HeaderProps) {
 
       <div className="hidden min-w-0 flex-1 items-center gap-3 lg:flex">
         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-          <Sparkles className="h-5 w-5" />
+          <School className="h-5 w-5" />
         </div>
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold tracking-tight">
@@ -47,10 +48,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         </div>
       </div>
 
-      <Button variant="ghost" size="icon" className="relative rounded-2xl">
-        <Bell className="h-5 w-5" />
-        <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-amber-500" />
-      </Button>
+      <NotificationBell />
 
       <Button variant="ghost" size="icon" className="rounded-2xl" onClick={toggle}>
         {dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}

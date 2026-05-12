@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
+import { usePushNotifications } from '@/hooks/usePushNotifications'
 
 export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  usePushNotifications()
 
   return (
     <div className="relative flex min-h-screen overflow-hidden">
