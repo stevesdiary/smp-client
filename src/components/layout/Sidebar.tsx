@@ -1,9 +1,9 @@
 import { NavLink } from 'react-router-dom'
 import {
-  LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList,
+  LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList, CreditCard,
   DollarSign, Calendar, Library, Bus, Package, Trophy,
   Building2, Heart, AlertTriangle, Video, MessageSquare,
-  Award, Settings, LogOut, School, ShieldCheck, Sparkles,
+  Award, Settings, LogOut, School, ShieldCheck, UserCheck, Bell,
   CalendarDays, BookMarked, CalendarRange, Globe
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -13,17 +13,19 @@ import { Badge } from '@/components/ui/badge'
 
 const allNavItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', section: 'Command center', roles: ['ADMIN', 'PRINCIPAL', 'TEACHER', 'PARENT', 'STUDENT', 'STAFF'] },
+  { to: '/notices', icon: Bell, label: 'Notices', section: 'Command center', roles: ['ADMIN', 'PRINCIPAL', 'TEACHER', 'PARENT', 'STUDENT', 'STAFF'] },
   { to: '/academic-years', icon: CalendarDays, label: 'Academic Years', section: 'Academic core', roles: ['ADMIN', 'PRINCIPAL'] },
   { to: '/students', icon: Users, label: 'Students', section: 'Academic core', roles: ['ADMIN', 'PRINCIPAL', 'TEACHER'] },
+  { to: '/candidates', icon: UserCheck, label: 'Admissions', section: 'Academic core', roles: ['ADMIN'] },
   { to: '/teachers', icon: GraduationCap, label: 'Teachers', section: 'Academic core', roles: ['ADMIN', 'PRINCIPAL'] },
   { to: '/classes', icon: School, label: 'Classes', section: 'Academic core', roles: ['ADMIN', 'PRINCIPAL', 'TEACHER'] },
   { to: '/subjects', icon: BookMarked, label: 'Subjects', section: 'Academic core', roles: ['ADMIN', 'TEACHER'] },
   { to: '/timetable', icon: CalendarRange, label: 'Timetable', section: 'Academic core', roles: ['ADMIN', 'TEACHER'] },
   { to: '/attendance', icon: ClipboardList, label: 'Attendance', section: 'Academic core', roles: ['ADMIN', 'TEACHER'] },
-  { to: '/grades', icon: BookOpen, label: 'Grades', section: 'Academic core', roles: ['ADMIN', 'TEACHER'] },
+  { to: '/gradebook', icon: BookOpen, label: 'Gradebook', section: 'Academic core', roles: ['ADMIN', 'TEACHER'] },
   { to: '/payments', icon: DollarSign, label: 'Payments', section: 'Operations', roles: ['ADMIN'] },
   { to: '/events', icon: Calendar, label: 'Events', section: 'Operations', roles: ['ADMIN', 'TEACHER'] },
-  { to: '/library', icon: Library, label: 'Library', section: 'Operations', roles: ['ADMIN', 'TEACHER', 'STAFF'] },
+  { to: '/library', icon: Library, label: 'Library', section: 'Operations', roles: ['ADMIN', 'TEACHER', 'STAFF', 'STUDENT', 'PARENT'] },
   { to: '/transport', icon: Bus, label: 'Transport', section: 'Operations', roles: ['ADMIN', 'STAFF'] },
   { to: '/inventory', icon: Package, label: 'Inventory', section: 'Operations', roles: ['ADMIN', 'STAFF'] },
   { to: '/sports', icon: Trophy, label: 'Sports', section: 'Campus life', roles: ['ADMIN', 'TEACHER'] },
@@ -34,6 +36,7 @@ const allNavItems = [
   { to: '/elearning', icon: MessageSquare, label: 'E-Learning', section: 'Digital learning', roles: ['ADMIN', 'TEACHER', 'STUDENT'] },
   { to: '/certificates', icon: Award, label: 'Certificates', section: 'Digital learning', roles: ['ADMIN', 'STUDENT'] },
   { to: '/parent', icon: Users, label: 'Parent Portal', section: 'Family access', roles: ['PARENT'] },
+  { to: '/billing', icon: CreditCard, label: 'Billing', section: 'System', roles: ['ADMIN'] },
   { to: '/website-editor', icon: Globe, label: 'Website Editor', section: 'System', roles: ['ADMIN'] },
   { to: '/custom-domain-setup', icon: Globe, label: 'Custom Domain', section: 'System', roles: ['ADMIN'] },
   { to: '/settings', icon: Settings, label: 'Settings', section: 'System', roles: ['ADMIN', 'PRINCIPAL', 'TEACHER', 'PARENT', 'STUDENT', 'STAFF'] },
@@ -123,10 +126,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </nav>
 
         <div className="border-t border-white/40 p-4 dark:border-white/5">
-          <div className="mb-3 flex items-center gap-2 rounded-2xl bg-amber-100/70 px-3 py-2 text-xs text-amber-900 dark:bg-amber-500/10 dark:text-amber-200">
-            <Sparkles className="h-3.5 w-3.5" />
-            Richer workspace applied to the live client.
-          </div>
           <button
             onClick={logout}
             className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
