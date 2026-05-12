@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Pencil, Plus, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
@@ -72,11 +72,32 @@ export default function StudentsPage() {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<Student | undefined>()
   const qc = useQueryClient()
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const limit = 25
 
-  const { data: students = [], isLoading } = useQuery<Student[]>({
-    queryKey: ['students'],
-    queryFn: () => api.get('/students').then(r => r.data),
+  // Simple debounce
+  const [searchTimer, setSearchTimer] = useState<ReturnType<typeof setTimeout>>()
+  function onSearch(val: string) {
+    setSearch(val)
+    clearTimeout(searchTimer)
+    setSearchTimer(setTimeout(() => { setDebouncedSearch(val); setPage(1) }, 400))
+  }
+
+  const { data: studentsResponse, isLoading } = useQuery<{ data: Student[]; total: number; page: number; limit: number }>({
+    queryKey: ['students', page, limit, debouncedSearch],
+    queryFn: () => {
+      const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+      if (debouncedSearch) params.set('search', debouncedSearch)
+      return api.get(`/students?${params}`).then(r => r.data)
+    },
+    placeholderData: keepPreviousData,
   })
+
+  const students = studentsResponse?.data ?? []
+  const total = studentsResponse?.total ?? 0
+  const totalPages = Math.ceil(total / limit)
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.delete(`/students/${id}`),
@@ -125,20 +146,18 @@ export default function StudentsPage() {
           <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
             <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
               <p className="text-sm text-white/70">Total enrolled</p>
-              <p className="mt-2 text-3xl font-semibold">{students.length}</p>
+              <p className="mt-2 text-3xl font-semibold">{total}</p>
               <p className="mt-2 text-sm text-white/70">Active learner records in the registry.</p>
+            </div>
+            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
+              <p className="text-sm text-white/70">This page</p>
+              <p className="mt-2 text-3xl font-semibold">{students.length}</p>
+              <p className="mt-2 text-sm text-white/70">Showing {students.length} of {total} students.</p>
             </div>
             <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
               <p className="text-sm text-white/70">With DOB on file</p>
               <p className="mt-2 text-3xl font-semibold">{students.filter(s => s.dob).length}</p>
-              <p className="mt-2 text-sm text-white/70">Students with a date of birth recorded.</p>
-            </div>
-            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Added last 30 days</p>
-              <p className="mt-2 text-3xl font-semibold">
-                {students.filter(s => (Date.now() - new Date(s.createdAt).getTime()) < 30 * 24 * 60 * 60 * 1000).length}
-              </p>
-              <p className="mt-2 text-sm text-white/70">New enrollments in the past month.</p>
+              <p className="mt-2 text-sm text-white/70">Students with date of birth recorded.</p>
             </div>
           </div>
         </div>
@@ -172,7 +191,34 @@ export default function StudentsPage() {
           </div>
         </div>
 
+        <div className="mb-4 flex items-center gap-3">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              className="h-10 rounded-2xl pl-9"
+              placeholder="Search by name or student code…"
+              value={search}
+              onChange={(e) => onSearch(e.target.value)}
+            />
+          </div>
+          <span className="text-sm text-muted-foreground">{total} students</span>
+        </div>
+
         <DataTable data={students} columns={columns} searchKey="lastName" isLoading={isLoading} />
+
+        {totalPages > 1 && (
+          <div className="mt-4 flex items-center justify-between">
+            <p className="text-xs text-muted-foreground">Page {page} of {totalPages}</p>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" className="h-8 w-8 rounded-xl" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" className="h-8 w-8 rounded-xl" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   )
