@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
-import { LockKeyhole, School, ShieldCheck } from 'lucide-react'
+import { LockKeyhole, School, ShieldCheck, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
@@ -14,9 +15,12 @@ import api from '@/lib/api'
 import { AuthShell } from '@/components/auth/AuthShell'
 
 const schema = z.object({
-  schoolCode: z.string().min(1, 'School portal code is required'),
   email: z.string().email('Invalid email'),
   password: z.string().min(1, 'Required'),
+})
+
+const schoolCodeSchema = z.object({
+  schoolCode: z.string().min(1, 'School portal code is required'),
 })
 
 type FormData = z.infer<typeof schema>
@@ -25,25 +29,41 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { login } = useAuthStore()
-  const initialSchoolCode = searchParams.get('schoolCode') ?? localStorage.getItem('tenantId') ?? ''
+
+  const savedCode = searchParams.get('schoolCode') ?? localStorage.getItem('tenantId') ?? ''
+  const [schoolCode, setSchoolCode] = useState(savedCode)
+  const [showCodeInput, setShowCodeInput] = useState(!savedCode)
+
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      schoolCode: initialSchoolCode,
-      email: '',
-      password: '',
-    },
+    defaultValues: { email: '', password: '' },
   })
 
   const onSubmit = async (data: FormData) => {
+    if (!schoolCode) {
+      setShowCodeInput(true)
+      return
+    }
     try {
-      localStorage.setItem('tenantId', data.schoolCode.trim().toLowerCase())
+      localStorage.setItem('tenantId', schoolCode.trim().toLowerCase())
       const res = await api.post('/auth/login', { email: data.email, password: data.password })
       login(res.data.token, res.data.user, res.data.refreshToken)
       toast.success('Welcome back!')
       navigate('/dashboard')
     } catch (error: unknown) {
       toast.error(getApiErrorMessage(error, 'Login failed'))
+    }
+  }
+
+  function handleSetSchoolCode(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const fd = new FormData(e.currentTarget)
+    const code = (fd.get('schoolCode') as string)?.trim().toLowerCase()
+    const result = schoolCodeSchema.safeParse({ schoolCode: code })
+    if (result.success) {
+      setSchoolCode(code)
+      localStorage.setItem('tenantId', code)
+      setShowCodeInput(false)
     }
   }
 
@@ -67,13 +87,37 @@ export default function LoginPage() {
         </p>
       )}
     >
+      {/* School code chip or input */}
+      {showCodeInput ? (
+        <form onSubmit={handleSetSchoolCode} className="mb-5 space-y-2">
+          <Label className="text-sm font-medium">School Portal Code</Label>
+          <div className="flex gap-2">
+            <Input
+              name="schoolCode"
+              className="h-11 flex-1 rounded-2xl bg-background/85"
+              placeholder="e.g. greenwood"
+              defaultValue={schoolCode}
+              autoFocus
+            />
+            <Button type="submit" size="sm" className="h-11 rounded-2xl px-4">Set</Button>
+          </div>
+        </form>
+      ) : (
+        <div className="mb-5 flex items-center gap-2 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-2.5">
+          <School className="h-4 w-4 text-primary" />
+          <span className="flex-1 text-sm font-medium">{schoolCode}</span>
+          <button
+            type="button"
+            onClick={() => setShowCodeInput(true)}
+            className="text-xs text-muted-foreground hover:text-foreground"
+          >
+            Change
+          </button>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="grid gap-5">
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">School Portal Code</Label>
-            <Input className="h-12 rounded-2xl bg-background/85" placeholder="greenwood-college" {...register('schoolCode')} />
-            {errors.schoolCode && <p className="text-xs text-destructive">{errors.schoolCode.message}</p>}
-          </div>
           <div className="space-y-2">
             <Label className="text-sm font-medium">Email</Label>
             <Input className="h-12 rounded-2xl bg-background/85" type="email" placeholder="admin@yourschool.com" {...register('email')} />
@@ -91,21 +135,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-secondary/55 p-4">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="font-medium">Secure role-based access</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Your account opens the exact workspace configured for your school role.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <Button type="submit" className="h-12 w-full rounded-2xl text-base" disabled={isSubmitting}>
+        <Button type="submit" className="h-12 w-full rounded-2xl text-base" disabled={isSubmitting || !schoolCode}>
           {isSubmitting ? 'Signing in...' : 'Sign In'}
         </Button>
 

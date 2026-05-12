@@ -6,7 +6,9 @@ import { toast } from 'sonner'
 import { ShieldCheck, UserPlus, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
+import { passwordComplexityHint, passwordSchema } from '@/lib/passwordPolicy'
 import { getApiErrorMessage } from '@/lib/utils'
 import api from '@/lib/api'
 import { AuthShell } from '@/components/auth/AuthShell'
@@ -16,7 +18,7 @@ const schema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
   email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: passwordSchema,
   roleId: z.string().min(1, 'Role ID is required'),
 })
 
@@ -94,8 +96,9 @@ export default function RegisterPage() {
 
         <div className="space-y-2">
           <Label className="text-sm font-medium">Password</Label>
-          <Input className="h-12 rounded-2xl bg-background/85" type="password" {...register('password')} />
+          <PasswordInput className="h-12 rounded-2xl bg-background/85" {...register('password')} />
           {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+          <p className="text-xs text-muted-foreground">{passwordComplexityHint}</p>
         </div>
 
         <div className="space-y-2">

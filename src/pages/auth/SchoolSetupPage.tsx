@@ -6,7 +6,9 @@ import { toast } from 'sonner'
 import { Building2, School, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Label } from '@/components/ui/label'
+import { passwordComplexityHint, passwordSchema } from '@/lib/passwordPolicy'
 import { getApiErrorMessage } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import api from '@/lib/api'
@@ -20,9 +22,9 @@ const schema = z.object({
     .regex(/^[a-z0-9-]+$/, 'Use lowercase letters, numbers, and hyphens only'),
   adminName: z.string().min(2, 'Administrator name is required'),
   adminEmail: z.string().email('Invalid email'),
-  adminPassword: z.string().min(8, 'Password must be at least 8 characters'),
+  adminPassword: passwordSchema,
   schoolType: z.enum(['PRIMARY', 'SECONDARY', 'PRIMARY_SECONDARY']),
-  studentTier: z.enum(['STARTER', 'GROWING', 'STANDARD', 'LARGE', 'MEGA']),
+  studentCount: z.number().int().min(1, 'Enter your student count').max(100000),
 })
 
 type FormData = z.infer<typeof schema>
@@ -34,7 +36,7 @@ export default function SchoolSetupPage() {
     resolver: zodResolver(schema),
     defaultValues: {
       schoolType: 'PRIMARY_SECONDARY',
-      studentTier: 'STARTER',
+      studentCount: 100,
     },
   })
 
@@ -45,7 +47,7 @@ export default function SchoolSetupPage() {
         schoolCode: values.schoolCode.trim().toLowerCase(),
       }
       const res = await api.post('/onboarding/school', payload)
-      login(res.data.token, res.data.user)
+      login(res.data.token, res.data.user, res.data.refreshToken)
       toast.success(`Your school portal is live for ${res.data.tenant.name}.`)
       navigate('/dashboard')
     } catch (error: unknown) {
@@ -63,7 +65,7 @@ export default function SchoolSetupPage() {
       icon={<Building2 className="h-7 w-7" />}
       highlights={[
         'Create the tenant, portal code, and first administrator in one submission.',
-        'Choose the school type and student tier before entering the live dashboard.',
+        'Price is calculated per student — ₦500/term up to 1,000 students, ₦400 above.',
         'Staff can use the generated school code immediately after setup.',
       ]}
       footer={(
@@ -102,8 +104,9 @@ export default function SchoolSetupPage() {
 
         <div className="space-y-2">
           <Label className="text-sm font-medium">Password</Label>
-          <Input className="h-12 rounded-2xl bg-background/85" type="password" placeholder="At least 8 characters" {...register('adminPassword')} />
+          <PasswordInput className="h-12 rounded-2xl bg-background/85" placeholder="Use a strong password" {...register('adminPassword')} />
           {errors.adminPassword && <p className="text-xs text-destructive">{errors.adminPassword.message}</p>}
+          <p className="text-xs text-muted-foreground">{passwordComplexityHint}</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -120,18 +123,17 @@ export default function SchoolSetupPage() {
             {errors.schoolType && <p className="text-xs text-destructive">{errors.schoolType.message}</p>}
           </div>
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Student Tier</Label>
-            <select
-              {...register('studentTier')}
-              className="flex h-12 w-full rounded-2xl border border-input bg-background/85 px-3 py-2 text-sm"
-            >
-              <option value="STARTER">Up to 50 students</option>
-              <option value="GROWING">Up to 100 students</option>
-              <option value="STANDARD">Up to 200 students</option>
-              <option value="LARGE">Up to 500 students</option>
-              <option value="MEGA">Up to 1,000 students</option>
-            </select>
-            {errors.studentTier && <p className="text-xs text-destructive">{errors.studentTier.message}</p>}
+            <Label className="text-sm font-medium">Number of Students</Label>
+            <Input
+              className="h-12 rounded-2xl bg-background/85"
+              type="number"
+              min={1}
+              max={100000}
+              placeholder="e.g. 250"
+              {...register('studentCount', { valueAsNumber: true })}
+            />
+            {errors.studentCount && <p className="text-xs text-destructive">{errors.studentCount.message}</p>}
+            <p className="text-xs text-muted-foreground">₦500/student/term · ₦400 above 1,000 · min ₦50,000</p>
           </div>
         </div>
 
