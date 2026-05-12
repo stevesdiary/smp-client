@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Plus, BookOpen, Users, Clock } from 'lucide-react'
+import { Plus, BookOpen, Users, Clock, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -115,9 +116,17 @@ function CourseCard({ course }: { course: Course }) {
             {course.duration && <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{course.duration}h</span>}
             <span className="flex items-center gap-1"><Users className="h-3 w-3" />{course._count?.enrollments ?? 0} enrolled</span>
           </div>
-          <Button variant="outline" size="sm" className="w-full rounded-xl" onClick={() => publishMutation.mutate()}>
-            {course.isPublished ? 'Unpublish' : 'Publish'}
-          </Button>
+          <div className="grid gap-2">
+            <Button variant="outline" size="sm" className="w-full rounded-xl" onClick={() => publishMutation.mutate()}>
+              {course.isPublished ? 'Unpublish' : 'Publish'}
+            </Button>
+            <Button asChild size="sm" className="w-full rounded-xl">
+              <Link to={`/courses/${course.id}`}>
+                <Pencil className="mr-2 h-3.5 w-3.5" />
+                Manage Lessons
+              </Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
