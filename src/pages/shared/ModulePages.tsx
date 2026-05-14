@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { GraduationCap, Layers3, Pencil, Plus, Sparkles, Trash2, Wallet } from 'lucide-react'
+import { GraduationCap, Layers3, Pencil, Plus, Trash2, Upload, Wallet } from 'lucide-react'
 import { toast } from 'sonner'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { DataTable } from '@/components/shared/DataTable'
+import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import api from '@/lib/api'
 import { fetchAllPaymentsByStudent } from '@/lib/moduleQueries'
 import { formatCurrency } from '@/lib/utils'
@@ -135,10 +136,19 @@ export function TeachersPage() {
           { label: 'Unassigned', value: teachers.filter((t: any) => !t.subject).length, detail: 'Faculty not yet linked to a subject.' },
         ]}
         actions={
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setEditing(null) } }}>
-            <DialogTrigger asChild>
-              <Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />Add Teacher</Button>
-            </DialogTrigger>
+          <div className="flex gap-2">
+            <CsvUploadDialog
+              title="Upload Teachers CSV"
+              uploadUrl="/teachers/upload-csv"
+              templateUrl="/teachers/csv-template"
+              templateFileName="teachers-template.csv"
+              invalidateKeys={[['teachers']]}
+              trigger={<Button className="h-12 rounded-2xl border border-white/30 bg-white/10 px-5 text-white hover:bg-white/20"><Upload className="mr-2 h-4 w-4" />CSV Upload</Button>}
+            />
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setEditing(null) } }}>
+              <DialogTrigger asChild>
+                <Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />Add Teacher</Button>
+              </DialogTrigger>
             <DialogContent className="rounded-[28px]">
               <DialogHeader><DialogTitle>{editing ? 'Edit' : 'Add'} Teacher</DialogTitle></DialogHeader>
               <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
@@ -164,6 +174,7 @@ export function TeachersPage() {
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         }
       />
 
@@ -182,7 +193,7 @@ export function TeachersPage() {
         <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
           <CardContent className="flex items-center gap-4 p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700 dark:text-amber-300">
-              <Sparkles className="h-5 w-5" />
+              <Layers3 className="h-5 w-5" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">With subject assigned</p>
