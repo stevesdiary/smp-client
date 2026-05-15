@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { BookOpen, Calendar, ChevronRight, DollarSign, Users } from 'lucide-react'
+import { BookOpen, Calendar, ChevronRight, Clock, DollarSign, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -34,6 +34,12 @@ export default function ParentPage() {
   const { data: payments = [] } = useQuery({
     queryKey: ['child-payments', childId],
     queryFn: () => api.get(`/parent/children/${childId}/payments`).then(r => r.data),
+    enabled: !!childId,
+  })
+
+  const { data: timetable = [] } = useQuery({
+    queryKey: ['child-timetable', childId],
+    queryFn: () => api.get(`/parent/children/${childId}/timetable`).then(r => r.data),
     enabled: !!childId,
   })
 
@@ -169,6 +175,7 @@ export default function ParentPage() {
             <TabsList className="h-auto rounded-2xl bg-white/70 p-1 shadow-sm dark:bg-card/70">
               <TabsTrigger value="attendance" className="rounded-2xl px-5 py-2.5">Attendance</TabsTrigger>
               <TabsTrigger value="grades" className="rounded-2xl px-5 py-2.5">Grades</TabsTrigger>
+              <TabsTrigger value="timetable" className="rounded-2xl px-5 py-2.5">Timetable</TabsTrigger>
               <TabsTrigger value="payments" className="rounded-2xl px-5 py-2.5">Payments</TabsTrigger>
             </TabsList>
 
@@ -215,6 +222,38 @@ export default function ParentPage() {
                       </div>
                     </div>
                   ))}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="timetable">
+              <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+                <CardHeader><CardTitle className="flex items-center gap-2"><Clock className="h-5 w-5" /> Weekly Timetable</CardTitle></CardHeader>
+                <CardContent>
+                  {timetable.length === 0 ? (
+                    <p className="py-6 text-center text-sm text-muted-foreground">No timetable assigned</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day, di) => {
+                        const dayEntries = timetable.filter((e: any) => e.dayOfWeek === di + 1)
+                        if (!dayEntries.length) return null
+                        return (
+                          <div key={day}>
+                            <p className="mb-1 text-xs font-semibold uppercase text-muted-foreground">{day}</p>
+                            <div className="space-y-1">
+                              {dayEntries.map((e: any) => (
+                                <div key={e.id} className="flex items-center gap-3 rounded-xl border p-2">
+                                  <span className="text-xs font-medium text-primary">{e.startTime}-{e.endTime}</span>
+                                  <span className="text-sm">{e.subject?.name}</span>
+                                  <span className="ml-auto text-xs text-muted-foreground">{e.teacher?.firstName} {e.teacher?.lastName}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>

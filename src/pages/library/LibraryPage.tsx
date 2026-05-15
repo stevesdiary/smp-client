@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { ArrowLeftRight, BookOpen, Plus } from 'lucide-react'
+import { ArrowLeftRight, BookOpen, Laptop, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DataTable } from '@/components/shared/DataTable'
+import { ELibraryTab } from '@/components/library/ELibraryTab'
 import { formatDate } from '@/lib/utils'
+import { useAuthStore } from '@/store/authStore'
+import { getUserRole } from '@/lib/auth'
 import api from '@/lib/api'
 
 const bookSchema = z.object({ title: z.string().min(1), author: z.string().min(1), isbn: z.string().optional(), genre: z.string().optional(), totalCopies: z.coerce.number().min(1) })
@@ -27,6 +30,9 @@ export default function LibraryPage() {
   const [addOpen, setAddOpen] = useState(false)
   const [borrowOpen, setBorrowOpen] = useState(false)
   const qc = useQueryClient()
+  const { user } = useAuthStore()
+  const role = getUserRole(user)
+  const canManage = role === 'ADMIN' || role === 'TEACHER' || role === 'STAFF'
 
   const { data: books = [], isLoading } = useQuery({ queryKey: ['books'], queryFn: () => api.get('/library/books').then(r => r.data) })
   const { data: transactions = [] } = useQuery({ queryKey: ['book-transactions'], queryFn: () => api.get('/library/transactions').then(r => r.data) })
@@ -83,7 +89,7 @@ export default function LibraryPage() {
       const s = getValue() as string
       return <Badge variant={s === 'RETURNED' ? 'success' : s === 'OVERDUE' ? 'destructive' : 'secondary'}>{s}</Badge>
     }},
-    { id: 'actions', cell: ({ row }) => row.original.status === 'BORROWED' && (
+    { id: 'actions', cell: ({ row }) => canManage && row.original.status === 'BORROWED' && (
       <Button size="sm" variant="outline" onClick={() => returnMutation.mutate(row.original.id)}>Return</Button>
     )},
   ]
@@ -126,6 +132,7 @@ export default function LibraryPage() {
 
       <div className="flex items-center justify-between">
         <div><h1 className="text-2xl font-semibold">Library</h1><p className="text-muted-foreground">{books.length} books</p></div>
+        {canManage && (
         <div className="flex gap-2">
           <Dialog open={borrowOpen} onOpenChange={setBorrowOpen}>
             <DialogTrigger asChild><Button variant="outline" className="h-12 rounded-2xl"><ArrowLeftRight className="h-4 w-4 mr-2" />Borrow</Button></DialogTrigger>
@@ -169,11 +176,13 @@ export default function LibraryPage() {
             </DialogContent>
           </Dialog>
         </div>
+        )}
       </div>
 
       <Tabs defaultValue="books" className="space-y-4">
-        <TabsList className="h-auto rounded-2xl bg-white/70 p-1 shadow-sm dark:bg-card/70"><TabsTrigger className="rounded-2xl px-5 py-2.5" value="books"><BookOpen className="h-4 w-4 mr-2" />Catalog</TabsTrigger><TabsTrigger className="rounded-2xl px-5 py-2.5" value="transactions">Transactions</TabsTrigger></TabsList>
+        <TabsList className="h-auto rounded-2xl bg-white/70 p-1 shadow-sm dark:bg-card/70"><TabsTrigger className="rounded-2xl px-5 py-2.5" value="books"><BookOpen className="h-4 w-4 mr-2" />Catalog</TabsTrigger><TabsTrigger className="rounded-2xl px-5 py-2.5" value="elibrary"><Laptop className="h-4 w-4 mr-2" />E-Library</TabsTrigger>{canManage && <TabsTrigger className="rounded-2xl px-5 py-2.5" value="transactions">Transactions</TabsTrigger>}</TabsList>
         <TabsContent value="books"><DataTable data={books} columns={bookColumns} searchKey="title" isLoading={isLoading} /></TabsContent>
+        <TabsContent value="elibrary"><ELibraryTab /></TabsContent>
         <TabsContent value="transactions"><DataTable data={transactions} columns={txColumns} /></TabsContent>
       </Tabs>
     </div>
