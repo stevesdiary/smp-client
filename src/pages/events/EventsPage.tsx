@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Calendar, MapPin, Plus, Sparkles } from 'lucide-react'
+import { Calendar, MapPin, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -129,7 +129,7 @@ export default function EventsPage() {
                   {event.description && <p className="text-sm text-muted-foreground mt-1 truncate">{event.description}</p>}
                 </div>
                 <div className="hidden items-center text-amber-500 lg:flex">
-                  <Sparkles className="h-4 w-4" />
+                  <Calendar className="h-4 w-4" />
                 </div>
               </CardContent>
             </Card>

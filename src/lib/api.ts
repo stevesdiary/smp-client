@@ -25,8 +25,27 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// Prisma serializes Decimal fields as strings in JSON. Coerce known monetary
+// fields to numbers here so all downstream code can trust the TypeScript types.
+const DECIMAL_FIELDS = new Set(['totalAmount', 'paidAmount', 'amount', 'commissionPercent'])
+
+function coerceDecimals(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(coerceDecimals)
+  if (value !== null && typeof value === 'object') {
+    const out: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      out[k] = DECIMAL_FIELDS.has(k) && typeof v === 'string' ? Number(v) : coerceDecimals(v)
+    }
+    return out
+  }
+  return value
+}
+
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    res.data = coerceDecimals(res.data)
+    return res
+  },
   async (err) => {
     const originalRequest = err.config
     const requestUrl = typeof originalRequest?.url === 'string' ? originalRequest.url : ''

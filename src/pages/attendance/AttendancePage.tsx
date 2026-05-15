@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
+import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import api from '@/lib/api'
 import type { Student } from '@/types'
 import { ModuleHero } from '@/components/shared/ModuleHero'
@@ -72,6 +73,13 @@ export default function AttendancePage() {
           <p className="text-muted-foreground">{marked}/{students.length} marked · {present} present</p>
         </div>
         <div className="flex items-center gap-3">
+          <CsvUploadDialog
+            title="Upload Attendance CSV"
+            uploadUrl="/attendances/upload-csv"
+            templateUrl="/attendances/csv-template"
+            templateFileName="attendance-template.csv"
+            invalidateKeys={[['attendance'], ['students']]}
+          />
           <input
             type="date"
             value={date}

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import {
+  Activity,
   ArrowRight,
   BookOpen,
   Building2,
@@ -10,7 +11,7 @@ import {
   Library,
   School,
   ShieldCheck,
-  Sparkles,
+  TrendingUp,
   Users,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -23,6 +24,7 @@ import { fetchAllPaymentsByStudent } from '@/lib/moduleQueries'
 import { useAuthStore } from '@/store/authStore'
 import { getUserRole } from '@/lib/auth'
 import api from '@/lib/api'
+import { StudentDashboard } from './StudentDashboard'
 
 type DashboardEvent = {
   id: string
@@ -128,6 +130,8 @@ export default function DashboardPage() {
   const isStudent = role === 'STUDENT'
   const isStaff = role === 'STAFF'
 
+  if (isStudent) return <StudentDashboard />
+
   const { data: students = [], isLoading: studentsLoading } = useQuery({
     queryKey: ['students'],
     queryFn: () => api.get('/students').then((res) => res.data),
@@ -174,6 +178,14 @@ export default function DashboardPage() {
   ), 0)
 
   const themeByRole = {
+    MASTER: {
+      label: 'Platform Control',
+      title: 'Oversee all schools from a single command surface.',
+      description: 'Monitor tenants, manage access, and ensure platform health across every school.',
+      badge: 'Platform admin',
+      surface: 'from-violet-500/10 to-indigo-500/5',
+      orb: 'bg-violet-400/30',
+    },
     ADMIN: {
       label: 'Command Center',
       title: 'Run the school with clarity instead of clutter.',
@@ -248,7 +260,7 @@ export default function DashboardPage() {
         { title: 'Leadership', value: '2', detail: 'Priority pathways surfaced for principal review.', icon: ShieldCheck, tone: 'teal' },
         { title: 'Discipline', value: 'Live', detail: 'School discipline records remain accessible.', icon: Calendar, tone: 'gold' },
         { title: 'Policies', value: 'Ready', detail: 'Settings and oversight controls are available.', icon: Building2, tone: 'slate' },
-        { title: 'School Health', value: 'Stable', detail: 'No blocked admin flows detected here.', icon: Sparkles, tone: 'rose' },
+        { title: 'School Health', value: 'Stable', detail: 'No blocked admin flows detected here.', icon: TrendingUp, tone: 'rose' },
       ]
     }
 
@@ -264,7 +276,7 @@ export default function DashboardPage() {
     if (role === 'PARENT') {
       return [
         { title: 'Children Linked', value: parentChildren.length, detail: 'Learners connected to this parent account.', icon: Users, tone: 'teal' },
-        { title: 'Updates', value: parentChildren.length > 0 ? 'Live' : 'None', detail: 'Progress and records can be reviewed here.', icon: Sparkles, tone: 'gold' },
+        { title: 'Updates', value: parentChildren.length > 0 ? 'Live' : 'None', detail: 'Progress and records can be reviewed here.', icon: TrendingUp, tone: 'gold' },
         { title: 'Portal', value: 'Active', detail: 'Attendance, grades, and payment history are available.', icon: BookOpen, tone: 'slate' },
         { title: 'Communication', value: 'Open', detail: 'Parent-facing academic records are synced.', icon: Calendar, tone: 'rose' },
       ]
@@ -274,7 +286,7 @@ export default function DashboardPage() {
       { title: 'Live Classes', value: liveClasses.length, detail: 'Scheduled live sessions visible to students.', icon: Calendar, tone: 'teal' },
       { title: 'E-Learning', value: 'Ready', detail: 'Digital learning modules can be opened now.', icon: BookOpen, tone: 'gold' },
       { title: 'Certificates', value: 'Track', detail: 'Certificates and milestones remain in view.', icon: GraduationCap, tone: 'slate' },
-      { title: 'Momentum', value: liveClasses.length > 0 ? 'On' : 'Idle', detail: 'Current study rhythm based on live sessions.', icon: Sparkles, tone: 'rose' },
+      { title: 'Momentum', value: liveClasses.length > 0 ? 'On' : 'Idle', detail: 'Current study rhythm based on live sessions.', icon: TrendingUp, tone: 'rose' },
     ]
   })()
 
@@ -290,7 +302,7 @@ export default function DashboardPage() {
     if (role === 'TEACHER') {
       return [
         { to: '/attendance', title: 'Take attendance', description: 'Mark daily attendance and identify gaps early.' },
-        { to: '/grades', title: 'Record grades', description: 'Update assessment scores and feedback.' },
+        { to: '/gradebook', title: 'Record grades', description: 'Update assessment scores and feedback.' },
         { to: '/elearning', title: 'Open e-learning', description: 'Manage live classes and digital submissions.' },
       ]
     }
@@ -307,14 +319,6 @@ export default function DashboardPage() {
       return [
         { to: '/parent', title: 'Open parent portal', description: 'See detailed attendance, grades, and payments.' },
         { to: '/settings', title: 'Account settings', description: 'Review parent access and profile settings.' },
-      ]
-    }
-
-    if (role === 'STUDENT') {
-      return [
-        { to: '/elearning', title: 'Continue learning', description: 'Jump back into live classes and course work.' },
-        { to: '/certificates', title: 'Check certificates', description: 'Review issued certificates and progress.' },
-        { to: '/settings', title: 'Profile settings', description: 'Manage student-facing preferences.' },
       ]
     }
 
@@ -348,14 +352,6 @@ export default function DashboardPage() {
         { label: 'Children linked', value: parentChildren.length, tone: 'bg-teal-500' },
         { label: 'Portal access', value: parentChildren.length > 0 ? 1 : 0, tone: 'bg-amber-500' },
         { label: 'Recent updates', value: parentChildren.length > 0 ? parentChildren.length : 0, tone: 'bg-slate-500' },
-      ]
-    }
-
-    if (role === 'STUDENT') {
-      return [
-        { label: 'Live classes', value: liveClasses.length, tone: 'bg-teal-500' },
-        { label: 'Certificates', value: 1, tone: 'bg-amber-500' },
-        { label: 'Learning access', value: 1, tone: 'bg-slate-500' },
       ]
     }
 

@@ -1,8 +1,9 @@
-export type UserRole = 'ADMIN' | 'PRINCIPAL' | 'TEACHER' | 'STAFF' | 'PARENT' | 'STUDENT'
+export type UserRole = 'MASTER' | 'ADMIN' | 'PRINCIPAL' | 'TEACHER' | 'STAFF' | 'PARENT' | 'STUDENT'
 
 export interface User {
   id: string
-  email: string
+  email?: string
+  studentCode?: string
   firstName?: string
   lastName?: string
   roleId?: string
@@ -21,11 +22,14 @@ export interface AuthState {
   user: User | null
   token: string | null
   tenantId: string | null
+  refreshToken?: string | null
 }
 
 export interface Student {
   id: string
   tenantId: string
+  studentId?: string
+  studentCode?: string
   firstName: string
   lastName: string
   dob?: string
@@ -78,6 +82,8 @@ export interface Subject {
   name: string
   code?: string
   description?: string
+  academicYearId?: string
+  classId?: string
 }
 
 export interface Assignment {
@@ -168,6 +174,7 @@ export interface Lesson {
   duration?: number
   order: number
   progress?: LessonPlaybackProgress
+  quizzes?: Quiz[]
 }
 
 export interface LessonPlaybackProgress {
@@ -192,6 +199,109 @@ export interface RecordedCourse extends Course {
   enrollmentProgress: number
   enrollmentStatus: 'ACTIVE' | 'COMPLETED' | 'DROPPED'
   modules: CourseModule[]
+}
+
+export type QuizPlacement = 'LESSON' | 'ACADEMIC'
+export type QuizStatus = 'DRAFT' | 'PUBLISHED' | 'CLOSED' | 'ARCHIVED'
+export type QuizGradeSinkType = 'NONE' | 'ASSIGNMENT' | 'EXAMINATION'
+export type QuizResultsVisibility = 'AFTER_CLOSE'
+export type QuizQuestionType = 'MULTIPLE_CHOICE' | 'TRUE_FALSE'
+
+export interface QuizQuestionOption {
+  id: string
+  label: string
+}
+
+export interface QuizQuestion {
+  id: string
+  prompt: string
+  type: QuizQuestionType
+  options?: QuizQuestionOption[]
+  correctAnswer?: string | boolean
+  points: number
+}
+
+export interface QuizAttempt {
+  id: string
+  submittedForStudentId?: string
+  submittedByUserId?: string | null
+  attemptNumber: number
+  score: number | null
+  passed: boolean | null
+  officialScoreApplied: boolean
+  answers: Array<{ questionId: string; answer: string | boolean }>
+  startedAt: string
+  deadlineAt?: string | null
+  completedAt?: string | null
+}
+
+export interface Quiz {
+  id: string
+  placement: QuizPlacement
+  status: QuizStatus
+  lessonId?: string | null
+  courseId?: string | null
+  academicYearId?: string | null
+  termId?: string | null
+  subjectId?: string | null
+  title: string
+  description?: string | null
+  durationMinutes?: number | null
+  attemptLimit?: number | null
+  passMark: number
+  availableFrom?: string | null
+  availableUntil?: string | null
+  gradeSinkType: QuizGradeSinkType
+  assignmentId?: string | null
+  examinationId?: string | null
+  resultsVisibility: QuizResultsVisibility
+  questionCount: number
+  questions?: QuizQuestion[]
+  lesson?: { id: string; title: string; moduleId?: string | null } | null
+  course?: { id: string; title: string; isPublished?: boolean } | null
+  subject?: { id: string; name: string; code?: string | null } | null
+  latestOfficialScoreSummary?: { latestAttempts: number; averageScore: number | null; passed: number }
+  attemptsCount?: number
+  activeAttempt?: QuizAttempt | null
+  latestAttempt?: QuizAttempt | null
+  isAvailable?: boolean
+  isAssignedToStudent?: boolean
+  resultsReleased?: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface QuizCreatePayload {
+  placement: QuizPlacement
+  lessonId?: string
+  academicYearId?: string
+  termId?: string
+  subjectId?: string
+  title: string
+  description?: string
+  durationMinutes?: number
+  attemptLimit?: number
+  passMark?: number
+  availableFrom?: string
+  availableUntil?: string
+  gradeSinkType?: QuizGradeSinkType
+  questions: QuizQuestion[]
+}
+
+export type QuizUpdatePayload = Partial<QuizCreatePayload>
+
+export interface QuizListFilters {
+  lessonId?: string
+  courseId?: string
+  subjectId?: string
+  placement?: QuizPlacement
+  status?: QuizStatus
+}
+
+export interface StaffQuizSubmitPayload {
+  studentId: string
+  answers: Array<{ questionId: string; answer: string | boolean }>
+  reason?: string
 }
 
 export interface LiveClass {
@@ -246,8 +356,48 @@ export interface Event {
   endDate?: string
 }
 
+export interface Notice {
+  id: string
+  authorId: string
+  title: string
+  content: string
+  targetRoles: UserRole[]
+  createdAt: string
+  updatedAt: string
+  author?: {
+    id: string
+    email?: string
+    firstName?: string
+    lastName?: string
+    role?: Role
+  }
+}
+
 export interface ApiError {
   error: string
+}
+
+export interface EBook {
+  id: string
+  tenantId: string
+  bookId?: string
+  book?: { id: string; available: number; totalCopies: number }
+  title: string
+  author: string
+  description?: string
+  coverUrl?: string
+  genre?: string
+  isbn?: string
+  fileKey: string
+  fileSize: number
+  fileType: 'PDF' | 'EPUB'
+  isDownloadable: boolean
+  createdAt: string
+}
+
+export interface ReadingProgress {
+  currentPage: number
+  totalPages?: number
 }
 
 export interface PaginatedResponse<T> {
