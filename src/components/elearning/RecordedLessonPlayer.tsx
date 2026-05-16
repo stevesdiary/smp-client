@@ -296,18 +296,18 @@ export function RecordedLessonPlayer({
 
   if (source.provider === 'unknown') {
     return (
-      <div className="flex min-h-[320px] items-center justify-center rounded-[28px] border border-amber-200 bg-amber-50 p-8 text-center">
+      <div className="flex min-h-[320px] items-center justify-center rounded-xl border border-amber-200 bg-amber-50 p-8 text-center">
         <div className="space-y-3">
-          <AlertTriangle className="mx-auto h-8 w-8 text-amber-600" />
+          <AlertTriangle className="mx-auto h-8 w-8 text-warning" />
           <p className="text-sm font-medium text-amber-900">Unsupported video source</p>
-          <p className="text-sm text-amber-700">Use a YouTube, Vimeo, or direct MP4 URL for recorded lessons.</p>
+          <p className="text-sm text-warning-foreground">Use a YouTube, Vimeo, or direct MP4 URL for recorded lessons.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="overflow-hidden rounded-[28px] border border-border/70 bg-black">
+    <div className="overflow-hidden rounded-xl border border-border/70 bg-black">
       {providerError ? (
         <div className="flex min-h-[320px] items-center justify-center p-8 text-center text-white">
           <div className="space-y-3">

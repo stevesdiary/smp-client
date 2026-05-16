@@ -34,32 +34,35 @@ export function DataTable<T>({ data, columns, searchKey, isLoading }: DataTableP
   })
 
   if (isLoading) return (
-    <div className="space-y-3">
-      {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-14 w-full rounded-2xl" />)}
+    <div className="space-y-2">
+      {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-12 w-full rounded-xl" />)}
     </div>
   )
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {searchKey && (
-        <div className="relative max-w-md">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="relative max-w-sm">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search records..."
+            placeholder="Search records…"
             value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
             onChange={(e) => table.getColumn(searchKey)?.setFilterValue(e.target.value)}
-            className="h-12 rounded-2xl bg-background/80 pl-11"
+            className="pl-9"
           />
         </div>
       )}
 
-      <div className="overflow-hidden rounded-[28px] border border-white/60 bg-white/80 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/80">
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
         <table className="w-full text-sm">
           <thead>
             {table.getHeaderGroups().map((hg) => (
-              <tr key={hg.id} className="border-b border-border/70 bg-secondary/50">
+              <tr key={hg.id} className="border-b border-border bg-muted/40">
                 {hg.headers.map((header) => (
-                  <th key={header.id} className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  <th
+                    key={header.id}
+                    className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-widest text-muted-foreground"
+                  >
                     {header.isPlaceholder ? null : (
                       <div
                         className={header.column.getCanSort() ? 'flex cursor-pointer select-none items-center gap-1' : ''}
@@ -75,18 +78,18 @@ export function DataTable<T>({ data, columns, searchKey, isLoading }: DataTableP
               </tr>
             ))}
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-5 py-12 text-center text-muted-foreground">
+                <td colSpan={columns.length} className="px-4 py-12 text-center text-sm text-muted-foreground">
                   No results found
                 </td>
               </tr>
             ) : (
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="border-b border-border/60 transition-colors hover:bg-secondary/35">
+                <tr key={row.id} className="transition-colors hover:bg-muted/40">
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-5 py-4 align-middle">
+                    <td key={cell.id} className="px-4 py-3.5 align-middle">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
@@ -97,15 +100,27 @@ export function DataTable<T>({ data, columns, searchKey, isLoading }: DataTableP
         </table>
       </div>
 
-      <div className="flex items-center justify-between rounded-2xl bg-white/60 px-4 py-3 shadow-sm backdrop-blur dark:bg-card/60">
-        <p className="text-sm text-muted-foreground">
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} • {table.getFilteredRowModel().rows.length} visible rows
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-muted-foreground">
+          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} &middot; {table.getFilteredRowModel().rows.length} rows
         </p>
-        <div className="flex gap-2">
-          <Button variant="outline" size="icon" className="rounded-xl" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+        <div className="flex gap-1.5">
+          <Button
+            variant="outline"
+            size="icon-sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            aria-label="Previous page"
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon" className="rounded-xl" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+          <Button
+            variant="outline"
+            size="icon-sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            aria-label="Next page"
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

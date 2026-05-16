@@ -131,11 +131,11 @@ export function ELibraryTab() {
         {canUpload && (
           <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
             <DialogTrigger asChild>
-              <Button className="h-11 rounded-2xl px-5">
+              <Button className="h-11 px-5">
                 <Upload className="mr-2 h-4 w-4" />Upload E-Book
               </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-[28px] max-w-lg">
+            <DialogContent className="rounded-xl max-w-lg">
               <DialogHeader><DialogTitle>Upload E-Book</DialogTitle></DialogHeader>
               <form onSubmit={form.handleSubmit((d) => uploadMutation.mutate(d))} className="space-y-4">
                 <div className="space-y-1">
@@ -193,7 +193,7 @@ export function ELibraryTab() {
 
       {/* Stats */}
       <div className="grid gap-3 sm:grid-cols-3">
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardContent className="flex items-center gap-4 p-5">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <BookOpen className="h-5 w-5" />
@@ -204,9 +204,9 @@ export function ELibraryTab() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700 dark:text-amber-300">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-chart-2/10 text-warning-foreground dark:text-warning">
               <FileText className="h-5 w-5" />
             </div>
             <div>
@@ -215,9 +215,9 @@ export function ELibraryTab() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardContent className="flex items-center gap-4 p-5">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-teal-500/10 text-teal-700 dark:text-teal-300">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-chart-1/10 text-chart-1 dark:text-chart-1">
               <Download className="h-5 w-5" />
             </div>
             <div>
@@ -248,14 +248,14 @@ export function ELibraryTab() {
           {filtered.map((eb) => (
             <Card
               key={eb.id}
-              className="group relative overflow-hidden rounded-[20px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur transition hover:shadow-xl dark:border-white/10 dark:bg-card/85"
+              className="group relative overflow-hidden rounded-[20px] transition hover:shadow-xl"
             >
               {/* Cover */}
               <div className="relative flex h-44 items-center justify-center bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
                 {eb.coverUrl ? (
                   <img src={eb.coverUrl} alt={eb.title} className="h-full w-full object-cover" />
                 ) : (
-                  <BookOpen className="h-12 w-12 text-primary/30" />
+                  <BookOpen className="h-10 w-10 text-primary/30" />
                 )}
                 <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/0 opacity-0 transition group-hover:bg-black/40 group-hover:opacity-100">
                   {eb.fileType === 'PDF' && (
@@ -272,7 +272,7 @@ export function ELibraryTab() {
                     </Button>
                   )}
                 </div>
-                <Badge className="absolute right-2 top-2 rounded-full bg-black/50 text-[10px] text-white backdrop-blur">
+                <Badge className="absolute right-2 top-2 rounded-full bg-black/50 text-[10px] text-white">
                   {eb.fileType}
                 </Badge>
               </div>

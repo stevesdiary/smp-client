@@ -67,10 +67,10 @@ export function NotificationBell() {
 
   return (
     <div ref={ref} className="relative">
-      <Button variant="ghost" size="icon" className="relative rounded-2xl" onClick={() => setOpen((v) => !v)}>
+      <Button variant="ghost" aria-label="Notifications" size="icon" className="relative rounded-xl" onClick={() => setOpen((v) => !v)}>
         <Bell className="h-5 w-5" />
         {count > 0 && (
-          <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
+          <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-chart-2 px-1 text-[10px] font-bold text-white">
             {count > 99 ? '99+' : count}
           </span>
         )}

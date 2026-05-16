@@ -190,14 +190,14 @@ export function EBookReader({ ebook, onClose }: EBookReaderProps) {
             <button
               onClick={() => goToPage(currentPage - 1)}
               disabled={currentPage <= 1}
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white backdrop-blur transition hover:bg-black/60 disabled:opacity-20"
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60 disabled:opacity-20"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
             <button
               onClick={() => goToPage(currentPage + 1)}
               disabled={currentPage >= numPages}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white backdrop-blur transition hover:bg-black/60 disabled:opacity-20"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/40 p-3 text-white transition hover:bg-black/60 disabled:opacity-20"
             >
               <ChevronRight className="h-6 w-6" />
             </button>

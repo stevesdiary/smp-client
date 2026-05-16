@@ -78,12 +78,12 @@ export function CsvUploadDialog({
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setFile(null) }}>
       <DialogTrigger asChild>
         {trigger ?? (
-          <Button variant="outline" className="h-12 rounded-2xl">
+          <Button variant="outline" className="h-10 rounded-xl">
             <Upload className="mr-2 h-4 w-4" />CSV Upload
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="rounded-[28px] max-w-md">
+      <DialogContent className="rounded-xl max-w-md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
