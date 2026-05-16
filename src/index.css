@@ -1,85 +1,154 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* ─── Geist Variable Font ────────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Geist';
+  src: url('/node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  /* ─── Light mode ─────────────────────────────────────────────────────── */
   :root {
-    --background: 42 33% 97%;
-    --foreground: 222 29% 16%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 29% 16%;
-    --primary: 192 64% 31%;
-    --primary-foreground: 46 56% 98%;
-    --secondary: 43 62% 92%;
-    --secondary-foreground: 223 33% 18%;
-    --muted: 39 30% 93%;
-    --muted-foreground: 214 16% 40%;
-    --accent: 35 72% 90%;
-    --accent-foreground: 223 33% 18%;
-    --destructive: 0 72% 52%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 34 30% 86%;
-    --input: 34 30% 86%;
-    --ring: 192 64% 31%;
-    --radius: 1rem;
-    --sidebar: 38 50% 98%;
-    --sidebar-foreground: 222 29% 16%;
-    --sidebar-accent: 192 64% 31%;
-    --sidebar-accent-foreground: 46 56% 98%;
-    --display-font: 'Space Grotesk', sans-serif;
-    --body-font: 'Manrope', sans-serif;
+    /* Backgrounds */
+    --background:           0 0% 98%;
+    --card:                 0 0% 100%;
+    --card-foreground:      220 15% 12%;
+    --popover:              0 0% 100%;
+    --popover-foreground:   220 15% 12%;
+
+    /* Text */
+    --foreground:           220 15% 12%;
+    --muted-foreground:     220 10% 46%;
+
+    /* Primary — deep teal */
+    --primary:              186 72% 28%;
+    --primary-foreground:   0 0% 100%;
+
+    /* Secondary — soft neutral */
+    --secondary:            220 14% 94%;
+    --secondary-foreground: 220 15% 20%;
+
+    /* Muted */
+    --muted:                220 14% 94%;
+
+    /* Accent — warm amber wash */
+    --accent:               38 80% 94%;
+    --accent-foreground:    38 60% 28%;
+
+    /* Semantic */
+    --destructive:          0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders & inputs */
+    --border:               220 13% 88%;
+    --input:                220 13% 88%;
+    --ring:                 186 72% 28%;
+
+    /* Sidebar */
+    --sidebar:              220 20% 97%;
+    --sidebar-foreground:   220 15% 12%;
+    --sidebar-accent:       186 72% 28%;
+    --sidebar-accent-foreground: 0 0% 100%;
+
+    /* Semantic status */
+    --success:              145 55% 38%;
+    --success-foreground:   0 0% 100%;
+    --success-light:        145 55% 94%;
+    --warning:              38 90% 50%;
+    --warning-foreground:   38 60% 15%;
+    --warning-light:        38 90% 94%;
+    --info:                 210 72% 45%;
+    --info-foreground:      0 0% 100%;
+    --info-light:           210 72% 94%;
+
+    /* Chart / insight bars — named by role, not hue */
+    --chart-1:              186 72% 28%;   /* primary teal */
+    --chart-2:              38 80% 50%;    /* amber */
+    --chart-3:              220 14% 60%;   /* slate */
+    --chart-4:              0 72% 51%;     /* rose */
+    --chart-5:              145 55% 38%;   /* green */
+
+    /* Design tokens */
+    --radius:               0.75rem;   /* 12px — one radius for everything */
   }
 
+  /* ─── Dark mode ──────────────────────────────────────────────────────── */
   .dark {
-    --background: 214 34% 10%;
-    --foreground: 38 33% 96%;
-    --card: 214 29% 14%;
-    --card-foreground: 38 33% 96%;
-    --primary: 184 55% 56%;
-    --primary-foreground: 214 34% 10%;
-    --secondary: 216 20% 20%;
-    --secondary-foreground: 38 33% 96%;
-    --muted: 215 22% 18%;
-    --muted-foreground: 217 16% 70%;
-    --accent: 214 24% 18%;
-    --accent-foreground: 38 33% 96%;
-    --destructive: 0 70% 56%;
-    --destructive-foreground: 38 33% 96%;
-    --border: 215 20% 22%;
-    --input: 215 20% 22%;
-    --ring: 184 55% 56%;
-    --sidebar: 214 31% 12%;
-    --sidebar-foreground: 38 33% 96%;
-    --sidebar-accent: 184 55% 56%;
-    --sidebar-accent-foreground: 214 34% 10%;
+    --background:           222 20% 10%;
+    --card:                 222 18% 14%;
+    --card-foreground:      220 15% 93%;
+    --popover:              222 18% 14%;
+    --popover-foreground:   220 15% 93%;
+
+    --foreground:           220 15% 93%;
+    --muted-foreground:     220 10% 58%;
+
+    --primary:              186 55% 56%;
+    --primary-foreground:   222 20% 10%;
+
+    --secondary:            220 14% 20%;
+    --secondary-foreground: 220 15% 85%;
+
+    --muted:                220 14% 20%;
+
+    --accent:               38 28% 18%;
+    --accent-foreground:    38 70% 72%;
+
+    --destructive:          0 68% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border:               220 14% 22%;
+    --input:                220 14% 22%;
+    --ring:                 186 55% 56%;
+
+    --sidebar:              222 22% 8%;
+    --sidebar-foreground:   220 15% 88%;
+    --sidebar-accent:       186 55% 56%;
+    --sidebar-accent-foreground: 222 20% 10%;
+
+    /* Semantic status */
+    --success:              145 45% 50%;
+    --success-foreground:   222 20% 10%;
+    --success-light:        145 35% 18%;
+    --warning:              38 80% 58%;
+    --warning-foreground:   38 60% 10%;
+    --warning-light:        38 40% 18%;
+    --info:                 210 65% 58%;
+    --info-foreground:      222 20% 10%;
+    --info-light:           210 40% 18%;
+
+    /* Chart / insight bars */
+    --chart-1:              186 55% 56%;
+    --chart-2:              38 80% 58%;
+    --chart-3:              220 14% 55%;
+    --chart-4:              0 68% 58%;
+    --chart-5:              145 45% 50%;
   }
 
+  /* ─── Base resets ────────────────────────────────────────────────────── */
   * { @apply border-border; }
+
   html { min-height: 100%; }
+
   body {
     min-height: 100vh;
-    background:
-      radial-gradient(circle at top left, hsl(192 72% 87% / 0.55), transparent 26%),
-      radial-gradient(circle at top right, hsl(40 88% 82% / 0.45), transparent 24%),
-      linear-gradient(180deg, hsl(var(--background)), hsl(40 42% 95%));
+    background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: var(--body-font);
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
-  }
-
-  .dark body {
-    background:
-      radial-gradient(circle at top left, hsl(184 55% 32% / 0.22), transparent 22%),
-      radial-gradient(circle at top right, hsl(41 70% 45% / 0.18), transparent 18%),
-      linear-gradient(180deg, hsl(var(--background)), hsl(218 28% 8%));
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--display-font);
-    letter-spacing: -0.03em;
+    font-family: 'Geist', system-ui, sans-serif;
+    letter-spacing: -0.025em;
   }
 
   #root {

@@ -9,16 +9,14 @@ export function AppLayout() {
   usePushNotifications()
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-[-8rem] top-[-5rem] h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute bottom-[-8rem] right-[-4rem] h-72 w-72 rounded-full bg-amber-300/20 blur-3xl dark:bg-amber-200/10" />
-      </div>
+    <div className="flex min-h-screen bg-background">
       <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="relative flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <Header onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 overflow-y-auto px-4 pb-6 pt-4 lg:px-6 lg:pb-8 lg:pt-5">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto px-4 pb-8 pt-6 lg:px-6 lg:pt-8">
+          <div className="mx-auto max-w-screen-xl space-y-6">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
