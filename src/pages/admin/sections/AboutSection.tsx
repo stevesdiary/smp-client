@@ -167,7 +167,7 @@ export function AboutSection({ config, onChange }: AboutSectionProps) {
                   <button
                     type="button"
                     onClick={() => remove(index)}
-                    className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-red-200 bg-red-50 text-red-600 transition hover:bg-red-100"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-red-200 bg-red-50 text-red-600 transition hover:bg-red-100"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

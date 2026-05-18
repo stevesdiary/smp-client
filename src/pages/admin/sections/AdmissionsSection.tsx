@@ -63,7 +63,7 @@ function ChipInput({
           {value.map((item) => (
             <span
               key={item}
-              className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700"
+              className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-sm font-medium text-info"
             >
               {item}
               <button type="button" onClick={() => onChange(value.filter((entry) => entry !== item))}>

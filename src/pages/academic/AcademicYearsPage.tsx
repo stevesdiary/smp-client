@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
 import type { AcademicYear, Term } from '@/types'
@@ -90,7 +90,7 @@ function AcademicYearCard({
   })
 
   return (
-    <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+    <Card className="rounded-xl">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -121,7 +121,7 @@ function AcademicYearCard({
                   <Plus className="mr-1.5 h-3 w-3" />Add Term
                 </Button>
               </DialogTrigger>
-              <DialogContent className="rounded-[28px]">
+              <DialogContent className="rounded-xl">
                 <DialogHeader>
                   <DialogTitle>Add Term — {year.name}</DialogTitle>
                 </DialogHeader>
@@ -163,7 +163,7 @@ function AcademicYearCard({
         <CardContent className="pt-0">
           <div className="space-y-2">
             {termsLoading
-              ? Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-2xl" />)
+              ? Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-10 rounded-xl" />)
               : terms.length === 0
                 ? (
                   <div className="rounded-2xl border border-dashed border-border/80 p-4 text-center text-sm text-muted-foreground">
@@ -217,23 +217,22 @@ export default function AcademicYearsPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Academic calendar"
-        title="Structure the school year into manageable academic periods."
-        description="Create academic years and nest terms within them. Mark one as current to activate it across attendance, grades, and timetables."
+        title="Academic Years"
+        description="Structure the school year into terms and periods."
         stats={[
-          { label: 'Academic years', value: years.length, detail: 'Total academic years configured.' },
-          { label: 'Current year', value: currentYear?.name ?? 'None set', detail: 'The active year across all modules.' },
-          { label: 'Status', value: currentYear ? 'Active' : 'Setup needed', detail: 'Set a current year to unlock full functionality.' },
+          { label: 'Years', value: years.length },
+          { label: 'Current', value: currentYear?.name ?? 'None set' },
         ]}
         actions={
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
-              <Button className="h-12 rounded-2xl px-5">
+              <Button className="h-10 rounded-xl px-5">
                 <Plus className="mr-2 h-4 w-4" />New Academic Year
               </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-[28px]">
+            <DialogContent className="rounded-xl">
               <DialogHeader><DialogTitle>Create Academic Year</DialogTitle></DialogHeader>
               <form onSubmit={handleSubmit(d => createMutation.mutate(d))} className="space-y-4">
                 <div className="space-y-1">
@@ -264,10 +263,10 @@ export default function AcademicYearsPage() {
 
       {isLoading ? (
         <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-[28px]" />)}
+          {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-xl" />)}
         </div>
       ) : years.length === 0 ? (
-        <div className="rounded-[32px] border border-dashed border-border bg-secondary/30 p-12 text-center">
+        <div className="rounded-xl border border-dashed border-border bg-secondary/30 p-12 text-center">
           <CalendarDays className="mx-auto h-10 w-10 text-muted-foreground/50" />
           <p className="mt-4 font-semibold">No academic years yet</p>
           <p className="mt-2 text-sm text-muted-foreground">

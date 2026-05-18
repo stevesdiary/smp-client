@@ -183,9 +183,9 @@ export default function CustomDomainSetup() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-info">
             <Globe className="h-6 w-6" />
           </div>
           <div>
@@ -197,7 +197,7 @@ export default function CustomDomainSetup() {
         </div>
       </section>
 
-      <section className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="grid gap-4 md:grid-cols-4">
           {steps.map((step) => {
             const completed = progressStep > step.id
@@ -240,7 +240,7 @@ export default function CustomDomainSetup() {
       </section>
 
       {currentStep === 1 ? (
-        <section className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="max-w-2xl">
             <h2 className="text-xl font-semibold text-gray-900">Step 1 — Enter Domain</h2>
             <p className="mt-2 text-sm text-gray-500">
@@ -273,7 +273,7 @@ export default function CustomDomainSetup() {
       ) : null}
 
       {currentStep === 2 ? (
-        <section className="space-y-6 rounded-[32px] border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="space-y-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <div>
             <h2 className="text-xl font-semibold text-gray-900">Step 2 — Add CNAME Record</h2>
             <p className="mt-2 text-sm text-gray-500">
@@ -336,10 +336,10 @@ export default function CustomDomainSetup() {
               <span
                 className={
                   verificationStatus === 'verified'
-                    ? 'text-emerald-600'
+                    ? 'text-success'
                     : verificationStatus === 'failed'
                       ? 'text-red-600'
-                      : 'text-amber-600'
+                      : 'text-warning'
                 }
               >
                 {verificationStatus === 'idle'
@@ -354,11 +354,11 @@ export default function CustomDomainSetup() {
       ) : null}
 
       {currentStep === 3 ? (
-        <section className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           {verificationStatus === 'verified' ? (
             <div className="space-y-5">
               <div className="flex items-start gap-4">
-                <CheckCircle2 className="mt-1 h-8 w-8 text-emerald-600" />
+                <CheckCircle2 className="mt-1 h-8 w-8 text-success" />
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900">Domain Verified</h2>
                   <p className="mt-2 text-sm text-gray-500">
@@ -410,11 +410,11 @@ export default function CustomDomainSetup() {
       ) : null}
 
       {currentStep === 4 ? (
-        <section className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           {!sslTimedOut && sslStatus !== 'active' ? (
             <div className="space-y-4">
               <div className="flex items-start gap-4">
-                <ShieldCheck className="mt-1 h-8 w-8 text-blue-600" />
+                <ShieldCheck className="mt-1 h-8 w-8 text-info" />
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900">Step 4 — SSL &amp; Live</h2>
                   <p className="mt-2 text-sm text-gray-600">
@@ -422,7 +422,7 @@ export default function CustomDomainSetup() {
                   </p>
                 </div>
               </div>
-              <div className="inline-flex items-center rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
+              <div className="inline-flex items-center rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-info">
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Clock3 className="mr-2 h-4 w-4" />}
                 SSL status: {sslStatus === 'idle' ? 'provisioning' : sslStatus}
               </div>
@@ -432,7 +432,7 @@ export default function CustomDomainSetup() {
           {sslStatus === 'active' ? (
             <div className="space-y-4">
               <div className="flex items-start gap-4">
-                <CheckCircle2 className="mt-1 h-8 w-8 text-emerald-600" />
+                <CheckCircle2 className="mt-1 h-8 w-8 text-success" />
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900">Your website is live</h2>
                   <p className="mt-2 text-sm text-gray-600">
@@ -441,7 +441,7 @@ export default function CustomDomainSetup() {
                       href={liveDomainUrl ?? '#'}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-blue-600 hover:underline"
+                      className="font-semibold text-info hover:underline"
                     >
                       {domain}
                     </a>
@@ -455,7 +455,7 @@ export default function CustomDomainSetup() {
           {sslTimedOut ? (
             <div className="space-y-4">
               <div className="flex items-start gap-4">
-                <AlertCircle className="mt-1 h-8 w-8 text-amber-600" />
+                <AlertCircle className="mt-1 h-8 w-8 text-warning" />
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900">Manual support needed</h2>
                   <p className="mt-2 text-sm text-gray-600">
