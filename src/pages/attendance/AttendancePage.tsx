@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import api from '@/lib/api'
 import type { Student } from '@/types'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 
 type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED'
 
@@ -56,22 +56,18 @@ export default function AttendancePage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Attendance desk"
-        title="Mark daily attendance from a clearer classroom operations view."
-        description="Attendance still saves through the same bulk endpoint, but the page now follows the richer interface direction."
+        title="Attendance"
+        description="Mark daily attendance for your class."
         stats={[
-          { label: 'Students', value: students.length, detail: 'Learners visible for this attendance session.' },
-          { label: 'Marked', value: marked, detail: 'Students already assigned a status.' },
-          { label: 'Present', value: present, detail: 'Students currently marked present.' },
+          { label: 'Students', value: students.length },
+          { label: 'Marked', value: marked },
+          { label: 'Present', value: present },
         ]}
       />
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">Attendance</h1>
-          <p className="text-muted-foreground">{marked}/{students.length} marked · {present} present</p>
-        </div>
         <div className="flex items-center gap-3">
           <CsvUploadDialog
             title="Upload Attendance CSV"
@@ -84,9 +80,9 @@ export default function AttendancePage() {
             type="date"
             value={date}
             onChange={e => setDate(e.target.value)}
-            className="h-12 rounded-2xl border border-input bg-background/80 px-4 text-sm"
+            className="h-10 rounded-xl border border-input bg-background/80 px-4 text-sm"
           />
-          <Button className="h-12 rounded-2xl px-5" onClick={submit} disabled={bulkMutation.isPending}>
+          <Button className="h-10 rounded-xl px-5" onClick={submit} disabled={bulkMutation.isPending}>
             {bulkMutation.isPending ? 'Saving...' : 'Save'}
           </Button>
         </div>
@@ -103,7 +99,7 @@ export default function AttendancePage() {
       {isLoading ? (
         <div className="space-y-2">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}</div>
       ) : (
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardHeader><CardTitle>Students</CardTitle></CardHeader>
           <CardContent className="p-0">
             {students.map((student) => (

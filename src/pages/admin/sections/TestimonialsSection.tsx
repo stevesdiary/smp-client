@@ -129,7 +129,7 @@ export function TestimonialsSection({ config, onChange }: TestimonialsSectionPro
                   <h3 className="text-base font-semibold text-gray-900">{testimonial.author}</h3>
                   <span
                     className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
-                      testimonial.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-600'
+                      testimonial.isActive ? 'bg-success-light text-emerald-700' : 'bg-gray-200 text-gray-600'
                     }`}
                   >
                     {testimonial.isActive ? 'Active' : 'Inactive'}

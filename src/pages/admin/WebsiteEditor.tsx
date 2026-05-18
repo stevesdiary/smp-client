@@ -162,17 +162,17 @@ export default function WebsiteEditor() {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="h-8 w-56 animate-pulse rounded-full bg-gray-100" />
           <div className="mt-4 h-4 w-80 animate-pulse rounded-full bg-gray-100" />
         </div>
         <div className="grid gap-6 xl:grid-cols-[240px,1fr]">
-          <div className="rounded-[32px] border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
             {Array.from({ length: 6 }).map((_, index) => (
               <div key={index} className="mb-3 h-12 animate-pulse rounded-2xl bg-gray-100" />
             ))}
           </div>
-          <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             {Array.from({ length: 8 }).map((_, index) => (
               <div key={index} className="mb-4 h-12 animate-pulse rounded-2xl bg-gray-100" />
             ))}
@@ -184,7 +184,7 @@ export default function WebsiteEditor() {
 
   if (loadError) {
     return (
-      <div className="rounded-[32px] border border-red-200 bg-red-50 p-6">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-6">
         <div className="flex items-start gap-4">
           <Globe className="mt-1 h-5 w-5 text-red-600" />
           <div>
@@ -205,7 +205,7 @@ export default function WebsiteEditor() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-[32px] border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-gray-900">Website Editor</h1>
@@ -248,14 +248,14 @@ export default function WebsiteEditor() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[240px,1fr]">
-        <aside className="rounded-[32px] border border-gray-200 bg-white p-3 shadow-sm">
+        <aside className="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
           <nav className="space-y-1">
             {sections.map((section) => (
               <button
                 key={section.id}
                 type="button"
                 onClick={() => setActiveSection(section.id)}
-                className={`flex w-full items-center rounded-2xl px-4 py-3 text-left text-sm font-medium transition ${
+                className={`flex w-full items-center px-4 py-3 text-left text-sm font-medium transition ${
                   activeSection === section.id
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20'
                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'

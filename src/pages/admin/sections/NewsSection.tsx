@@ -155,7 +155,7 @@ export function NewsSection({ config, onChange }: NewsSectionProps) {
                   <h3 className="text-base font-semibold text-gray-900">{post.title}</h3>
                   <span
                     className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${
-                      post.isPublished ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                      post.isPublished ? 'bg-success-light text-emerald-700' : 'bg-warning-light text-warning-foreground'
                     }`}
                   >
                     {post.isPublished ? 'Published' : 'Draft'}
