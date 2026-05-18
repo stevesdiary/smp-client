@@ -70,7 +70,7 @@ export default function RegisterPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-2">
           <Label className="text-sm font-medium">School Portal Code</Label>
-          <Input className="h-12 rounded-2xl bg-background/85" placeholder="greenwood-college" {...register('tenantId')} />
+          <Input className="h-10 rounded-xl bg-background/85" placeholder="greenwood-college" {...register('tenantId')} />
           {errors.tenantId && <p className="text-xs text-destructive">{errors.tenantId.message}</p>}
           <p className="text-xs text-muted-foreground">Use the school code or portal ID your administrator shared with you.</p>
         </div>
@@ -78,32 +78,32 @@ export default function RegisterPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label className="text-sm font-medium">First Name</Label>
-            <Input className="h-12 rounded-2xl bg-background/85" {...register('firstName')} />
+            <Input className="h-10 rounded-xl bg-background/85" {...register('firstName')} />
             {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
           </div>
           <div className="space-y-2">
             <Label className="text-sm font-medium">Last Name</Label>
-            <Input className="h-12 rounded-2xl bg-background/85" {...register('lastName')} />
+            <Input className="h-10 rounded-xl bg-background/85" {...register('lastName')} />
             {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
           </div>
         </div>
 
         <div className="space-y-2">
           <Label className="text-sm font-medium">Email</Label>
-          <Input className="h-12 rounded-2xl bg-background/85" type="email" {...register('email')} />
+          <Input className="h-10 rounded-xl bg-background/85" type="email" {...register('email')} />
           {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label className="text-sm font-medium">Password</Label>
-          <PasswordInput className="h-12 rounded-2xl bg-background/85" {...register('password')} />
+          <PasswordInput className="h-10 rounded-xl bg-background/85" {...register('password')} />
           {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
           <p className="text-xs text-muted-foreground">{passwordComplexityHint}</p>
         </div>
 
         <div className="space-y-2">
           <Label className="text-sm font-medium">Invitation / Role ID</Label>
-          <Input className="h-12 rounded-2xl bg-background/85" placeholder="Paste the role ID from your school admin" {...register('roleId')} />
+          <Input className="h-10 rounded-xl bg-background/85" placeholder="Paste the role ID from your school admin" {...register('roleId')} />
           {errors.roleId && <p className="text-xs text-destructive">{errors.roleId.message}</p>}
         </div>
 

@@ -99,7 +99,7 @@ export default function LoginPage() {
               defaultValue={schoolCode}
               autoFocus
             />
-            <Button type="submit" size="sm" className="h-11 rounded-2xl px-4">Set</Button>
+            <Button type="submit" size="sm" className="h-11 px-4">Set</Button>
           </div>
         </form>
       ) : (
@@ -120,7 +120,7 @@ export default function LoginPage() {
         <div className="grid gap-5">
           <div className="space-y-2">
             <Label className="text-sm font-medium">Email</Label>
-            <Input className="h-12 rounded-2xl bg-background/85" type="email" placeholder="admin@yourschool.com" {...register('email')} />
+            <Input className="h-10 rounded-xl bg-background/85" type="email" placeholder="admin@yourschool.com" {...register('email')} />
             {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
           </div>
           <div className="space-y-2">
@@ -130,7 +130,7 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
-            <PasswordInput className="h-12 rounded-2xl bg-background/85" placeholder="••••••••" {...register('password')} />
+            <PasswordInput className="h-10 rounded-xl bg-background/85" placeholder="••••••••" {...register('password')} />
             {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
           </div>
         </div>

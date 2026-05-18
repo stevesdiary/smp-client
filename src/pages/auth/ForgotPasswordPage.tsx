@@ -99,13 +99,13 @@ export default function ForgotPasswordPage() {
         <form onSubmit={emailForm.handleSubmit(onRequestOtp)} className="space-y-5">
           <div className="space-y-2">
             <Label className="text-sm font-medium">School Code</Label>
-            <Input className="h-12 rounded-2xl bg-background/85" placeholder="e.g. greenwood" {...emailForm.register('schoolCode')} />
+            <Input className="h-10 rounded-xl bg-background/85" placeholder="e.g. greenwood" {...emailForm.register('schoolCode')} />
             {emailForm.formState.errors.schoolCode && <p className="text-xs text-destructive">{emailForm.formState.errors.schoolCode.message}</p>}
           </div>
 
           <div className="space-y-2">
             <Label className="text-sm font-medium">Email</Label>
-            <Input className="h-12 rounded-2xl bg-background/85" type="email" placeholder="you@school.com" {...emailForm.register('email')} />
+            <Input className="h-10 rounded-xl bg-background/85" type="email" placeholder="you@school.com" {...emailForm.register('email')} />
             {emailForm.formState.errors.email && <p className="text-xs text-destructive">{emailForm.formState.errors.email.message}</p>}
           </div>
 
@@ -132,7 +132,7 @@ export default function ForgotPasswordPage() {
           <div className="space-y-2">
             <Label className="text-sm font-medium">6-digit code</Label>
             <Input
-              className="h-12 rounded-2xl bg-background/85 text-center text-2xl tracking-[0.5em] font-mono"
+              className="h-10 rounded-xl bg-background/85 text-center text-2xl tracking-[0.5em] font-mono"
               maxLength={6}
               placeholder="000000"
               {...resetForm.register('otp')}
@@ -142,13 +142,13 @@ export default function ForgotPasswordPage() {
 
           <div className="space-y-2">
             <Label className="text-sm font-medium">New password</Label>
-            <PasswordInput className="h-12 rounded-2xl bg-background/85" placeholder="Min 8 chars, upper + lower + number" {...resetForm.register('newPassword')} />
+            <PasswordInput className="h-10 rounded-xl bg-background/85" placeholder="Min 8 chars, upper + lower + number" {...resetForm.register('newPassword')} />
             {resetForm.formState.errors.newPassword && <p className="text-xs text-destructive">{resetForm.formState.errors.newPassword.message}</p>}
           </div>
 
           <div className="space-y-2">
             <Label className="text-sm font-medium">Confirm password</Label>
-            <PasswordInput className="h-12 rounded-2xl bg-background/85" {...resetForm.register('confirmPassword')} />
+            <PasswordInput className="h-10 rounded-xl bg-background/85" {...resetForm.register('confirmPassword')} />
             {resetForm.formState.errors.confirmPassword && <p className="text-xs text-destructive">{resetForm.formState.errors.confirmPassword.message}</p>}
           </div>
 
