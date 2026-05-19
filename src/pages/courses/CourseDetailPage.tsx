@@ -162,7 +162,7 @@ function ModuleDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="rounded-[28px]">
+      <DialogContent className="rounded-xl">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
@@ -224,7 +224,7 @@ function LessonDialog({
       open={state.open}
       onOpenChange={(open) => onOpenChange(open ? state : { open: false })}
     >
-      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto rounded-[28px]">
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto rounded-xl">
         <DialogHeader>
           <DialogTitle>{state.mode === 'create' ? 'Add lesson' : 'Edit lesson'}</DialogTitle>
         </DialogHeader>
@@ -660,8 +660,8 @@ export default function CourseDetailPage() {
     return (
       <div className="space-y-4">
         <Skeleton className="h-12 w-56 rounded-2xl" />
-        <Skeleton className="h-40 w-full rounded-[28px]" />
-        <Skeleton className="h-64 w-full rounded-[28px]" />
+        <Skeleton className="h-40 w-full rounded-xl" />
+        <Skeleton className="h-64 w-full rounded-xl" />
       </div>
     )
   }
@@ -673,7 +673,7 @@ export default function CourseDetailPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to courses
         </Link>
-        <div className="rounded-[28px] border border-border/70 bg-card p-6">
+        <div className="rounded-xl border border-border/70 bg-card p-6">
           <h1 className="text-xl font-semibold">Course not found</h1>
         </div>
       </div>
@@ -696,7 +696,7 @@ export default function CourseDetailPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to courses
         </Link>
-        <div className="rounded-[32px] border border-white/60 bg-white/85 p-6 shadow-lg shadow-slate-900/5 dark:border-white/10 dark:bg-card/85">
+        <div className="rounded-xl border p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
@@ -723,7 +723,7 @@ export default function CourseDetailPage() {
                 await createModuleMutation.mutateAsync(values)
               }}
               trigger={
-                <Button className="h-12 rounded-2xl px-5">
+                <Button className="h-10 rounded-xl px-5">
                   <Plus className="mr-2 h-4 w-4" />
                   Add module
                 </Button>
@@ -739,7 +739,7 @@ export default function CourseDetailPage() {
           const lessons = module.lessons ?? []
 
           return (
-            <section key={module.id} className="rounded-[30px] border border-white/60 bg-white/85 p-6 shadow-lg shadow-slate-900/5 dark:border-white/10 dark:bg-card/85">
+            <section key={module.id} className="rounded-[30px] border p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
@@ -898,7 +898,7 @@ export default function CourseDetailPage() {
             </section>
           )
         }) : (
-          <div className="rounded-[28px] border border-dashed border-border bg-card px-6 py-10 text-sm text-muted-foreground">
+          <div className="rounded-xl border border-dashed border-border bg-card px-6 py-10 text-sm text-muted-foreground">
             This course has no modules yet. Create the first module to start adding video and quiz lessons.
           </div>
         )}

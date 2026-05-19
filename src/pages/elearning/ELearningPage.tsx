@@ -21,7 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DataTable } from '@/components/shared/DataTable'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { Skeleton } from '@/components/ui/skeleton'
 import { RecordedLessonPlayer } from '@/components/elearning/RecordedLessonPlayer'
 import { formatDate } from '@/lib/utils'
@@ -138,15 +138,15 @@ function StudentRecordedLessons() {
   if (isLoading) {
     return (
       <div className="grid gap-6 xl:grid-cols-[360px,1fr]">
-        <Skeleton className="h-[560px] rounded-[28px]" />
-        <Skeleton className="h-[560px] rounded-[28px]" />
+        <Skeleton className="h-[560px] rounded-xl" />
+        <Skeleton className="h-[560px] rounded-xl" />
       </div>
     )
   }
 
   if (!recordedCourses.length || !selectedCourse || !selectedLesson) {
     return (
-      <div className="rounded-[28px] border border-dashed border-border bg-card px-6 py-12 text-center">
+      <div className="rounded-xl border border-dashed border-border bg-card px-6 py-12 text-center">
         <p className="text-base font-medium">No recorded lessons are available yet.</p>
         <p className="mt-2 text-sm text-muted-foreground">You will see published course recordings here once your teacher adds them and you are enrolled.</p>
       </div>
@@ -155,7 +155,7 @@ function StudentRecordedLessons() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[360px,1fr]">
-      <aside className="space-y-4 rounded-[28px] border border-white/60 bg-white/85 p-5 shadow-lg shadow-slate-900/5 dark:border-white/10 dark:bg-card/85">
+      <aside className="space-y-4 rounded-xl border p-5">
         <div>
           <h2 className="text-lg font-semibold">Recorded Courses</h2>
           <p className="mt-1 text-sm text-muted-foreground">Choose a course and lesson to continue learning.</p>
@@ -199,7 +199,7 @@ function StudentRecordedLessons() {
       </aside>
 
       <div className="space-y-6">
-        <section className="rounded-[28px] border border-white/60 bg-white/85 p-5 shadow-lg shadow-slate-900/5 dark:border-white/10 dark:bg-card/85">
+        <section className="rounded-xl border p-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
@@ -233,7 +233,7 @@ function StudentRecordedLessons() {
           </div>
         </section>
 
-        <section className="rounded-[28px] border border-white/60 bg-white/85 p-5 shadow-lg shadow-slate-900/5 dark:border-white/10 dark:bg-card/85">
+        <section className="rounded-xl border p-5">
           <div className="flex items-center gap-2">
             <PlayCircle className="h-5 w-5 text-primary" />
             <h3 className="text-lg font-semibold">Lesson Queue</h3>
@@ -339,14 +339,14 @@ function StudentQuizWorkspace({
 
   if (!quiz) {
     return (
-      <div className="rounded-[28px] border border-dashed border-border bg-card px-6 py-12 text-center">
+      <div className="rounded-xl border border-dashed border-border bg-card px-6 py-12 text-center">
         <p className="text-base font-medium">Select a {tabLabel.toLowerCase()} to continue.</p>
       </div>
     )
   }
 
   if (isLoading || !quizDetail) {
-    return <Skeleton className="h-[520px] rounded-[28px]" />
+    return <Skeleton className="h-[520px] rounded-xl" />
   }
 
   const activeAttempt = quizDetail.activeAttempt
@@ -354,7 +354,7 @@ function StudentQuizWorkspace({
   const latestAttempt = quizDetail.latestAttempt
 
   return (
-    <section className="space-y-5 rounded-[28px] border border-white/60 bg-white/85 p-5 shadow-lg shadow-slate-900/5 dark:border-white/10 dark:bg-card/85">
+    <section className="space-y-5 rounded-xl border p-5">
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-3">
           <Badge variant={quizDetail.status === 'PUBLISHED' ? 'success' : quizDetail.status === 'CLOSED' ? 'outline' : 'secondary'}>
@@ -545,8 +545,8 @@ function StudentQuizHub() {
   if (isLoading) {
     return (
       <div className="grid gap-6 xl:grid-cols-[360px,1fr]">
-        <Skeleton className="h-[520px] rounded-[28px]" />
-        <Skeleton className="h-[520px] rounded-[28px]" />
+        <Skeleton className="h-[520px] rounded-xl" />
+        <Skeleton className="h-[520px] rounded-xl" />
       </div>
     )
   }
@@ -566,7 +566,7 @@ function StudentQuizHub() {
 
       <TabsContent value="course">
         <div className="grid gap-6 xl:grid-cols-[360px,1fr]">
-          <aside className="rounded-[28px] border border-white/60 bg-white/85 p-5 shadow-lg shadow-slate-900/5 dark:border-white/10 dark:bg-card/85">
+          <aside className="rounded-xl border p-5">
             <h2 className="text-lg font-semibold">Course quizzes</h2>
             <p className="mt-1 text-sm text-muted-foreground">Lesson-linked quizzes from your enrolled courses.</p>
             <div className="mt-4">
@@ -583,7 +583,7 @@ function StudentQuizHub() {
 
       <TabsContent value="academic">
         <div className="grid gap-6 xl:grid-cols-[360px,1fr]">
-          <aside className="rounded-[28px] border border-white/60 bg-white/85 p-5 shadow-lg shadow-slate-900/5 dark:border-white/10 dark:bg-card/85">
+          <aside className="rounded-xl border p-5">
             <h2 className="text-lg font-semibold">Academic assessments</h2>
             <p className="mt-1 text-sm text-muted-foreground">Standalone timed assessments assigned through your class subject enrollments.</p>
             <div className="mt-4">
@@ -604,24 +604,19 @@ function StudentQuizHub() {
 function StudentLearningHub() {
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Digital learning"
-        title="Watch lessons, take timed quizzes, and track released results from one student workspace."
-        description="Recorded lessons remain course-based while quizzes now cover both lesson practice and official academic assessments."
-        stats={[
-          { label: 'Recorded lessons', value: 'Live', detail: 'Published recordings stay synced to progress tracking.' },
-          { label: 'Course quizzes', value: 'Open', detail: 'Lesson-linked quizzes appear alongside enrolled course work.' },
-          { label: 'Assessments', value: 'Ready', detail: 'Standalone academic assessments use hidden results until close.' },
-        ]}
+        title="E-Learning"
+        description="Watch lessons, take quizzes, and track your academic progress."
       />
 
       <Tabs defaultValue="recorded" className="space-y-6">
-        <TabsList className="h-auto rounded-2xl bg-white/70 p-1 shadow-sm dark:bg-card/70">
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="recorded">
+        <TabsList>
+          <TabsTrigger value="recorded">
             <Video className="mr-2 h-4 w-4" />
             Recorded lessons
           </TabsTrigger>
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="quizzes">
+          <TabsTrigger value="quizzes">
             <CircleHelp className="mr-2 h-4 w-4" />
             Quizzes & assessments
           </TabsTrigger>
@@ -718,29 +713,29 @@ export default function ELearningPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Live learning"
-        title="Coordinate live classes and submissions from a sharper e-learning surface."
-        description="Recorded lessons and quizzes now live in the student workspace, while this area continues to handle live sessions and learner submissions."
+        title="E-Learning"
+        description="Coordinate live classes and track learner submissions."
         stats={[
-          { label: 'Live classes', value: liveClasses.length, detail: 'Scheduled classes currently available.' },
-          { label: 'Live now', value: liveNow, detail: 'Classes actively marked as live.' },
-          { label: 'Submissions', value: submissions.length, detail: 'Learner submissions currently visible.' },
+          { label: 'Live classes', value: liveClasses.length },
+          { label: 'Live now', value: liveNow },
+          { label: 'Submissions', value: submissions.length },
         ]}
       />
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">E-Learning</h1>
+        <h2 className="text-lg font-semibold">Live Classes</h2>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="h-12 rounded-2xl px-5">
+            <Button className="h-10 rounded-xl px-5">
               <Plus className="mr-2 h-4 w-4" />
               Schedule Class
             </Button>
           </DialogTrigger>
-          <DialogContent className="rounded-[28px]">
+          <DialogContent className="rounded-xl">
             <DialogHeader>
               <DialogTitle>Schedule Live Class</DialogTitle>
             </DialogHeader>

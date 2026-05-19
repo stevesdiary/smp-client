@@ -19,6 +19,7 @@ import { ELibraryTab } from '@/components/library/ELibraryTab'
 import { formatDate } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import { getUserRole } from '@/lib/auth'
+import { PageHeader } from '@/components/shared/PageHeader'
 import api from '@/lib/api'
 
 const bookSchema = z.object({ title: z.string().min(1), author: z.string().min(1), isbn: z.string().optional(), genre: z.string().optional(), totalCopies: z.coerce.number().min(1) })
@@ -95,48 +96,23 @@ export default function LibraryPage() {
   ]
 
   return (
-    <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-teal-950 to-cyan-900 p-6 text-white shadow-2xl shadow-slate-900/10 lg:p-8">
-        <div className="absolute right-0 top-0 h-52 w-52 rounded-full bg-amber-300/20 blur-3xl" />
-        <div className="relative grid gap-6 xl:grid-cols-[1.2fr,0.85fr]">
-          <div className="space-y-4">
-            <Badge className="rounded-full border border-white/15 bg-white/10 px-4 py-1 text-[10px] uppercase tracking-[0.22em] text-white">
-              Library operations
-            </Badge>
-            <div>
-              <h1 className="text-3xl font-semibold leading-tight lg:text-5xl">Run library circulation from a stronger catalog surface.</h1>
-              <p className="mt-3 max-w-2xl text-sm text-white/78 lg:text-base">
-                Catalog management and borrowing still use the current library endpoints, now inside the richer app frame.
-              </p>
-            </div>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Books</p>
-              <p className="mt-2 text-3xl font-semibold">{books.length}</p>
-              <p className="mt-2 text-sm text-white/70">Catalog entries currently available.</p>
-            </div>
-            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Borrowed</p>
-              <p className="mt-2 text-3xl font-semibold">{transactions.filter((tx: any) => tx.status === 'BORROWED').length}</p>
-              <p className="mt-2 text-sm text-white/70">Active book loans currently in circulation.</p>
-            </div>
-            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Returned</p>
-              <p className="mt-2 text-3xl font-semibold">{transactions.filter((tx: any) => tx.status === 'RETURNED').length}</p>
-              <p className="mt-2 text-sm text-white/70">Transactions that have been completed.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Library operations"
+        title="Library"
+        description="Manage catalog, borrowing, and returns."
+        stats={[
+          { label: 'Books', value: books.length },
+          { label: 'Borrowed', value: transactions.filter((tx: any) => tx.status === 'BORROWED').length },
+          { label: 'Returned', value: transactions.filter((tx: any) => tx.status === 'RETURNED').length },
+        ]}
+      />
 
-      <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-semibold">Library</h1><p className="text-muted-foreground">{books.length} books</p></div>
-        {canManage && (
+      {canManage && (
         <div className="flex gap-2">
           <Dialog open={borrowOpen} onOpenChange={setBorrowOpen}>
-            <DialogTrigger asChild><Button variant="outline" className="h-12 rounded-2xl"><ArrowLeftRight className="h-4 w-4 mr-2" />Borrow</Button></DialogTrigger>
-            <DialogContent className="rounded-[28px]">
+            <DialogTrigger asChild><Button variant="outline" className="h-10 rounded-xl"><ArrowLeftRight className="h-4 w-4 mr-2" />Borrow</Button></DialogTrigger>
+            <DialogContent className="rounded-xl">
               <DialogHeader><DialogTitle>Borrow Book</DialogTitle></DialogHeader>
               <form onSubmit={borrowForm.handleSubmit(d => borrowMutation.mutate(d))} className="space-y-4">
                 <div className="space-y-1">
@@ -160,8 +136,8 @@ export default function LibraryPage() {
             </DialogContent>
           </Dialog>
           <Dialog open={addOpen} onOpenChange={setAddOpen}>
-            <DialogTrigger asChild><Button className="h-12 rounded-2xl"><Plus className="h-4 w-4 mr-2" />Add Book</Button></DialogTrigger>
-            <DialogContent className="rounded-[28px]">
+            <DialogTrigger asChild><Button className="h-10 rounded-xl"><Plus className="h-4 w-4 mr-2" />Add Book</Button></DialogTrigger>
+            <DialogContent className="rounded-xl">
               <DialogHeader><DialogTitle>Add Book</DialogTitle></DialogHeader>
               <form onSubmit={bookForm.handleSubmit(d => addMutation.mutate(d))} className="space-y-4">
                 <div className="space-y-1"><Label>Title</Label><Input className="h-11 rounded-2xl" {...bookForm.register('title')} /></div>
@@ -177,10 +153,9 @@ export default function LibraryPage() {
           </Dialog>
         </div>
         )}
-      </div>
 
       <Tabs defaultValue="books" className="space-y-4">
-        <TabsList className="h-auto rounded-2xl bg-white/70 p-1 shadow-sm dark:bg-card/70"><TabsTrigger className="rounded-2xl px-5 py-2.5" value="books"><BookOpen className="h-4 w-4 mr-2" />Catalog</TabsTrigger><TabsTrigger className="rounded-2xl px-5 py-2.5" value="elibrary"><Laptop className="h-4 w-4 mr-2" />E-Library</TabsTrigger>{canManage && <TabsTrigger className="rounded-2xl px-5 py-2.5" value="transactions">Transactions</TabsTrigger>}</TabsList>
+        <TabsList><TabsTrigger value="books"><BookOpen className="h-4 w-4 mr-2" />Catalog</TabsTrigger><TabsTrigger value="elibrary"><Laptop className="h-4 w-4 mr-2" />E-Library</TabsTrigger>{canManage && <TabsTrigger value="transactions">Transactions</TabsTrigger>}</TabsList>
         <TabsContent value="books"><DataTable data={books} columns={bookColumns} searchKey="title" isLoading={isLoading} /></TabsContent>
         <TabsContent value="elibrary"><ELibraryTab /></TabsContent>
         <TabsContent value="transactions"><DataTable data={transactions} columns={txColumns} /></TabsContent>

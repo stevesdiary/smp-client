@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton'
 import api from '@/lib/api'
 import type { Course } from '@/types'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 
 const schema = z.object({
   title: z.string().min(1, 'Required'),
@@ -100,7 +100,7 @@ function CourseCard({ course }: { course: Course }) {
 
   return (
     <div className="transition-transform duration-200 ease-out hover:-translate-y-0.5">
-      <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 transition-shadow hover:shadow-xl dark:border-white/10 dark:bg-card/85">
+      <Card className="rounded-xl transition-shadow hover:shadow-xl">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="text-base line-clamp-2">{course.title}</CardTitle>
@@ -145,36 +145,34 @@ export default function CoursesPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Digital learning"
-        title="Manage course publishing from a stronger content operations surface."
-        description="Course creation and publish state still use the current course endpoints while the screen now follows the richer interface language."
+        title="Courses"
+        description="Manage course publishing and enrollments."
         stats={[
-          { label: 'Courses', value: courses.length, detail: 'Course records currently available.' },
-          { label: 'Published', value: publishedCourses, detail: 'Courses already visible as published.' },
-          { label: 'Enrollments', value: totalEnrollments, detail: 'Aggregate course enrollments across the catalog.' },
+          { label: 'Courses', value: courses.length },
+          { label: 'Published', value: publishedCourses },
+          { label: 'Enrollments', value: totalEnrollments },
         ]}
       />
 
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Courses</h1>
-          <p className="text-muted-foreground">{courses.length} courses</p>
-        </div>
+        <div className="flex items-center gap-3">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="h-12 rounded-2xl px-5"><Plus className="h-4 w-4 mr-2" />New Course</Button>
+            <Button><Plus className="h-4 w-4 mr-2" />New Course</Button>
           </DialogTrigger>
-          <DialogContent className="rounded-[28px]">
+          <DialogContent className="rounded-xl">
             <DialogHeader><DialogTitle>Create Course</DialogTitle></DialogHeader>
             <CourseForm onSuccess={() => setOpen(false)} />
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-48 rounded-[28px]" />)}
+          {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-48 rounded-xl" />)}
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { DataTable } from '@/components/shared/DataTable'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
@@ -142,10 +142,10 @@ export default function CandidatesPage() {
           </Button>
           {row.original.status === 'PENDING' && (
             <>
-              <Button variant="ghost" size="icon" className="rounded-xl text-green-600" onClick={() => admitMutation.mutate(row.original.id)}>
+              <Button variant="ghost" aria-label="Admit" size="icon" className="rounded-xl text-success" onClick={() => admitMutation.mutate(row.original.id)}>
                 <UserCheck className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" className="rounded-xl text-destructive" onClick={() => rejectMutation.mutate(row.original.id)}>
+              <Button variant="ghost" aria-label="Reject" size="icon" className="rounded-xl text-destructive" onClick={() => rejectMutation.mutate(row.original.id)}>
                 <UserX className="h-4 w-4" />
               </Button>
             </>
@@ -157,14 +157,14 @@ export default function CandidatesPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Admissions"
-        title="Manage the full candidate-to-student pipeline."
-        description="Register applicants, review their applications, and admit them into the school with a single click."
+        title="Candidates"
+        description="Register applicants and admit them into the school."
         stats={[
-          { label: 'Total applicants', value: candidates.length, detail: 'All candidates registered in the system.' },
-          { label: 'Pending review', value: pending.length, detail: 'Candidates awaiting admission decision.' },
-          { label: 'Admitted', value: admitted.length, detail: 'Candidates converted to students.' },
+          { label: 'Total', value: candidates.length },
+          { label: 'Pending', value: pending.length },
+          { label: 'Admitted', value: admitted.length },
         ]}
         actions={
           <div className="flex gap-2">
@@ -174,13 +174,13 @@ export default function CandidatesPage() {
               templateUrl="/candidates/csv-template"
               templateFileName="candidates-template.csv"
               invalidateKeys={[['candidates']]}
-              trigger={<Button className="h-12 rounded-2xl border border-white/30 bg-white/10 px-5 text-white hover:bg-white/20"><Upload className="mr-2 h-4 w-4" />CSV Upload</Button>}
+              trigger={<Button className="h-10 rounded-xl border border-white/30 bg-white/10 px-5 text-white hover:bg-white/20"><Upload className="mr-2 h-4 w-4" />CSV Upload</Button>}
             />
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
               <DialogTrigger asChild>
-                <Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />New Candidate</Button>
+                <Button className="h-10 rounded-xl px-5"><Plus className="mr-2 h-4 w-4" />New Candidate</Button>
               </DialogTrigger>
-              <DialogContent className="rounded-[28px]">
+              <DialogContent className="rounded-xl">
                 <DialogHeader><DialogTitle>Register Candidate</DialogTitle></DialogHeader>
                 <form onSubmit={form.handleSubmit(d => createMutation.mutate(d))} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -225,9 +225,9 @@ export default function CandidatesPage() {
 
       {/* Pipeline summary cards */}
       <section className="grid gap-4 md:grid-cols-3">
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700 dark:text-amber-300">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-chart-2/10 text-warning-foreground dark:text-warning">
               <Clock className="h-5 w-5" />
             </div>
             <div>
@@ -236,9 +236,9 @@ export default function CandidatesPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-500/10 text-green-700 dark:text-green-300">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-success-light text-green-700 dark:text-green-300">
               <CheckCircle2 className="h-5 w-5" />
             </div>
             <div>
@@ -247,9 +247,9 @@ export default function CandidatesPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-700 dark:text-red-300">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-red-500/10 text-red-700 dark:text-red-300">
               <UserX className="h-5 w-5" />
             </div>
             <div>
@@ -276,7 +276,7 @@ export default function CandidatesPage() {
 
       {/* Detail dialog */}
       <Dialog open={!!detailCandidate} onOpenChange={(v) => { if (!v) setDetailCandidate(null) }}>
-        <DialogContent className="rounded-[28px] max-w-lg">
+        <DialogContent className="rounded-xl max-w-lg">
           <DialogHeader><DialogTitle>Candidate Details</DialogTitle></DialogHeader>
           {detailCandidate && (
             <div className="space-y-5">
@@ -322,7 +322,7 @@ export default function CandidatesPage() {
               {detailCandidate.status === 'PENDING' && (
                 <div className="flex gap-3">
                   <Button
-                    className="h-11 flex-1 rounded-2xl bg-green-600 hover:bg-green-700"
+                    className="h-11 flex-1 rounded-2xl bg-success hover:bg-success/90"
                     onClick={() => admitMutation.mutate(detailCandidate.id)}
                     disabled={admitMutation.isPending}
                   >
@@ -343,7 +343,7 @@ export default function CandidatesPage() {
 
               {detailCandidate.status === 'ADMITTED' && (
                 <div className="rounded-2xl border border-green-200 bg-green-50 p-4 dark:border-green-900 dark:bg-green-950/30">
-                  <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                  <p className="text-sm font-medium text-success dark:text-green-200">
                     This candidate has been admitted and a student record was created.
                   </p>
                 </div>
