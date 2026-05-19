@@ -78,13 +78,13 @@ export default function SchoolSetupPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-2">
           <Label className="text-sm font-medium">School Name</Label>
-          <Input className="h-12 rounded-2xl bg-background/85" placeholder="Bright Future Academy" {...register('schoolName')} />
+          <Input className="h-10 rounded-xl bg-background/85" placeholder="Bright Future Academy" {...register('schoolName')} />
           {errors.schoolName && <p className="text-xs text-destructive">{errors.schoolName.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label className="text-sm font-medium">School Portal Code</Label>
-          <Input className="h-12 rounded-2xl bg-background/85" placeholder="bright-future-academy" {...register('schoolCode')} />
+          <Input className="h-10 rounded-xl bg-background/85" placeholder="bright-future-academy" {...register('schoolCode')} />
           {errors.schoolCode && <p className="text-xs text-destructive">{errors.schoolCode.message}</p>}
           <p className="text-xs text-muted-foreground">This is the code your staff will use when signing in.</p>
         </div>
@@ -92,19 +92,19 @@ export default function SchoolSetupPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label className="text-sm font-medium">Administrator Name</Label>
-            <Input className="h-12 rounded-2xl bg-background/85" placeholder="Amina Yusuf" {...register('adminName')} />
+            <Input className="h-10 rounded-xl bg-background/85" placeholder="Amina Yusuf" {...register('adminName')} />
             {errors.adminName && <p className="text-xs text-destructive">{errors.adminName.message}</p>}
           </div>
           <div className="space-y-2">
             <Label className="text-sm font-medium">Administrator Email</Label>
-            <Input className="h-12 rounded-2xl bg-background/85" type="email" placeholder="admin@school.com" {...register('adminEmail')} />
+            <Input className="h-10 rounded-xl bg-background/85" type="email" placeholder="admin@school.com" {...register('adminEmail')} />
             {errors.adminEmail && <p className="text-xs text-destructive">{errors.adminEmail.message}</p>}
           </div>
         </div>
 
         <div className="space-y-2">
           <Label className="text-sm font-medium">Password</Label>
-          <PasswordInput className="h-12 rounded-2xl bg-background/85" placeholder="Use a strong password" {...register('adminPassword')} />
+          <PasswordInput className="h-10 rounded-xl bg-background/85" placeholder="Use a strong password" {...register('adminPassword')} />
           {errors.adminPassword && <p className="text-xs text-destructive">{errors.adminPassword.message}</p>}
           <p className="text-xs text-muted-foreground">{passwordComplexityHint}</p>
         </div>
@@ -125,7 +125,7 @@ export default function SchoolSetupPage() {
           <div className="space-y-2">
             <Label className="text-sm font-medium">Number of Students</Label>
             <Input
-              className="h-12 rounded-2xl bg-background/85"
+              className="h-10 rounded-xl bg-background/85"
               type="number"
               min={1}
               max={100000}

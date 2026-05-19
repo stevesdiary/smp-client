@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
 
@@ -39,8 +39,8 @@ type PricingTier = {
 }
 
 const statusConfig = {
-  TRIAL: { label: 'Free Trial', variant: 'warning' as const, icon: Zap, color: 'text-amber-600' },
-  ACTIVE: { label: 'Active', variant: 'success' as const, icon: CheckCircle2, color: 'text-green-600' },
+  TRIAL: { label: 'Free Trial', variant: 'warning' as const, icon: Zap, color: 'text-warning' },
+  ACTIVE: { label: 'Active', variant: 'success' as const, icon: CheckCircle2, color: 'text-success' },
   EXPIRED: { label: 'Expired', variant: 'destructive' as const, icon: Shield, color: 'text-red-600' },
   CANCELLED: { label: 'Cancelled', variant: 'secondary' as const, icon: Shield, color: 'text-muted-foreground' },
 }
@@ -119,20 +119,20 @@ export default function BillingPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Billing"
-        title="Manage your school's subscription and payment."
-        description="View your current plan, upgrade student capacity, and manage billing cycles through Paystack."
+        title="Subscription & Billing"
+        description="Manage your school's plan, student capacity, and billing cycles via Paystack."
         stats={[
-          { label: 'Plan status', value: cfg.label, detail: status === 'TRIAL' && trialDays !== null ? `${trialDays} days remaining in trial` : status === 'ACTIVE' && expiryDays !== null ? `Renews in ${expiryDays} days` : 'No active subscription' },
-          { label: 'Student capacity', value: subscription?.studentCount ?? 0, detail: 'Maximum students on current plan.' },
-          { label: 'Amount', value: subscription ? formatNaira(subscription.amount) : '—', detail: subscription?.billingCycle === 'per_session' ? 'Per session (15% discount)' : 'Per term' },
+          { label: 'Plan status', value: cfg.label },
+          { label: 'Students', value: subscription?.studentCount ?? 0 },
+          { label: 'Amount', value: subscription ? formatNaira(subscription.amount) : '—' },
         ]}
       />
 
       {/* Current subscription card */}
       <section className="grid gap-6 lg:grid-cols-[1.2fr,0.8fr]">
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <CardTitle>Current Plan</CardTitle>
@@ -197,7 +197,7 @@ export default function BillingPage() {
         </Card>
 
         {/* Quick verify card */}
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardHeader><CardTitle>Verify Payment</CardTitle></CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
@@ -210,7 +210,7 @@ export default function BillingPage() {
                 placeholder="sub_84177414_1714..."
               />
               <Button
-                className="h-11 rounded-2xl px-5"
+                className="h-11 px-5"
                 disabled={verifyMutation.isPending}
                 onClick={() => {
                   const ref = (document.getElementById('verify-ref') as HTMLInputElement)?.value
@@ -226,7 +226,7 @@ export default function BillingPage() {
       </section>
 
       {/* Pricing table */}
-      <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+      <Card className="rounded-xl">
         <CardHeader>
           <CardTitle>Pricing</CardTitle>
           <p className="text-sm text-muted-foreground">
@@ -255,7 +255,7 @@ export default function BillingPage() {
                     </td>
                     <td className="py-3">{formatNaira(tier.ratePerStudent)}</td>
                     <td className="py-3 font-medium">{formatNaira(tier.termAmount)}</td>
-                    <td className="py-3 font-medium text-green-700 dark:text-green-400">{formatNaira(tier.sessionAmount)}</td>
+                    <td className="py-3 font-medium text-green-700 dark:text-success">{formatNaira(tier.sessionAmount)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -266,7 +266,7 @@ export default function BillingPage() {
 
       {/* Payment dialog */}
       <Dialog open={payOpen} onOpenChange={setPayOpen}>
-        <DialogContent className="rounded-[28px] max-w-md">
+        <DialogContent className="rounded-xl max-w-md">
           <DialogHeader><DialogTitle>Initialize Payment</DialogTitle></DialogHeader>
           <form onSubmit={form.handleSubmit((d) => initMutation.mutate(d as PayForm))} className="space-y-5">
             <div className="space-y-2">

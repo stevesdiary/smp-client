@@ -70,7 +70,7 @@ export default function StudentLoginPage() {
         <div className="space-y-1.5">
           <Label>Student ID</Label>
           <Input
-            className="h-12 rounded-2xl bg-background/85 uppercase"
+            className="h-10 rounded-xl bg-background/85 uppercase"
             placeholder="e.g. GWD250042"
             {...register('studentId')}
           />
@@ -79,7 +79,7 @@ export default function StudentLoginPage() {
 
         <div className="space-y-1.5">
           <Label>Password</Label>
-          <PasswordInput className="h-12 rounded-2xl bg-background/85" placeholder="••••••••" {...register('password')} />
+          <PasswordInput className="h-10 rounded-xl bg-background/85" placeholder="••••••••" {...register('password')} />
           {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
         </div>
 
