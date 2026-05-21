@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { getUserRole } from '@/lib/auth'
 import api from '@/lib/api'
 import { formatDate } from '@/lib/utils'
@@ -134,18 +134,13 @@ export default function NoticesPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="School updates"
-        title="Publish and track notices from a dedicated communication surface."
-        description={
-          canManage
-            ? 'Create targeted announcements for staff, families, and learners without leaving the main workspace.'
-            : 'Review notices addressed to your role from one cleaner communication feed.'
-        }
+        title="Notices"
+        description={canManage ? 'Create targeted announcements for staff, families, and learners.' : 'Review notices addressed to your role.'}
         stats={[
-          { label: 'Visible', value: notices.length, detail: 'Notices currently available in this workspace.' },
-          { label: 'Authors', value: authorCount, detail: 'People who have published notices here.' },
-          { label: 'Access', value: canManage ? 'Publish' : 'Read only', detail: canManage ? 'You can create, edit, and remove notices.' : 'You can review notices targeted to your role.' },
+          { label: 'Visible', value: notices.length },
+          { label: 'Authors', value: authorCount },
         ]}
         actions={canManage ? (
           <div>
@@ -157,12 +152,12 @@ export default function NoticesPage() {
               setOpen(true)
             }}>
               <DialogTrigger asChild>
-                <Button className="h-12 rounded-2xl px-5" onClick={openCreate}>
+                <Button className="h-10 rounded-xl px-5" onClick={openCreate}>
                   <Plus className="h-4 w-4" />
                   New Notice
                 </Button>
               </DialogTrigger>
-              <DialogContent className="rounded-[28px]">
+              <DialogContent className="rounded-xl">
                 <DialogHeader>
                   <DialogTitle>{editingNotice ? 'Edit Notice' : 'Publish Notice'}</DialogTitle>
                 </DialogHeader>
@@ -243,11 +238,11 @@ export default function NoticesPage() {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-40 rounded-[28px]" />
+            <Skeleton key={index} className="h-40 rounded-xl" />
           ))}
         </div>
       ) : notices.length === 0 ? (
-        <Card className="rounded-[28px] border-dashed">
+        <Card className="rounded-xl border-dashed">
           <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Bell className="h-6 w-6" />
@@ -263,7 +258,7 @@ export default function NoticesPage() {
       ) : (
         <div className="space-y-4">
           {notices.map((notice) => (
-            <Card key={notice.id} className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 dark:border-white/10 dark:bg-card/85">
+            <Card key={notice.id} className="rounded-xl">
               <CardContent className="space-y-4 p-5">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div className="space-y-3">

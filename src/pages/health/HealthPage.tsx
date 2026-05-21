@@ -17,7 +17,7 @@ import api from '@/lib/api'
 import { getApiErrorMessage } from '@/lib/utils'
 import { fetchHealthRecordsByStudent, type HealthRecordWithStudent } from '@/lib/moduleQueries'
 import type { Student } from '@/types'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 
 const schema = z.object({
   studentId: z.string().min(1, 'Required'),
@@ -62,23 +62,22 @@ export default function HealthPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Student wellbeing"
-        title="Keep health records visible from a cleaner care operations surface."
-        description="Medical data still uses the current health record endpoints while the screen now fits the richer interface system."
+        title="Health Records"
+        description="Manage student medical records and health data."
         stats={[
-          { label: 'Records', value: records.length, detail: 'Health records currently available.' },
-          { label: 'Students', value: students.length, detail: 'Students eligible for record creation.' },
-          { label: 'Conditions', value: recordsWithConditions.length, detail: 'Records with stored medical conditions.' },
+          { label: 'Records', value: records.length },
+          { label: 'With conditions', value: recordsWithConditions.length },
         ]}
       />
 
       <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-semibold">Health Records</h1><p className="text-muted-foreground">{records.length} records</p></div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button className="h-12 rounded-2xl px-5"><Plus className="h-4 w-4 mr-2" />New Record</Button></DialogTrigger>
-          <DialogContent className="rounded-[28px]">
-            <DialogHeader><DialogTitle>Create Health Record</DialogTitle></DialogHeader>
+        <div className="flex items-center gap-3">
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />New Record</Button></DialogTrigger>
+            <DialogContent className="rounded-xl">
+              <DialogHeader><DialogTitle>Create Health Record</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit(d => mutation.mutate(d))} className="space-y-4">
               <div className="space-y-1">
                 <Label>Student</Label>
@@ -96,7 +95,8 @@ export default function HealthPage() {
               <Button type="submit" className="h-11 w-full rounded-2xl" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save Record'}</Button>
             </form>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
       <DataTable data={records} columns={columns} isLoading={isLoading} />
     </div>
