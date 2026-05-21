@@ -15,15 +15,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Skeleton } from '@/components/ui/skeleton'
 import { getApiErrorMessage } from '@/lib/utils'
 import api from '@/lib/api'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 
 const schema = z.object({ name: z.string().min(1), type: z.string().min(1), description: z.string().optional(), instructor: z.string().optional(), maxCapacity: z.coerce.number().optional() })
 type FormData = z.infer<typeof schema>
 
 const typeColors: Record<string, string> = {
-  Sports: 'bg-green-100 text-green-800',
+  Sports: 'bg-success-light text-success',
   Arts: 'bg-purple-100 text-purple-800',
-  Music: 'bg-blue-100 text-blue-800',
+  Music: 'bg-info-light text-info',
   Clubs: 'bg-orange-100 text-orange-800',
 }
 
@@ -54,22 +54,21 @@ export default function SportsPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Campus life"
-        title="Run sports and club participation from a sharper activity surface."
-        description="Activities and enrollments remain powered by the same sports endpoints while the page now matches the richer product direction."
+        title="Sports & Activities"
+        description="Manage sports programs and club participation."
         stats={[
-          { label: 'Activities', value: activities.length, detail: 'Programs currently available for enrollment.' },
-          { label: 'Enrollments', value: totalEnrollments, detail: 'Total learners already assigned to activities.' },
-          { label: 'Students', value: students.length, detail: 'Students available for enrollment actions.' },
+          { label: 'Activities', value: activities.length },
+          { label: 'Enrollments', value: totalEnrollments },
         ]}
       />
 
       <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-semibold">Sports & Activities</h1><p className="text-muted-foreground">{activities.length} activities</p></div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button className="h-12 rounded-2xl px-5"><Plus className="h-4 w-4 mr-2" />New Activity</Button></DialogTrigger>
-          <DialogContent className="rounded-[28px]">
+        <div className="flex items-center gap-3">
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />New Activity</Button></DialogTrigger>
+            <DialogContent className="rounded-xl">
             <DialogHeader><DialogTitle>Create Activity</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit(d => mutation.mutate(d))} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -84,11 +83,12 @@ export default function SportsPage() {
               <Button type="submit" className="h-11 w-full rounded-2xl" disabled={isSubmitting}>{isSubmitting ? 'Creating...' : 'Create Activity'}</Button>
             </form>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
 
       <Dialog open={enrollOpen} onOpenChange={setEnrollOpen}>
-        <DialogContent className="rounded-[28px]">
+        <DialogContent className="rounded-xl">
           <DialogHeader><DialogTitle>Enroll Student</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="space-y-1">
@@ -104,11 +104,11 @@ export default function SportsPage() {
       </Dialog>
 
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-40 rounded-[28px]" />)}</div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-40 rounded-xl" />)}</div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {activities.map((a: any) => (
-            <Card key={a.id} className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 transition-shadow hover:shadow-xl dark:border-white/10 dark:bg-card/85">
+            <Card key={a.id} className="rounded-xl transition-shadow hover:shadow-xl">
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-base">{a.name}</CardTitle>

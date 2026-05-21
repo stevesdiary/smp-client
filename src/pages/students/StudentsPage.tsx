@@ -1,9 +1,9 @@
-import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { ChevronLeft, ChevronRight, Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { DataTable } from '@/components/shared/DataTable'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
 import type { Student } from '@/types'
@@ -45,24 +46,24 @@ function StudentForm({ student, onSuccess }: { student?: Student; onSuccess: () 
 
   return (
     <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1">
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
           <Label>First Name</Label>
-          <Input className="h-11 rounded-2xl" {...register('firstName')} />
+          <Input {...register('firstName')} />
           {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
         </div>
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <Label>Last Name</Label>
-          <Input className="h-11 rounded-2xl" {...register('lastName')} />
+          <Input {...register('lastName')} />
           {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
         </div>
       </div>
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         <Label>Date of Birth</Label>
-        <Input className="h-11 rounded-2xl" type="date" {...register('dob')} />
+        <Input type="date" {...register('dob')} />
       </div>
-      <Button type="submit" className="h-11 w-full rounded-2xl" disabled={isSubmitting}>
-        {isSubmitting ? 'Saving...' : student ? 'Update Student' : 'Add Student'}
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? 'Saving…' : student ? 'Update Student' : 'Add Student'}
       </Button>
     </form>
   )
@@ -77,7 +78,6 @@ export default function StudentsPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const limit = 25
 
-  // Simple debounce
   const [searchTimer, setSearchTimer] = useState<ReturnType<typeof setTimeout>>()
   function onSearch(val: string) {
     setSearch(val)
@@ -114,12 +114,12 @@ export default function StudentsPage() {
     {
       id: 'actions',
       cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button variant="ghost" size="icon" onClick={() => { setEditing(row.original); setOpen(true) }}>
-            <Pencil className="h-4 w-4" />
+        <div className="flex gap-1">
+          <Button variant="ghost" size="icon-sm" aria-label="Edit student" onClick={() => { setEditing(row.original); setOpen(true) }}>
+            <Pencil className="h-3.5 w-3.5" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => deleteMutation.mutate(row.original.id)}>
-            <Trash2 className="h-4 w-4 text-destructive" />
+          <Button variant="ghost" size="icon-sm" aria-label="Delete student" onClick={() => deleteMutation.mutate(row.original.id)}>
+            <Trash2 className="h-3.5 w-3.5 text-destructive" />
           </Button>
         </div>
       ),
@@ -127,49 +127,18 @@ export default function StudentsPage() {
   ]
 
   return (
-    <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-teal-950 to-cyan-900 p-6 text-white shadow-2xl shadow-slate-900/10 lg:p-8">
-        <div className="absolute right-0 top-0 h-52 w-52 rounded-full bg-amber-300/20 blur-3xl" />
-        <div className="relative grid gap-6 xl:grid-cols-[1.2fr,0.85fr]">
-          <div className="space-y-4">
-            <Badge className="rounded-full border border-white/15 bg-white/10 px-4 py-1 text-[10px] uppercase tracking-[0.22em] text-white">
-              Student registry
-            </Badge>
-            <div>
-              <h1 className="text-3xl font-semibold leading-tight lg:text-5xl">Manage student records with a cleaner operating surface.</h1>
-              <p className="mt-3 max-w-2xl text-sm text-white/78 lg:text-base">
-                Enrollment data remains connected to the live student API while the interface now feels closer to the richer client direction.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Total enrolled</p>
-              <p className="mt-2 text-3xl font-semibold">{total}</p>
-              <p className="mt-2 text-sm text-white/70">Active learner records in the registry.</p>
-            </div>
-            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">This page</p>
-              <p className="mt-2 text-3xl font-semibold">{students.length}</p>
-              <p className="mt-2 text-sm text-white/70">Showing {students.length} of {total} students.</p>
-            </div>
-            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">With DOB on file</p>
-              <p className="mt-2 text-3xl font-semibold">{students.filter(s => s.dob).length}</p>
-              <p className="mt-2 text-sm text-white/70">Students with date of birth recorded.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold">Student records</h2>
-            <p className="text-sm text-muted-foreground">Search, review, and maintain the school’s active learner list.</p>
-          </div>
-          <div className="flex gap-2">
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Student registry"
+        title="Students"
+        description="Manage student records, enrollment, and learner data."
+        stats={[
+          { label: 'Total enrolled', value: total },
+          { label: 'This page', value: students.length },
+          { label: 'With DOB', value: students.filter(s => s.dob).length },
+        ]}
+        actions={
+          <>
             <CsvUploadDialog
               title="Upload Students CSV"
               uploadUrl="/students/upload-csv"
@@ -178,48 +147,49 @@ export default function StudentsPage() {
               invalidateKeys={[['students']]}
             />
             <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(undefined) }}>
-            <DialogTrigger asChild>
-              <Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />Add Student</Button>
-            </DialogTrigger>
-            <DialogContent className="rounded-[28px]">
-              <DialogHeader>
-                <DialogTitle>{editing ? 'Edit Student' : 'Add Student'}</DialogTitle>
-              </DialogHeader>
-              <StudentForm student={editing} onSuccess={() => { setOpen(false); setEditing(undefined) }} />
-            </DialogContent>
-          </Dialog>
+              <DialogTrigger asChild>
+                <Button><Plus className="h-4 w-4" />Add Student</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>{editing ? 'Edit Student' : 'Add Student'}</DialogTitle>
+                </DialogHeader>
+                <StudentForm student={editing} onSuccess={() => { setOpen(false); setEditing(undefined) }} />
+              </DialogContent>
+            </Dialog>
+          </>
+        }
+      />
+
+      {/* Server-side search */}
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Input
+            placeholder="Search by name or student code…"
+            value={search}
+            onChange={(e) => onSearch(e.target.value)}
+            className="pl-3"
+          />
+        </div>
+        <span className="text-sm text-muted-foreground">{total} students</span>
+      </div>
+
+      {/* Table — searchKey omitted to avoid duplicate search UI */}
+      <DataTable data={students} columns={columns} isLoading={isLoading} />
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">Page {page} of {totalPages}</p>
+          <div className="flex items-center gap-1.5">
+            <Button variant="outline" size="icon-sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)} aria-label="Previous page">
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="icon-sm" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)} aria-label="Next page">
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-
-        <div className="mb-4 flex items-center gap-3">
-          <div className="relative flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              className="h-10 rounded-2xl pl-9"
-              placeholder="Search by name or student code…"
-              value={search}
-              onChange={(e) => onSearch(e.target.value)}
-            />
-          </div>
-          <span className="text-sm text-muted-foreground">{total} students</span>
-        </div>
-
-        <DataTable data={students} columns={columns} searchKey="lastName" isLoading={isLoading} />
-
-        {totalPages > 1 && (
-          <div className="mt-4 flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">Page {page} of {totalPages}</p>
-            <div className="flex items-center gap-1">
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-xl" disabled={page <= 1} onClick={() => setPage(p => p - 1)}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon" className="h-8 w-8 rounded-xl" disabled={page >= totalPages} onClick={() => setPage(p => p + 1)}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-      </section>
+      )}
     </div>
   )
 }

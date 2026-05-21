@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatDate, formatCurrency } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
+import { PageHeader } from '@/components/shared/PageHeader'
 import {
   useStudentProfile,
   useStudentTimetable,
@@ -19,11 +20,11 @@ import type { Grade, Attendance } from '@/types'
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 const DAY_TONE: Record<number, string> = {
-  1: 'bg-teal-500/15 text-teal-800 dark:text-teal-200',
-  2: 'bg-amber-500/15 text-amber-800 dark:text-amber-200',
+  1: 'bg-chart-1/15 text-teal-800 dark:text-teal-200',
+  2: 'bg-chart-2/15 text-amber-800 dark:text-amber-200',
   3: 'bg-sky-500/15 text-sky-800 dark:text-sky-200',
   4: 'bg-violet-500/15 text-violet-800 dark:text-violet-200',
-  5: 'bg-rose-500/15 text-rose-800 dark:text-rose-200',
+  5: 'bg-chart-4/15 text-rose-800 dark:text-rose-200',
 }
 
 const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
@@ -53,7 +54,7 @@ function OverviewTab() {
   if (!profile) return <Empty message="Could not load profile." />
 
   return (
-    <Card className="rounded-[28px]">
+    <Card className="rounded-xl">
       <CardContent className="grid gap-3 p-6 text-sm">
         <Row label="Full Name" value={`${profile.firstName} ${profile.lastName}`} />
         <Row label="Student ID" value={profile.studentId || profile.studentCode || '—'} mono />
@@ -195,24 +196,19 @@ export default function StudentPortalPage() {
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-900 p-6 text-white shadow-2xl lg:p-8">
-        <div className="absolute right-0 top-0 h-52 w-52 rounded-full bg-violet-300/20 blur-3xl" />
-        <div className="relative space-y-2">
-          <Badge className="rounded-full border border-white/15 bg-white/10 px-4 py-1 text-[10px] uppercase tracking-[0.22em] text-white">
-            Student portal
-          </Badge>
-          <h1 className="text-3xl font-semibold">Welcome back, {user?.firstName || 'Student'}</h1>
-          <p className="text-sm text-white/70">Your timetable, grades, attendance, and fees — all in one place.</p>
-        </div>
-      </section>
+      <PageHeader
+        eyebrow="Student portal"
+        title={`Welcome back, ${user?.firstName || 'Student'}`}
+        description="Your timetable, grades, attendance, and fees — all in one place."
+      />
 
       <Tabs defaultValue="overview">
-        <TabsList className="grid w-full grid-cols-5 rounded-2xl">
-          <TabsTrigger value="overview" className="rounded-xl gap-1.5"><User className="h-3.5 w-3.5" />Overview</TabsTrigger>
-          <TabsTrigger value="timetable" className="rounded-xl gap-1.5"><Calendar className="h-3.5 w-3.5" />Timetable</TabsTrigger>
-          <TabsTrigger value="grades" className="rounded-xl gap-1.5"><BookOpen className="h-3.5 w-3.5" />Grades</TabsTrigger>
-          <TabsTrigger value="attendance" className="rounded-xl gap-1.5"><ClipboardList className="h-3.5 w-3.5" />Attendance</TabsTrigger>
-          <TabsTrigger value="fees" className="rounded-xl gap-1.5"><CreditCard className="h-3.5 w-3.5" />Fees</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="overview" className="gap-1.5"><User className="h-3.5 w-3.5" />Overview</TabsTrigger>
+          <TabsTrigger value="timetable" className="gap-1.5"><Calendar className="h-3.5 w-3.5" />Timetable</TabsTrigger>
+          <TabsTrigger value="grades" className="gap-1.5"><BookOpen className="h-3.5 w-3.5" />Grades</TabsTrigger>
+          <TabsTrigger value="attendance" className="gap-1.5"><ClipboardList className="h-3.5 w-3.5" />Attendance</TabsTrigger>
+          <TabsTrigger value="fees" className="gap-1.5"><CreditCard className="h-3.5 w-3.5" />Fees</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="mt-4"><OverviewTab /></TabsContent>
         <TabsContent value="timetable" className="mt-4"><TimetableTab /></TabsContent>
