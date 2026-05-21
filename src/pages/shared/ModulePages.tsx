@@ -14,56 +14,10 @@ import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { DataTable } from '@/components/shared/DataTable'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
+import { PageHeader } from '@/components/shared/PageHeader'
 import api from '@/lib/api'
 import { fetchAllPaymentsByStudent } from '@/lib/moduleQueries'
 import { formatCurrency } from '@/lib/utils'
-
-type ModuleHeroStat = {
-  label: string
-  value: string | number
-  detail: string
-}
-
-function ModuleHero({
-  eyebrow,
-  title,
-  description,
-  stats,
-  actions,
-}: {
-  eyebrow: string
-  title: string
-  description: string
-  stats: ModuleHeroStat[]
-  actions?: ReactNode
-}) {
-  return (
-    <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-teal-950 to-cyan-900 p-6 text-white shadow-2xl shadow-slate-900/10 lg:p-8">
-      <div className="absolute right-0 top-0 h-52 w-52 rounded-full bg-amber-300/20 blur-3xl" />
-      <div className="relative grid gap-6 xl:grid-cols-[1.2fr,0.85fr]">
-        <div className="space-y-4">
-          <Badge className="rounded-full border border-white/15 bg-white/10 px-4 py-1 text-[10px] uppercase tracking-[0.22em] text-white">
-            {eyebrow}
-          </Badge>
-          <div>
-            <h1 className="text-3xl font-semibold leading-tight lg:text-5xl">{title}</h1>
-            <p className="mt-3 max-w-2xl text-sm text-white/78 lg:text-base">{description}</p>
-          </div>
-          {actions}
-        </div>
-        <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-          {stats.map((stat) => (
-            <div key={stat.label} className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">{stat.label}</p>
-              <p className="mt-2 text-3xl font-semibold">{stat.value}</p>
-              <p className="mt-2 text-sm text-white/70">{stat.detail}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
 
 // ─── Teachers ───────────────────────────────────────────────────────────────
 
@@ -113,10 +67,10 @@ export function TeachersPage() {
       id: 'actions',
       cell: ({ row }) => (
         <div className="flex gap-2">
-          <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => { setEditing(row.original); setOpen(true) }}>
+          <Button variant="ghost" aria-label="Edit" size="icon" className="rounded-xl" onClick={() => { setEditing(row.original); setOpen(true) }}>
             <Pencil className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => deleteMutation.mutate(row.original.id)}>
+          <Button variant="ghost" aria-label="Delete" size="icon" className="rounded-xl" onClick={() => deleteMutation.mutate(row.original.id)}>
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
         </div>
@@ -126,14 +80,13 @@ export function TeachersPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Academic core"
-        title="Faculty records in one cleaner workspace."
-        description="Teacher records remain live and editable while the page now matches the richer shell and dashboard direction."
+        title="Teachers"
+        description="Faculty records and subject assignments."
         stats={[
-          { label: 'Total faculty', value: teachers.length, detail: 'Current faculty profiles in the system.' },
-          { label: 'With subject', value: teachers.filter((t: any) => t.subject).length, detail: 'Teachers with a subject specialty on file.' },
-          { label: 'Unassigned', value: teachers.filter((t: any) => !t.subject).length, detail: 'Faculty not yet linked to a subject.' },
+          { label: 'Faculty', value: teachers.length },
+          { label: 'With subject', value: teachers.filter((t: any) => t.subject).length },
         ]}
         actions={
           <div className="flex gap-2">
@@ -143,13 +96,13 @@ export function TeachersPage() {
               templateUrl="/teachers/csv-template"
               templateFileName="teachers-template.csv"
               invalidateKeys={[['teachers']]}
-              trigger={<Button className="h-12 rounded-2xl border border-white/30 bg-white/10 px-5 text-white hover:bg-white/20"><Upload className="mr-2 h-4 w-4" />CSV Upload</Button>}
+              trigger={<Button variant="outline"><Upload className="mr-2 h-4 w-4" />CSV Upload</Button>}
             />
             <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { reset(); setEditing(null) } }}>
               <DialogTrigger asChild>
-                <Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />Add Teacher</Button>
+                <Button className="h-10 rounded-xl px-5"><Plus className="mr-2 h-4 w-4" />Add Teacher</Button>
               </DialogTrigger>
-            <DialogContent className="rounded-[28px]">
+            <DialogContent className="rounded-xl">
               <DialogHeader><DialogTitle>{editing ? 'Edit' : 'Add'} Teacher</DialogTitle></DialogHeader>
               <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -179,9 +132,9 @@ export function TeachersPage() {
       />
 
       <section className="grid gap-4 md:grid-cols-3">
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <GraduationCap className="h-5 w-5" />
             </div>
             <div>
@@ -190,9 +143,9 @@ export function TeachersPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700 dark:text-amber-300">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-chart-2/10 text-warning-foreground dark:text-warning">
               <Layers3 className="h-5 w-5" />
             </div>
             <div>
@@ -201,9 +154,9 @@ export function TeachersPage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+        <Card className="rounded-xl">
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-500/10 text-teal-700 dark:text-teal-300">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-chart-1/10 text-chart-1 dark:text-chart-1">
               <Layers3 className="h-5 w-5" />
             </div>
             <div>
@@ -270,21 +223,20 @@ export function ClassesPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Class structure"
-        title="Organize classes with a stronger classroom operations view."
-        description="Class creation stays simple, but the page now aligns visually with the richer client direction."
+        title="Classes"
+        description="Organize classrooms and homeroom assignments."
         stats={[
-          { label: 'Total classes', value: classes.length, detail: 'Current class records available in the system.' },
-          { label: 'Homeroom linked', value: classes.filter((item: any) => item.teacher).length, detail: 'Classes already assigned a homeroom teacher.' },
-          { label: 'Total students', value: classes.reduce((sum: number, c: any) => sum + (c._count?.enrollments ?? 0), 0), detail: 'Enrolled students across all classes.' },
+          { label: 'Classes', value: classes.length },
+          { label: 'Students', value: classes.reduce((sum: number, c: any) => sum + (c._count?.enrollments ?? 0), 0) },
         ]}
         actions={
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />Add Class</Button>
+              <Button className="h-10 rounded-xl px-5"><Plus className="mr-2 h-4 w-4" />Add Class</Button>
             </DialogTrigger>
-            <DialogContent className="rounded-[28px]">
+            <DialogContent className="rounded-xl">
               <DialogHeader><DialogTitle>Create Class</DialogTitle></DialogHeader>
               <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
                 <div className="space-y-1">
@@ -338,7 +290,7 @@ export function PaymentsPage() {
       header: 'Status',
       cell: ({ getValue }) => {
         const s = getValue() as string
-        const color = s === 'SUCCESS' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+        const color = s === 'SUCCESS' ? 'bg-success-light text-success dark:bg-green-900 dark:text-green-200'
           : s === 'FAILED' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
           : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
         return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${color}`}>{s}</span>
@@ -348,14 +300,14 @@ export function PaymentsPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Finance"
-        title="Track payment flow with a clearer revenue view."
-        description="Payments stay connected to the current module query layer while the page gains the same richer framing as the rest of the app."
+        title="Payments"
+        description="Track payment records and revenue."
         stats={[
-          { label: 'Records', value: payments.length, detail: 'All payment records currently loaded.' },
-          { label: 'Successful', value: successfulPayments.length, detail: 'Payments marked as successful.' },
-          { label: 'Revenue', value: formatCurrency(totalRevenue), detail: 'Aggregate of successful payment amounts.' },
+          { label: 'Records', value: payments.length },
+          { label: 'Successful', value: successfulPayments.length },
+          { label: 'Revenue', value: formatCurrency(totalRevenue) },
         ]}
       />
       <DataTable data={payments} columns={columns} isLoading={isLoading} />

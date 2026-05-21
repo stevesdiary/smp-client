@@ -47,8 +47,8 @@ function userName(u: AuditUser) {
 }
 
 const ACTION_COLORS: Record<string, string> = {
-  create: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-  update: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+  create: 'bg-success-light text-success',
+  update: 'bg-info-light text-info dark:bg-info-light dark:text-info',
   delete: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
 }
 
@@ -142,11 +142,11 @@ export function AuditLogSection() {
           <div className="flex items-center justify-between pt-2">
             <p className="text-xs text-muted-foreground">{total} entries</p>
             <div className="flex items-center gap-1">
-              <Button variant="outline" size="icon" className="h-8 w-8" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+              <Button variant="outline" aria-label="Previous page" size="icon" className="h-8 w-8" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <span className="px-2 text-xs">{page} / {totalPages}</span>
-              <Button variant="outline" size="icon" className="h-8 w-8" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
+              <Button variant="outline" aria-label="Next page" size="icon" className="h-8 w-8" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>

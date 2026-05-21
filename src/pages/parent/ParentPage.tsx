@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import api from '@/lib/api'
 
@@ -46,7 +47,7 @@ export default function ParentPage() {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-36 rounded-[24px]" />)}
+        {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-36 rounded-xl" />)}
       </div>
     )
   }
@@ -58,43 +59,17 @@ export default function ParentPage() {
   ), 0)
 
   return (
-    <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-sky-950 via-cyan-900 to-teal-800 p-6 text-white shadow-2xl shadow-slate-900/10 lg:p-8">
-        <div className="absolute right-0 top-0 h-48 w-48 rounded-full bg-amber-300/20 blur-3xl" />
-        <div className="relative grid gap-6 xl:grid-cols-[1.2fr,0.9fr]">
-          <div className="space-y-4">
-            <Badge className="rounded-full border border-white/15 bg-white/10 px-4 py-1 text-[10px] uppercase tracking-[0.22em] text-white">
-              Family Portal
-            </Badge>
-            <div>
-              <h1 className="text-3xl font-semibold leading-tight lg:text-5xl">
-                {activeChild ? `${activeChild.firstName}'s progress at a glance.` : 'Monitor your child from one focused workspace.'}
-              </h1>
-              <p className="mt-3 max-w-2xl text-sm text-white/78 lg:text-base">
-                Attendance, grades, and payment history are arranged into a cleaner parent-first experience.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Attendance rate</p>
-              <p className="mt-2 text-3xl font-semibold">{attendanceRate}%</p>
-              <p className="mt-2 text-sm text-white/70">Based on recorded sessions for the selected child.</p>
-            </div>
-            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Grades recorded</p>
-              <p className="mt-2 text-3xl font-semibold">{grades.length}</p>
-              <p className="mt-2 text-sm text-white/70">Assessment entries currently visible in the portal.</p>
-            </div>
-            <div className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-              <p className="text-sm text-white/70">Payments made</p>
-              <p className="mt-2 text-3xl font-semibold">{formatCurrency(totalPaid)}</p>
-              <p className="mt-2 text-sm text-white/70">Successful parent-side payment volume for this child.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Family portal"
+        title={activeChild ? `${activeChild.firstName}'s Progress` : 'Parent Portal'}
+        description="Attendance, grades, and payment history for your child."
+        stats={[
+          { label: 'Attendance', value: `${attendanceRate}%` },
+          { label: 'Grades', value: grades.length },
+          { label: 'Paid', value: formatCurrency(totalPaid) },
+        ]}
+      />
 
       <section className="space-y-3">
         <div>
@@ -134,9 +109,9 @@ export default function ParentPage() {
       {childId && (
         <>
           <section className="grid gap-4 md:grid-cols-3">
-            <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+            <Card className="rounded-xl">
               <CardContent className="flex items-center gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500/10 text-sky-700 dark:text-sky-300">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-500/10 text-sky-700 dark:text-sky-300">
                   <Calendar className="h-5 w-5" />
                 </div>
                 <div>
@@ -146,9 +121,9 @@ export default function ParentPage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+            <Card className="rounded-xl">
               <CardContent className="flex items-center gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-success-light text-emerald-700 dark:text-emerald-300">
                   <BookOpen className="h-5 w-5" />
                 </div>
                 <div>
@@ -158,9 +133,9 @@ export default function ParentPage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+            <Card className="rounded-xl">
               <CardContent className="flex items-center gap-4 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-chart-2/10 text-warning-foreground dark:text-warning">
                   <DollarSign className="h-5 w-5" />
                 </div>
                 <div>
@@ -180,7 +155,7 @@ export default function ParentPage() {
             </TabsList>
 
             <TabsContent value="attendance">
-              <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+              <Card className="rounded-xl">
                 <CardHeader>
                   <CardTitle>Recent attendance</CardTitle>
                 </CardHeader>
@@ -203,7 +178,7 @@ export default function ParentPage() {
             </TabsContent>
 
             <TabsContent value="grades">
-              <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+              <Card className="rounded-xl">
                 <CardHeader>
                   <CardTitle>Grades</CardTitle>
                 </CardHeader>
@@ -227,7 +202,7 @@ export default function ParentPage() {
             </TabsContent>
 
             <TabsContent value="timetable">
-              <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+              <Card className="rounded-xl">
                 <CardHeader><CardTitle className="flex items-center gap-2"><Clock className="h-5 w-5" /> Weekly Timetable</CardTitle></CardHeader>
                 <CardContent>
                   {timetable.length === 0 ? (
@@ -259,7 +234,7 @@ export default function ParentPage() {
             </TabsContent>
 
             <TabsContent value="payments">
-              <Card className="rounded-[28px] border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+              <Card className="rounded-xl">
                 <CardHeader>
                   <CardTitle>Payment history</CardTitle>
                 </CardHeader>

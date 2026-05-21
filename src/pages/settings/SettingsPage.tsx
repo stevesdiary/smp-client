@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AuditLogSection } from './AuditLogSection'
 import api from '@/lib/api'
 
@@ -58,7 +60,11 @@ function SchoolSettingsSection() {
     update('gradingSystem', { ...(current?.gradingSystem ?? { mode: 'percentage' }), bands })
   }
 
-  if (isLoading) return <Card><CardContent className="py-8 text-center text-sm text-muted-foreground">Loading…</CardContent></Card>
+  if (isLoading) return (
+    <Card>
+      <CardContent className="py-8 text-center text-sm text-muted-foreground">Loading…</CardContent>
+    </Card>
+  )
 
   const dirty = form !== null
 
@@ -66,60 +72,58 @@ function SchoolSettingsSection() {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <School className="h-5 w-5 text-primary" />
+          <School className="h-4 w-4 text-primary" />
           <CardTitle>School Settings</CardTitle>
         </div>
       </CardHeader>
-      <CardContent className="space-y-5">
+      <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <Label>School Name</Label>
             <Input value={current?.schoolName ?? ''} onChange={(e) => update('schoolName', e.target.value)} />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <Label>School Code</Label>
             <Input value={current?.schoolCode ?? ''} onChange={(e) => update('schoolCode', e.target.value.toUpperCase())} maxLength={6} />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <Label>Country</Label>
             <Input value={current?.country ?? ''} onChange={(e) => update('country', e.target.value)} />
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <Label>School Type</Label>
-            <select
-              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-              value={current?.schoolType ?? ''}
-              onChange={(e) => update('schoolType', e.target.value)}
-            >
-              <option value="">Select…</option>
-              {SCHOOL_TYPES.map((t) => (
-                <option key={t} value={t}>{t.replace(/_/g, ' + ')}</option>
-              ))}
-            </select>
+            <Select value={current?.schoolType ?? ''} onValueChange={(v) => update('schoolType', v)}>
+              <SelectTrigger><SelectValue placeholder="Select type…" /></SelectTrigger>
+              <SelectContent>
+                {SCHOOL_TYPES.map((t) => (
+                  <SelectItem key={t} value={t}>{t.replace(/_/g, ' + ')}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
         {current?.gradingSystem?.bands && (
           <div className="space-y-2">
             <Label>Grading Bands</Label>
-            <div className="rounded-lg border">
+            <div className="overflow-hidden rounded-xl border border-border">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b bg-muted/50">
-                    <th className="px-3 py-2 text-left font-medium">Grade</th>
-                    <th className="px-3 py-2 text-left font-medium">Min %</th>
-                    <th className="px-3 py-2 text-left font-medium">Max %</th>
+                  <tr className="border-b border-border bg-muted/40">
+                    <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Grade</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Min %</th>
+                    <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Max %</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-border">
                   {current.gradingSystem.bands.map((band, i) => (
-                    <tr key={band.grade} className="border-b last:border-0">
-                      <td className="px-3 py-2 font-medium">{band.grade}</td>
-                      <td className="px-3 py-2">
-                        <Input type="number" className="h-8 w-20" value={band.min} onChange={(e) => updateBand(i, 'min', +e.target.value)} />
+                    <tr key={band.grade}>
+                      <td className="px-4 py-2.5 font-medium">{band.grade}</td>
+                      <td className="px-4 py-2.5">
+                        <Input type="number" className="h-8 w-20 rounded-lg text-xs" value={band.min} onChange={(e) => updateBand(i, 'min', +e.target.value)} />
                       </td>
-                      <td className="px-3 py-2">
-                        <Input type="number" className="h-8 w-20" value={band.max} onChange={(e) => updateBand(i, 'max', +e.target.value)} />
+                      <td className="px-4 py-2.5">
+                        <Input type="number" className="h-8 w-20 rounded-lg text-xs" value={band.max} onChange={(e) => updateBand(i, 'max', +e.target.value)} />
                       </td>
                     </tr>
                   ))}
@@ -130,7 +134,7 @@ function SchoolSettingsSection() {
         )}
 
         {dirty && (
-          <Button onClick={() => mutation.mutate(form!)} disabled={mutation.isPending} className="flex items-center gap-2">
+          <Button onClick={() => mutation.mutate(form!)} disabled={mutation.isPending}>
             <Save className="h-4 w-4" />
             {mutation.isPending ? 'Saving…' : 'Save Changes'}
           </Button>
@@ -140,24 +144,22 @@ function SchoolSettingsSection() {
   )
 }
 
-type Tab = 'general' | 'audit'
-
 function GeneralTab({ isAdmin }: { isAdmin: boolean }) {
   const { dark, toggle } = useThemeStore()
   const { user, logout } = useAuthStore()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Card>
         <CardHeader><CardTitle>Profile</CardTitle></CardHeader>
         <CardContent className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground text-xl font-semibold">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
             {getInitials(user?.firstName, user?.lastName)}
           </div>
           <div>
             <p className="font-semibold">{user?.firstName} {user?.lastName}</p>
             <p className="text-sm text-muted-foreground">{user?.email}</p>
-            <p className="text-xs text-muted-foreground mt-1">{user?.role?.name}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{user?.role?.name}</p>
           </div>
         </CardContent>
       </Card>
@@ -170,9 +172,9 @@ function GeneralTab({ isAdmin }: { isAdmin: boolean }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium">Dark Mode</p>
-              <p className="text-sm text-muted-foreground">Toggle dark/light theme</p>
+              <p className="text-sm text-muted-foreground">Toggle dark / light theme</p>
             </div>
-            <Button variant="outline" size="icon" onClick={toggle}>
+            <Button variant="outline" size="icon-sm" onClick={toggle} aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}>
               {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
           </div>
@@ -182,7 +184,7 @@ function GeneralTab({ isAdmin }: { isAdmin: boolean }) {
       <Card>
         <CardHeader><CardTitle>Account</CardTitle></CardHeader>
         <CardContent>
-          <Button variant="destructive" onClick={logout} className="flex items-center gap-2">
+          <Button variant="destructive" onClick={logout}>
             <LogOut className="h-4 w-4" />
             Sign Out
           </Button>
@@ -196,40 +198,34 @@ export default function SettingsPage() {
   const { user } = useAuthStore()
   const role = getUserRole(user)
   const isAdmin = role === 'ADMIN'
-  const [tab, setTab] = useState<Tab>('general')
-
-  const tabs: { key: Tab; label: string; icon: React.ReactNode; adminOnly?: boolean }[] = [
-    { key: 'general', label: 'General', icon: <Settings2 className="h-4 w-4" /> },
-    { key: 'audit', label: 'Audit Log', icon: <Shield className="h-4 w-4" />, adminOnly: true },
-  ]
-
-  const visibleTabs = tabs.filter((t) => !t.adminOnly || isAdmin)
 
   return (
-    <div className="space-y-6 max-w-3xl">
-      <h1 className="text-2xl font-semibold">Settings</h1>
+    <div className="max-w-2xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Manage your account, school, and preferences.</p>
+      </div>
 
-      {visibleTabs.length > 1 && (
-        <div className="flex gap-1 rounded-2xl bg-secondary/60 p-1">
-          {visibleTabs.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition ${
-                tab === t.key
-                  ? 'bg-background shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t.icon}
-              {t.label}
-            </button>
-          ))}
-        </div>
+      {isAdmin ? (
+        <Tabs defaultValue="general">
+          <TabsList>
+            <TabsTrigger value="general">
+              <Settings2 className="h-4 w-4" />General
+            </TabsTrigger>
+            <TabsTrigger value="audit">
+              <Shield className="h-4 w-4" />Audit Log
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="general">
+            <GeneralTab isAdmin={isAdmin} />
+          </TabsContent>
+          <TabsContent value="audit">
+            <AuditLogSection />
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <GeneralTab isAdmin={false} />
       )}
-
-      {tab === 'general' && <GeneralTab isAdmin={isAdmin} />}
-      {tab === 'audit' && isAdmin && <AuditLogSection />}
     </div>
   )
 }
