@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DataTable } from '@/components/shared/DataTable'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 
 const schema = z.object({
   studentId: z.string().min(1, 'Required'),
@@ -61,22 +61,22 @@ export default function DisciplinaryPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Behaviour desk"
-        title="Track disciplinary records from a clearer oversight surface."
-        description="Incident creation and review still use the current disciplinary APIs while the interface now matches the richer admin shell."
+        title="Disciplinary"
+        description="Track and manage disciplinary incidents and resolutions."
         stats={[
-          { label: 'Records', value: records.length, detail: 'Disciplinary incidents currently logged.' },
-          { label: 'Open', value: unresolved, detail: 'Incidents not yet resolved.' },
-          { label: 'Students', value: students.length, detail: 'Students available for record creation.' },
+          { label: 'Records', value: records.length },
+          { label: 'Open', value: unresolved },
+          { label: 'Students', value: students.length },
         ]}
       />
 
       <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-semibold">Disciplinary</h1><p className="text-muted-foreground">{records.length} records</p></div>
+        <div><h2 className="text-lg font-semibold">Incident Records</h2><p className="text-sm text-muted-foreground">{records.length} incidents logged</p></div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button className="h-12 rounded-2xl px-5"><Plus className="h-4 w-4 mr-2" />New Record</Button></DialogTrigger>
-          <DialogContent className="rounded-[28px]">
+          <DialogTrigger asChild><Button><Plus className="h-4 w-4" />New Record</Button></DialogTrigger>
+          <DialogContent className="rounded-xl">
             <DialogHeader><DialogTitle>Create Disciplinary Record</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit(d => mutation.mutate(d))} className="space-y-4">
               <div className="space-y-1">

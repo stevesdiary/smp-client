@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DataTable } from '@/components/shared/DataTable'
 import api from '@/lib/api'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 
 const roomSchema = z.object({ roomNumber: z.string().min(1), building: z.string().min(1), floor: z.coerce.number(), capacity: z.coerce.number().min(1), type: z.string().min(1) })
 const assignSchema = z.object({ roomId: z.string().min(1), studentId: z.string().min(1), startDate: z.string().min(1) })
@@ -59,23 +59,23 @@ export default function HostelPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Accommodation"
-        title="Manage hostel rooms from a cleaner residential operations view."
-        description="Room creation and student assignments still hit the current hostel APIs, now inside the richer interface system."
+        title="Hostel"
+        description="Manage rooms and student assignments."
         stats={[
-          { label: 'Rooms', value: rooms.length, detail: 'Hostel rooms currently configured.' },
-          { label: 'Occupied', value: occupiedRooms, detail: 'Rooms with at least one assigned student.' },
-          { label: 'Students', value: students.length, detail: 'Students available for room assignment.' },
+          { label: 'Rooms', value: rooms.length },
+          { label: 'Occupied', value: occupiedRooms },
+          { label: 'Students', value: students.length },
         ]}
       />
 
       <div className="flex items-center justify-between">
-        <div><h1 className="text-2xl font-semibold">Hostel</h1><p className="text-muted-foreground">{rooms.length} rooms</p></div>
+        <div><h2 className="text-lg font-semibold">Rooms</h2><p className="text-sm text-muted-foreground">{rooms.length} rooms configured</p></div>
         <div className="flex gap-2">
           <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
-            <DialogTrigger asChild><Button variant="outline" className="h-12 rounded-2xl">Assign Student</Button></DialogTrigger>
-            <DialogContent className="rounded-[28px]">
+            <DialogTrigger asChild><Button variant="outline">Assign Student</Button></DialogTrigger>
+            <DialogContent className="rounded-xl">
               <DialogHeader><DialogTitle>Assign Student to Room</DialogTitle></DialogHeader>
               <form onSubmit={assignForm.handleSubmit(d => assignMutation.mutate(d))} className="space-y-4">
                 <div className="space-y-1">
@@ -98,8 +98,8 @@ export default function HostelPage() {
             </DialogContent>
           </Dialog>
           <Dialog open={roomOpen} onOpenChange={setRoomOpen}>
-            <DialogTrigger asChild><Button className="h-12 rounded-2xl"><Plus className="h-4 w-4 mr-2" />Add Room</Button></DialogTrigger>
-            <DialogContent className="rounded-[28px]">
+            <DialogTrigger asChild><Button><Plus className="h-4 w-4" />Add Room</Button></DialogTrigger>
+            <DialogContent className="rounded-xl">
               <DialogHeader><DialogTitle>Create Room</DialogTitle></DialogHeader>
               <form onSubmit={roomForm.handleSubmit(d => roomMutation.mutate(d))} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">

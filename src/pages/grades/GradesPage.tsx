@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataTable } from '@/components/shared/DataTable'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import { QuizComposer } from '@/components/elearning/QuizComposer'
 import { formatDate } from '@/lib/utils'
@@ -147,8 +147,8 @@ function AssignmentsTab({ students, subjects, academicYears, terms }: { students
           invalidateKeys={[['gradebook', 'all-by-student'], ['gradebook', 'assignments']]}
         />
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />New Assignment</Button></DialogTrigger>
-          <DialogContent className="rounded-[28px]">
+          <DialogTrigger asChild><Button className="h-10 rounded-xl px-5"><Plus className="mr-2 h-4 w-4" />New Assignment</Button></DialogTrigger>
+          <DialogContent className="rounded-xl">
             <DialogHeader><DialogTitle>Create Assignment</DialogTitle></DialogHeader>
             <form onSubmit={form.handleSubmit(d => createMutation.mutate(d))} className="space-y-4">
               <div className="space-y-1"><Label>Title</Label><Input className="h-11 rounded-2xl" {...form.register('title')} placeholder="Midterm Test" /></div>
@@ -268,8 +268,8 @@ function ExaminationsTab({ students, subjects, academicYears, terms }: { student
           invalidateKeys={[['gradebook']]}
         />
         <Dialog open={resultOpen} onOpenChange={setResultOpen}>
-          <DialogTrigger asChild><Button variant="outline" className="h-12 rounded-2xl"><Plus className="mr-2 h-4 w-4" />Record Result</Button></DialogTrigger>
-          <DialogContent className="rounded-[28px]">
+          <DialogTrigger asChild><Button variant="outline" className="h-10 rounded-xl"><Plus className="mr-2 h-4 w-4" />Record Result</Button></DialogTrigger>
+          <DialogContent className="rounded-xl">
             <DialogHeader><DialogTitle>Record Exam Result</DialogTitle></DialogHeader>
             <form onSubmit={resultForm.handleSubmit(d => recordResultMutation.mutate(d))} className="space-y-4">
               <div className="space-y-1"><Label>Examination ID</Label><Input className="h-11 rounded-2xl" {...resultForm.register('examinationId')} placeholder="Paste examination UUID" /></div>
@@ -288,8 +288,8 @@ function ExaminationsTab({ students, subjects, academicYears, terms }: { student
           </DialogContent>
         </Dialog>
         <Dialog open={examOpen} onOpenChange={setExamOpen}>
-          <DialogTrigger asChild><Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />New Exam</Button></DialogTrigger>
-          <DialogContent className="rounded-[28px]">
+          <DialogTrigger asChild><Button className="h-10 rounded-xl px-5"><Plus className="mr-2 h-4 w-4" />New Exam</Button></DialogTrigger>
+          <DialogContent className="rounded-xl">
             <DialogHeader><DialogTitle>Create Examination</DialogTitle></DialogHeader>
             <form onSubmit={examForm.handleSubmit(d => createExamMutation.mutate(d))} className="space-y-4">
               <div className="space-y-1"><Label>Exam Name</Label><Input className="h-11 rounded-2xl" {...examForm.register('name')} placeholder="Term 1 Final Exam" /></div>
@@ -371,7 +371,7 @@ function ReportCardsTab({ students, terms }: { students: Student[]; terms: Term[
       ) : reportCard && reportCard.subjects.length > 0 ? (
         <div className="space-y-6">
           {/* Overall average */}
-          <div className="rounded-[28px] border border-white/60 bg-white/85 p-6 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85">
+          <div className="rounded-xl border p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Overall Average</p>
@@ -386,7 +386,7 @@ function ReportCardsTab({ students, terms }: { students: Student[]; terms: Term[
           {/* Subject breakdown */}
           <div className="space-y-3">
             {reportCard.subjects.map((subj: any) => (
-              <div key={subj.subjectId} className="rounded-[20px] border border-white/60 bg-white/85 p-5 shadow-sm backdrop-blur dark:border-white/10 dark:bg-card/85">
+              <div key={subj.subjectId} className="rounded-[20px] border p-5 shadow-sm">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">{subj.subjectName}</p>
@@ -594,31 +594,24 @@ export default function GradesPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Gradebook"
-        title="Record performance and launch official digital assessments from one command surface."
-        description="Manual grade entry stays available while academic quizzes now create official assignment or examination sinks inside the same LMS."
+        title="Gradebook"
+        description="Record grades and manage academic assessments."
         stats={[
-          { label: 'Grade records', value: grades.length, detail: 'Manual and synced grade entries currently visible.' },
-          { label: 'Assessments', value: assessments.length, detail: 'Standalone academic quizzes configured from gradebook.' },
-          { label: 'Assessment avg', value: assessmentAverage !== null ? `${assessmentAverage}%` : '—', detail: 'Average of latest official quiz attempts.' },
+          { label: 'Grades', value: grades.length },
+          { label: 'Assessments', value: assessments.length },
+          { label: 'Avg score', value: assessmentAverage !== null ? `${assessmentAverage}%` : '—' },
         ]}
       />
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Gradebook</h1>
-          <p className="text-muted-foreground">{grades.length} grade records · {assessments.length} academic assessments</p>
-        </div>
-      </div>
-
       <Tabs defaultValue="grades" className="space-y-4">
-        <TabsList className="h-auto flex-wrap rounded-2xl bg-white/70 p-1 shadow-sm dark:bg-card/70">
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="grades">Grades</TabsTrigger>
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="assignments"><ClipboardCheck className="mr-1.5 h-3.5 w-3.5" />Assignments</TabsTrigger>
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="exams"><FileText className="mr-1.5 h-3.5 w-3.5" />Examinations</TabsTrigger>
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="report-cards"><BookOpen className="mr-1.5 h-3.5 w-3.5" />Report Cards</TabsTrigger>
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="assessments">Assessments</TabsTrigger>
+        <TabsList className="flex-wrap">
+          <TabsTrigger value="grades">Grades</TabsTrigger>
+          <TabsTrigger value="assignments"><ClipboardCheck className="mr-1.5 h-3.5 w-3.5" />Assignments</TabsTrigger>
+          <TabsTrigger value="exams"><FileText className="mr-1.5 h-3.5 w-3.5" />Examinations</TabsTrigger>
+          <TabsTrigger value="report-cards"><BookOpen className="mr-1.5 h-3.5 w-3.5" />Report Cards</TabsTrigger>
+          <TabsTrigger value="assessments">Assessments</TabsTrigger>
         </TabsList>
 
         <TabsContent value="grades" className="space-y-4">
@@ -632,9 +625,9 @@ export default function GradesPage() {
             />
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />Record Grade</Button>
+                <Button className="h-10 rounded-xl px-5"><Plus className="mr-2 h-4 w-4" />Record Grade</Button>
               </DialogTrigger>
-              <DialogContent className="rounded-[28px]">
+              <DialogContent className="rounded-xl">
                 <DialogHeader><DialogTitle>Record Grade</DialogTitle></DialogHeader>
                 <form onSubmit={handleSubmit((data) => gradeMutation.mutate(data))} className="space-y-4">
                   <div className="space-y-1">
@@ -684,9 +677,9 @@ export default function GradesPage() {
               }}
             >
               <DialogTrigger asChild>
-                <Button className="h-12 rounded-2xl px-5"><Plus className="mr-2 h-4 w-4" />New Assessment</Button>
+                <Button className="h-10 rounded-xl px-5"><Plus className="mr-2 h-4 w-4" />New Assessment</Button>
               </DialogTrigger>
-              <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto rounded-[28px]">
+              <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto rounded-xl">
                 <DialogHeader>
                   <DialogTitle>{editingQuiz ? 'Edit academic assessment' : 'Create academic assessment'}</DialogTitle>
                 </DialogHeader>
@@ -720,7 +713,7 @@ export default function GradesPage() {
             </Dialog>
           </div>
 
-          <div className="rounded-[28px] border border-border/70 bg-secondary/15 px-5 py-4 text-sm text-muted-foreground">
+          <div className="rounded-xl border border-border/70 bg-secondary/15 px-5 py-4 text-sm text-muted-foreground">
             Latest-attempt scoring is active for graded quizzes. Students see results only after the assessment is closed.
           </div>
 
