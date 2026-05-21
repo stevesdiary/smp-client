@@ -72,7 +72,7 @@ export function StudentDashboard() {
         <div className="grid gap-4 sm:grid-cols-3">
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-success-light text-success">
                 <CheckCircle className="h-5 w-5" />
               </div>
               <div>
@@ -83,7 +83,7 @@ export function StudentDashboard() {
           </Card>
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-info-light text-info">
                 <Calendar className="h-5 w-5" />
               </div>
               <div>
@@ -94,7 +94,7 @@ export function StudentDashboard() {
           </Card>
           <Card>
             <CardContent className="flex items-center gap-3 p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-chart-2/10 text-warning">
                 <GraduationCap className="h-5 w-5" />
               </div>
               <div>

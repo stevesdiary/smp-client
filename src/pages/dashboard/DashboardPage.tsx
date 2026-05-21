@@ -56,26 +56,32 @@ type ActivityItem = {
 }
 
 const statToneClasses: Record<StatTone, string> = {
-  teal: 'bg-teal-500/10 text-teal-700 dark:text-teal-300',
-  gold: 'bg-amber-500/15 text-amber-700 dark:text-amber-300',
-  slate: 'bg-slate-500/10 text-slate-700 dark:text-slate-300',
-  rose: 'bg-rose-500/10 text-rose-700 dark:text-rose-300',
+  teal:  'bg-chart-1/10 text-chart-1',
+  gold:  'bg-warning-light text-warning',
+  slate: 'bg-muted text-muted-foreground',
+  rose:  'bg-chart-4/10 text-chart-4',
 }
 
 function StatCard({ title, value, detail, icon: Icon, tone }: DashboardStat) {
+  const toneClasses: Record<StatTone, string> = {
+    teal:  'bg-primary/10 text-primary',
+    gold:  'bg-warning-light text-warning',
+    slate: 'bg-muted text-muted-foreground',
+    rose:  'bg-chart-4/10 text-chart-4',
+  }
   return (
-    <Card className="overflow-hidden border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+    <Card>
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm text-muted-foreground">{title}</p>
-            <p className="mt-2 text-3xl font-semibold tracking-tight">{value}</p>
+            <p className="mt-2 text-2xl font-semibold tracking-tight">{value}</p>
           </div>
-          <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${statToneClasses[tone]}`}>
-            <Icon className="h-5 w-5" />
+          <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${toneClasses[tone]}`}>
+            <Icon className="h-4 w-4" />
           </div>
         </div>
-        <p className="mt-4 text-sm text-muted-foreground">{detail}</p>
+        <p className="mt-3 text-sm text-muted-foreground">{detail}</p>
       </CardContent>
     </Card>
   )
@@ -108,13 +114,13 @@ function QuickAction({ to, title, description }: { to: string; title: string; de
   return (
     <Link
       to={to}
-      className="group flex items-center justify-between rounded-2xl border border-border/70 bg-background/70 px-4 py-4 transition hover:border-primary/40 hover:bg-primary/5"
+      className="group flex items-center justify-between rounded-xl border border-border bg-muted/30 px-4 py-3.5 transition hover:border-primary/40 hover:bg-primary/5"
     >
       <div>
-        <p className="font-medium">{title}</p>
-        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        <p className="text-sm font-medium">{title}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
       </div>
-      <ArrowRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
+      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-primary" />
     </Link>
   )
 }
@@ -183,58 +189,44 @@ export default function DashboardPage() {
       title: 'Oversee all schools from a single command surface.',
       description: 'Monitor tenants, manage access, and ensure platform health across every school.',
       badge: 'Platform admin',
-      surface: 'from-violet-500/10 to-indigo-500/5',
-      orb: 'bg-violet-400/30',
     },
     ADMIN: {
       label: 'Command Center',
       title: 'Run the school with clarity instead of clutter.',
       description: 'Admissions, academics, finance, and operations are surfaced in one executive workspace.',
       badge: 'Executive view',
-      surface: 'from-slate-950 via-teal-950 to-cyan-900 text-white',
-      orb: 'bg-amber-300/20',
     },
     PRINCIPAL: {
       label: 'Leadership Desk',
       title: 'Stay ahead of discipline, policy, and oversight signals.',
       description: 'Use the dashboard as a daily brief for school-wide health and principal workflows.',
       badge: 'Leadership',
-      surface: 'from-slate-900 via-slate-800 to-slate-700 text-white',
-      orb: 'bg-sky-300/20',
     },
     TEACHER: {
       label: 'Teaching Studio',
       title: 'Move from attendance to learning outcomes without context switching.',
       description: 'Your core teaching actions and class momentum sit at the top of the workspace.',
       badge: 'Faculty',
-      surface: 'from-emerald-950 via-teal-900 to-cyan-800 text-white',
-      orb: 'bg-amber-300/20',
     },
     STAFF: {
       label: 'Operations Hub',
       title: 'Keep campus services reliable and visible.',
       description: 'Library, hostel, transport, and inventory flows are surfaced as one operations layer.',
       badge: 'Operations',
-      surface: 'from-slate-950 via-stone-900 to-amber-900 text-white',
-      orb: 'bg-teal-300/20',
     },
     PARENT: {
       label: 'Family Portal',
       title: 'Track progress, attendance, and payments in one place.',
       description: 'The dashboard highlights what a parent needs now instead of exposing the entire admin system.',
       badge: 'Family',
-      surface: 'from-sky-950 via-cyan-900 to-teal-800 text-white',
-      orb: 'bg-amber-300/20',
     },
     STUDENT: {
       label: 'Student Pulse',
       title: 'See your live learning flow at a glance.',
       description: 'Classes, e-learning, and achievement tracking now feel like one coherent student experience.',
       badge: 'Learner',
-      surface: 'from-indigo-950 via-sky-900 to-cyan-800 text-white',
-      orb: 'bg-amber-300/20',
     },
-  }[role]
+  }[role] ?? { label: 'Command Center', title: '', description: '', badge: 'Admin' }
 
   const stats: DashboardStat[] = (() => {
     if (role === 'ADMIN') {
@@ -331,34 +323,34 @@ export default function DashboardPage() {
   const insightItems: InsightItem[] = (() => {
     if (role === 'ADMIN' || role === 'TEACHER') {
       return [
-        { label: 'Students', value: students.length, tone: 'bg-teal-500' },
-        { label: 'Classes', value: classes.length, tone: 'bg-amber-500' },
-        { label: 'Events', value: events.length, tone: 'bg-slate-500' },
-        { label: 'Revenue units', value: Math.round(totalRevenue / 1000), tone: 'bg-rose-500' },
+        { label: 'Students', value: students.length, tone: 'bg-chart-1' },
+        { label: 'Classes', value: classes.length, tone: 'bg-chart-2' },
+        { label: 'Events', value: events.length, tone: 'bg-chart-3' },
+        { label: 'Revenue units', value: Math.round(totalRevenue / 1000), tone: 'bg-chart-4' },
       ]
     }
 
     if (role === 'STAFF') {
       return [
-        { label: 'Borrowed', value: libraryStats?.borrowed ?? 0, tone: 'bg-teal-500' },
-        { label: 'Returned', value: libraryStats?.returned ?? 0, tone: 'bg-amber-500' },
-        { label: 'Hostel ops', value: 1, tone: 'bg-slate-500' },
-        { label: 'Transport ops', value: 1, tone: 'bg-rose-500' },
+        { label: 'Borrowed', value: libraryStats?.borrowed ?? 0, tone: 'bg-chart-1' },
+        { label: 'Returned', value: libraryStats?.returned ?? 0, tone: 'bg-chart-2' },
+        { label: 'Hostel ops', value: 1, tone: 'bg-chart-3' },
+        { label: 'Transport ops', value: 1, tone: 'bg-chart-4' },
       ]
     }
 
     if (role === 'PARENT') {
       return [
-        { label: 'Children linked', value: parentChildren.length, tone: 'bg-teal-500' },
-        { label: 'Portal access', value: parentChildren.length > 0 ? 1 : 0, tone: 'bg-amber-500' },
-        { label: 'Recent updates', value: parentChildren.length > 0 ? parentChildren.length : 0, tone: 'bg-slate-500' },
+        { label: 'Children linked', value: parentChildren.length, tone: 'bg-chart-1' },
+        { label: 'Portal access', value: parentChildren.length > 0 ? 1 : 0, tone: 'bg-chart-2' },
+        { label: 'Recent updates', value: parentChildren.length > 0 ? parentChildren.length : 0, tone: 'bg-chart-3' },
       ]
     }
 
     return [
-      { label: 'Priority flows', value: 2, tone: 'bg-teal-500' },
-      { label: 'School oversight', value: 1, tone: 'bg-amber-500' },
-      { label: 'Controls ready', value: 1, tone: 'bg-slate-500' },
+      { label: 'Priority flows', value: 2, tone: 'bg-chart-1' },
+      { label: 'School oversight', value: 1, tone: 'bg-chart-2' },
+      { label: 'Controls ready', value: 1, tone: 'bg-chart-3' },
     ]
   })()
 
@@ -394,86 +386,69 @@ export default function DashboardPage() {
     }))
   })()
 
+  // ─── Greeting card greeting ───────────────────────────────────────────────
+  const greetingHour = new Date().getHours()
+  const greeting = greetingHour < 12 ? 'Good morning' : greetingHour < 17 ? 'Good afternoon' : 'Good evening'
+  const firstName = user?.firstName ?? 'there'
+  const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', month: 'long', day: 'numeric' })
+
   return (
-    <div className="space-y-8">
-      <section className={`relative overflow-hidden rounded-[32px] bg-gradient-to-br ${themeByRole.surface} p-6 shadow-2xl shadow-slate-900/10 lg:p-8`}>
-        <div className={`absolute right-0 top-0 h-48 w-48 rounded-full blur-3xl ${themeByRole.orb}`} />
-        <div className="relative grid gap-8 xl:grid-cols-[1.4fr,0.9fr]">
-          <div className="space-y-5">
-            <Badge className="rounded-full border border-white/15 bg-white/10 px-4 py-1 text-[10px] uppercase tracking-[0.25em] text-white">
-              {themeByRole.label}
-            </Badge>
-            <div className="space-y-3">
-              <h1 className="max-w-3xl text-3xl font-semibold leading-tight lg:text-5xl">
-                {themeByRole.title}
-              </h1>
-              <p className="max-w-2xl text-sm text-white/78 lg:text-base">
-                {themeByRole.description}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <Button asChild className="rounded-full bg-white text-slate-900 hover:bg-white/90">
-                <Link to={quickActions[0]?.to ?? '/settings'}>{quickActions[0]?.title ?? 'Open workspace'}</Link>
-              </Button>
-              <Badge className="rounded-full bg-white/10 px-4 py-2 text-sm text-white">
-                {themeByRole.badge}
-              </Badge>
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
-            {stats.slice(0, 2).map((stat) => (
-              <div key={stat.title} className="rounded-[28px] border border-white/12 bg-white/10 p-5 backdrop-blur">
-                <p className="text-sm text-white/70">{stat.title}</p>
-                <p className="mt-2 text-3xl font-semibold">{stat.value}</p>
-                <p className="mt-2 text-sm text-white/70">{stat.detail}</p>
-              </div>
-            ))}
-          </div>
+    <div className="space-y-6">
+      {/* Greeting header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{themeByRole.label}</p>
+          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+            {greeting}, {firstName}.
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">{today}</p>
         </div>
-      </section>
+        <Badge variant="secondary" className="hidden sm:flex">{themeByRole.badge}</Badge>
+      </div>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {/* Stat grid */}
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {studentsLoading && canViewAcademic ? (
-          Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} className="h-32 rounded-[24px]" />)
+          Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)
         ) : (
           stats.map((stat) => <StatCard key={stat.title} {...stat} />)
         )}
       </section>
 
+      {/* Insight + Quick actions */}
       <section className="grid gap-6 xl:grid-cols-[1.25fr,0.95fr]">
-        <Card className="overflow-hidden border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+        <Card>
           <CardHeader className="pb-4">
-            <CardTitle>Performance overview</CardTitle>
-            <CardDescription>Key operating signals derived from live dashboard data.</CardDescription>
+            <CardTitle>Overview</CardTitle>
+            <CardDescription>Key operating signals from live dashboard data.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <InsightBars items={insightItems} />
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl bg-secondary/70 p-4">
-                <p className="text-sm text-muted-foreground">Role lens</p>
-                <p className="mt-2 text-lg font-semibold">{themeByRole.label}</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  The workspace prioritizes the actions most likely to matter for this role.
+              <div className="rounded-xl bg-muted/60 p-4">
+                <p className="text-xs text-muted-foreground">Role lens</p>
+                <p className="mt-1.5 text-sm font-semibold">{themeByRole.label}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Workspace prioritises actions for this role.
                 </p>
               </div>
-              <div className="rounded-2xl bg-primary/10 p-4">
-                <p className="text-sm text-muted-foreground">Operational status</p>
-                <p className="mt-2 text-lg font-semibold">Connected</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  This dashboard is still using the live `smp-client` query layer, not a static mock.
+              <div className="rounded-xl bg-primary/8 p-4">
+                <p className="text-xs text-muted-foreground">Status</p>
+                <p className="mt-1.5 text-sm font-semibold">Connected</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Live data via the smp-client query layer.
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+        <Card>
           <CardHeader className="pb-4">
             <CardTitle>Quick actions</CardTitle>
             <CardDescription>Fast paths into the most relevant workflows.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-2">
             {quickActions.map((action) => (
               <QuickAction key={action.to} {...action} />
             ))}
@@ -481,47 +456,44 @@ export default function DashboardPage() {
         </Card>
       </section>
 
+      {/* Live feed + Events */}
       <section className="grid gap-6 xl:grid-cols-[1.1fr,0.9fr]">
-        <Card className="overflow-hidden border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+        <Card>
           <CardHeader className="pb-4">
             <CardTitle>Live feed</CardTitle>
             <CardDescription>Recent events, linked records, or role-relevant actions.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-2">
             {activityItems.map((item) => (
-              <div key={`${item.title}-${item.badge}`} className="flex items-start justify-between gap-4 rounded-2xl bg-secondary/55 p-4">
+              <div key={`${item.title}-${item.badge}`} className="flex items-start justify-between gap-4 rounded-xl bg-muted/40 p-3.5">
                 <div>
-                  <p className="font-medium">{item.title}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
+                  <p className="text-sm font-medium">{item.title}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{item.detail}</p>
                 </div>
-                <Badge variant="outline" className="border-primary/20 bg-background/70">
-                  {item.badge}
-                </Badge>
+                <Badge variant="outline">{item.badge}</Badge>
               </div>
             ))}
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden border-white/60 bg-white/85 shadow-lg shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/90">
+        <Card>
           <CardHeader className="pb-4">
             <CardTitle>Upcoming events</CardTitle>
             <CardDescription>School calendar signals surfaced when available.</CardDescription>
           </CardHeader>
           <CardContent>
             {events.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-border/80 bg-secondary/50 p-6 text-center">
-                <p className="font-medium">No upcoming events yet</p>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Event data will appear here as soon as school schedules are added.
-                </p>
+              <div className="rounded-xl border border-dashed border-border bg-muted/30 p-6 text-center">
+                <p className="text-sm font-medium">No upcoming events</p>
+                <p className="mt-1 text-xs text-muted-foreground">Event data will appear once schedules are added.</p>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {events.slice(0, 5).map((event) => (
-                  <div key={event.id} className="flex items-center justify-between gap-4 rounded-2xl border border-border/70 bg-background/70 px-4 py-3">
+                  <div key={event.id} className="flex items-center justify-between gap-4 rounded-xl border border-border px-4 py-3">
                     <div>
-                      <p className="font-medium">{event.title}</p>
-                      <p className="mt-1 text-sm text-muted-foreground">{formatDate(event.startDate)}</p>
+                      <p className="text-sm font-medium">{event.title}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{formatDate(event.startDate)}</p>
                     </div>
                     <Badge variant="outline">{event.type}</Badge>
                   </div>
