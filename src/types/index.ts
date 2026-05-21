@@ -64,6 +64,30 @@ export interface Attendance {
   remarks?: string
 }
 
+// Attendance Status enumeration for marking
+export type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED'
+
+// Student with attendance marking
+export interface StudentWithAttendance extends Student {
+  status?: AttendanceStatus
+}
+
+// Bulk attendance submission payload
+export interface AttendanceRecord {
+  studentId: string
+  status: AttendanceStatus
+  date: string
+  classId: string
+}
+
+// Attendance page state
+export interface AttendancePageState {
+  classId: string | null
+  date: string
+  marks: Record<string, AttendanceStatus>
+  showSummary: boolean
+}
+
 export interface Grade {
   id: string
   studentId: string
