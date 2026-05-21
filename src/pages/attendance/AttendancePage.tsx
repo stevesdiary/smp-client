@@ -1,139 +1,233 @@
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState, useMemo } from 'react'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { AlertCircle, Check, Clock, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import api from '@/lib/api'
-import type { Student } from '@/types'
+import type { Student, AttendanceStatus } from '@/types'
+import ClassSelector from './components/ClassSelector'
+import ListMarkingView from './components/ListMarkingView'
+import AttendanceSummary from './components/AttendanceSummary'
 import { PageHeader } from '@/components/shared/PageHeader'
+import { Card } from '@/components/ui/card'
 
-type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED'
+// Get today's date in YYYY-MM-DD format
+function getTodayDate(): string {
+  const today = new Date()
+  return today.toISOString().split('T')[0]
+}
 
-const statusConfig = {
-  PRESENT: { icon: Check, color: 'success', label: 'Present' },
-  ABSENT: { icon: X, color: 'destructive', label: 'Absent' },
-  LATE: { icon: Clock, color: 'warning', label: 'Late' },
-  EXCUSED: { icon: AlertCircle, color: 'secondary', label: 'Excused' },
-} as const
-
+/**
+ * AttendancePage - State Orchestrator
+ *
+ * Manages all attendance state and coordinates sub-components:
+ * - ClassSelector: class + date selection
+ * - ListMarkingView: student marking interface
+ * - AttendanceSummary: review and save
+ *
+ * State:
+ * - classId: selected class ID (null = show placeholder)
+ * - date: selected date (YYYY-MM-DD)
+ * - marks: Record<studentId, AttendanceStatus> - persisted across views
+ * - showSummary: toggles between marking view and summary view
+ */
 export default function AttendancePage() {
-  const today = new Date().toISOString().split('T')[0]
-  const [date, setDate] = useState(today)
-  const [attendance, setAttendance] = useState<Record<string, AttendanceStatus>>({})
-  const qc = useQueryClient()
+  // Core state
+  const [classId, setClassId] = useState<string | null>(null)
+  const [date, setDate] = useState<string>(getTodayDate())
+  const [marks, setMarks] = useState<Record<string, AttendanceStatus>>({})
+  const [showSummary, setShowSummary] = useState(false)
 
-  const { data: students = [], isLoading } = useQuery<Student[]>({
-    queryKey: ['students'],
-    queryFn: () => api.get('/students').then(r => r.data),
+  // Fetch students when class is selected
+  const {
+    data: students = [],
+    isLoading: studentsLoading,
+    error: studentsError,
+  } = useQuery({
+    queryKey: ['students', classId],
+    queryFn: async () => {
+      if (!classId) return []
+      const response = await api.get('/students', {
+        params: { classId, limit: 200 },
+      })
+      return response.data as Student[]
+    },
+    enabled: !!classId,
   })
 
-  const bulkMutation = useMutation({
-    mutationFn: (records: any[]) => api.post('/attendance/bulk', { records }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['attendance'] }); toast.success('Attendance saved') },
-    onError: () => toast.error('Failed to save attendance'),
-  })
-
-  const markAll = (status: AttendanceStatus) => {
-    const all: Record<string, AttendanceStatus> = {}
-    students.forEach(s => { all[s.id] = status })
-    setAttendance(all)
-  }
-
-  const submit = () => {
-    const records = Object.entries(attendance).map(([studentId, status]) => ({
-      studentId, date, status
+  // Create attendance records from marks (only marked students)
+  const attendanceRecords = useMemo(() => {
+    return Object.entries(marks).map(([studentId, status]) => ({
+      studentId,
+      status,
+      date,
+      classId: classId!,
     }))
-    if (records.length === 0) return toast.error('Mark attendance first')
-    bulkMutation.mutate(records)
+  }, [marks, date, classId])
+
+  // Save attendance mutation
+  const { mutate: saveAttendance, isPending: isSaving } = useMutation({
+    mutationFn: async () => {
+      const response = await api.post('/attendance/bulk', {
+        records: attendanceRecords,
+        date,
+      })
+      return response.data
+    },
+    onSuccess: () => {
+      toast.success('Attendance saved successfully')
+      // Reset state after successful save
+      setMarks({})
+      setShowSummary(false)
+      setClassId(null)
+      setDate(getTodayDate())
+    },
+    onError: (error: any) => {
+      const errorMsg = error?.response?.data?.error || 'Failed to save attendance'
+      toast.error(errorMsg)
+      // Keep summary open so user can retry
+    },
+  })
+
+  // Event handlers
+  const handleMark = (studentId: string, status: AttendanceStatus) => {
+    setMarks((prev) => ({ ...prev, [studentId]: status }))
   }
 
-  const marked = Object.keys(attendance).length
-  const present = Object.values(attendance).filter(s => s === 'PRESENT').length
+  const handleFinish = () => {
+    if (Object.keys(marks).length === 0) {
+      toast.error('Please mark at least one student')
+      return
+    }
+    setShowSummary(true)
+  }
 
+  const handleGoBack = () => {
+    setShowSummary(false)
+  }
+
+  const handleSave = () => {
+    saveAttendance()
+  }
+
+  const handleClassChange = (newClassId: string) => {
+    setClassId(newClassId || null)
+    // Clear marks when changing class
+    setMarks({})
+    setShowSummary(false)
+  }
+
+  const handleDateChange = (newDate: string) => {
+    setDate(newDate)
+  }
+
+  // Stats for header
+  const markedCount = Object.keys(marks).length
+  const presentCount = Object.values(marks).filter((s) => s === 'PRESENT').length
+
+  // Show placeholder if no class selected
+  if (!classId) {
+    return (
+      <div className="space-y-8">
+        <PageHeader
+          eyebrow="Roll call"
+          title="Attendance"
+          description="Mark daily attendance for your class."
+        />
+
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Card className="p-8 text-center max-w-md">
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">No class selected</h2>
+            <p className="text-slate-600 mb-6">Select a class to begin marking attendance</p>
+            <ClassSelector
+              selectedClassId={classId}
+              selectedDate={date}
+              onClassSelect={handleClassChange}
+              onDateChange={handleDateChange}
+            />
+          </Card>
+        </div>
+      </div>
+    )
+  }
+
+  // Show summary if requested
+  if (showSummary) {
+    return (
+      <div className="space-y-8">
+        <PageHeader
+          eyebrow="Roll call"
+          title="Review Attendance"
+          description="Review and save attendance marks"
+          stats={[
+            { label: 'Total Students', value: students.length },
+            { label: 'Marked', value: markedCount },
+            { label: 'Present', value: presentCount },
+          ]}
+        />
+
+        <div className="space-y-6">
+          <ClassSelector
+            selectedClassId={classId}
+            selectedDate={date}
+            onClassSelect={handleClassChange}
+            onDateChange={handleDateChange}
+          />
+          <AttendanceSummary
+            marks={marks}
+            students={students}
+            date={date}
+            classId={classId}
+            onSave={handleSave}
+            onGoBack={handleGoBack}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  // Show marking view
   return (
     <div className="space-y-8">
       <PageHeader
-        eyebrow="Attendance desk"
+        eyebrow="Roll call"
         title="Attendance"
         description="Mark daily attendance for your class."
         stats={[
-          { label: 'Students', value: students.length },
-          { label: 'Marked', value: marked },
-          { label: 'Present', value: present },
+          { label: 'Total Students', value: students.length },
+          { label: 'Marked', value: markedCount },
+          { label: 'Present', value: presentCount },
         ]}
       />
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <CsvUploadDialog
-            title="Upload Attendance CSV"
-            uploadUrl="/attendances/upload-csv"
-            templateUrl="/attendances/csv-template"
-            templateFileName="attendance-template.csv"
-            invalidateKeys={[['attendance'], ['students']]}
-          />
-          <input
-            type="date"
-            value={date}
-            onChange={e => setDate(e.target.value)}
-            className="h-10 rounded-xl border border-input bg-background/80 px-4 text-sm"
-          />
-          <Button className="h-10 rounded-xl px-5" onClick={submit} disabled={bulkMutation.isPending}>
-            {bulkMutation.isPending ? 'Saving...' : 'Save'}
-          </Button>
-        </div>
-      </div>
+      <div className="space-y-6">
+        <ClassSelector
+          selectedClassId={classId}
+          selectedDate={date}
+          onClassSelect={handleClassChange}
+          onDateChange={handleDateChange}
+        />
 
-      <div className="flex gap-2 flex-wrap">
-        {(Object.keys(statusConfig) as AttendanceStatus[]).map(status => (
-          <Button key={status} variant="outline" size="sm" className="rounded-xl" onClick={() => markAll(status)}>
-            Mark All {statusConfig[status].label}
-          </Button>
-        ))}
-      </div>
+        {studentsError && (
+          <Card className="p-4 bg-red-50 border-red-200">
+            <p className="text-sm text-red-600">Failed to load students. Please try again.</p>
+          </Card>
+        )}
 
-      {isLoading ? (
-        <div className="space-y-2">{Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}</div>
-      ) : (
-        <Card className="rounded-xl">
-          <CardHeader><CardTitle>Students</CardTitle></CardHeader>
-          <CardContent className="p-0">
-            {students.map((student) => (
-              <div key={student.id} className="flex items-center justify-between border-b border-border/70 px-6 py-4 last:border-0">
-                <div>
-                  <p className="font-medium">{student.firstName} {student.lastName}</p>
-                  {attendance[student.id] && (
-                    <Badge variant={statusConfig[attendance[student.id]].color as any} className="text-xs mt-0.5">
-                      {statusConfig[attendance[student.id]].label}
-                    </Badge>
-                  )}
-                </div>
-                <div className="flex gap-1">
-                  {(Object.keys(statusConfig) as AttendanceStatus[]).map(status => {
-                    const { icon: Icon } = statusConfig[status]
-                    return (
-                      <Button
-                        key={status}
-                        variant={attendance[student.id] === status ? 'default' : 'outline'}
-                        size="icon"
-                        className="h-9 w-9 rounded-xl"
-                        onClick={() => setAttendance(prev => ({ ...prev, [student.id]: status }))}
-                        title={statusConfig[status].label}
-                      >
-                        <Icon className="h-3.5 w-3.5" />
-                      </Button>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
+        {students.length > 0 && (
+          <ListMarkingView
+            students={students}
+            marks={marks}
+            onMark={handleMark}
+            onFinish={handleFinish}
+            isLoading={studentsLoading || isSaving}
+          />
+        )}
+
+        {!studentsError && students.length === 0 && !studentsLoading && (
+          <Card className="p-8 text-center bg-slate-50">
+            <p className="text-sm text-slate-600">No students found in this class.</p>
+          </Card>
+        )}
+      </div>
     </div>
   )
 }
