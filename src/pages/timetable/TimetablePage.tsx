@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 import api from '@/lib/api'
 import type { Class, Teacher, AcademicYear } from '@/types'
 
@@ -48,11 +48,11 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 const DAY_TONE: Record<number, string> = {
-  1: 'bg-teal-500/15 text-teal-800 dark:text-teal-200',
-  2: 'bg-amber-500/15 text-amber-800 dark:text-amber-200',
+  1: 'bg-chart-1/15 text-teal-800 dark:text-teal-200',
+  2: 'bg-chart-2/15 text-amber-800 dark:text-amber-200',
   3: 'bg-sky-500/15 text-sky-800 dark:text-sky-200',
   4: 'bg-violet-500/15 text-violet-800 dark:text-violet-200',
-  5: 'bg-rose-500/15 text-rose-800 dark:text-rose-200',
+  5: 'bg-chart-4/15 text-rose-800 dark:text-rose-200',
 }
 
 export default function TimetablePage() {
@@ -109,19 +109,18 @@ export default function TimetablePage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Class timetable"
-        title="Build and view the weekly schedule for each class."
-        description="Select a class to see its full weekly timetable. Add periods with subject, teacher, time, and room assignments."
+        title="Timetable"
+        description="Build and view the weekly schedule for each class."
         stats={[
-          { label: 'Classes', value: classes.length, detail: 'Total classes available to schedule.' },
-          { label: 'Periods', value: selectedClassId ? entries.length : '—', detail: 'Scheduled periods for the selected class.' },
-          { label: 'Days covered', value: selectedClassId ? daysWithPeriods : '—', detail: 'Weekdays with at least one period.' },
+          { label: 'Classes', value: classes.length },
+          { label: 'Periods', value: selectedClassId ? entries.length : '—' },
         ]}
         actions={
           <div className="flex flex-wrap gap-3">
             <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-              <SelectTrigger className="h-12 w-56 rounded-2xl border-white/20 bg-white/10 text-white">
+              <SelectTrigger className="w-48">
                 <SelectValue placeholder="Select a class…" />
               </SelectTrigger>
               <SelectContent>
@@ -131,11 +130,11 @@ export default function TimetablePage() {
             {selectedClassId && (
               <Dialog open={createOpen} onOpenChange={v => { setCreateOpen(v); if (!v) reset() }}>
                 <DialogTrigger asChild>
-                  <Button className="h-12 rounded-2xl bg-white px-5 text-slate-900 hover:bg-white/90">
+                  <Button>
                     <Plus className="mr-2 h-4 w-4" />Add Period
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="rounded-[28px]">
+                <DialogContent className="rounded-xl">
                   <DialogHeader>
                     <DialogTitle>Add Period — {selectedClass?.name}</DialogTitle>
                   </DialogHeader>
@@ -224,7 +223,7 @@ export default function TimetablePage() {
       />
 
       {!selectedClassId ? (
-        <div className="rounded-[32px] border border-dashed border-border bg-secondary/30 p-12 text-center">
+        <div className="rounded-xl border border-dashed border-border bg-secondary/30 p-12 text-center">
           <CalendarRange className="mx-auto h-10 w-10 text-muted-foreground/50" />
           <p className="mt-4 font-semibold">Select a class to view its timetable</p>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -233,7 +232,7 @@ export default function TimetablePage() {
         </div>
       ) : isLoading ? (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-          {SCHOOL_DAYS.map(d => <Skeleton key={d} className="h-64 rounded-[24px]" />)}
+          {SCHOOL_DAYS.map(d => <Skeleton key={d} className="h-64 rounded-xl" />)}
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
@@ -255,7 +254,7 @@ export default function TimetablePage() {
                   dayEntries.map(entry => (
                     <Card
                       key={entry.id}
-                      className="rounded-[20px] border-white/60 bg-white/85 shadow shadow-slate-900/5 backdrop-blur dark:border-white/10 dark:bg-card/85"
+                      className="rounded-[20px] shadow shadow-slate-900/5"
                     >
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between gap-2">

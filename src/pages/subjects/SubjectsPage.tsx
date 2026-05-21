@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { DataTable } from '@/components/shared/DataTable'
-import { ModuleHero } from '@/components/shared/ModuleHero'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import api from '@/lib/api'
 import type { Class, Teacher, AcademicYear } from '@/types'
@@ -130,14 +130,14 @@ export default function SubjectsPage() {
 
   return (
     <div className="space-y-8">
-      <ModuleHero
+      <PageHeader
         eyebrow="Subject registry"
-        title="Manage subjects across classes and academic years."
-        description="Create subjects, link them to classes and academic years, and assign teachers directly from this view."
+        title="Subjects"
+        description="Manage subjects across classes and academic years."
         stats={[
-          { label: 'Subjects', value: subjects.length, detail: 'Total subjects configured in the system.' },
-          { label: 'Teacher-assigned', value: assignedCount, detail: 'Subjects already linked to a teacher.' },
-          { label: 'Classes covered', value: classCount, detail: 'Distinct classes with at least one subject.' },
+          { label: 'Subjects', value: subjects.length },
+          { label: 'Assigned', value: assignedCount },
+          { label: 'Classes', value: classCount },
         ]}
         actions={
           <div className="flex gap-2">
@@ -147,15 +147,15 @@ export default function SubjectsPage() {
               templateUrl="/subjects/csv-template"
               templateFileName="subjects-template.csv"
               invalidateKeys={[['subjects']]}
-              trigger={<Button className="h-12 rounded-2xl border border-white/30 bg-white/10 px-5 text-white hover:bg-white/20"><Upload className="mr-2 h-4 w-4" />CSV Upload</Button>}
+              trigger={<Button className="h-10 rounded-xl border border-white/30 bg-white/10 px-5 text-white hover:bg-white/20"><Upload className="mr-2 h-4 w-4" />CSV Upload</Button>}
             />
             <Dialog open={open} onOpenChange={v => { if (!v) closeDialog(); else setOpen(true) }}>
             <DialogTrigger asChild>
-              <Button className="h-12 rounded-2xl px-5">
+              <Button className="h-10 rounded-xl px-5">
                 <Plus className="mr-2 h-4 w-4" />Add Subject
               </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-[28px]">
+            <DialogContent className="rounded-xl">
               <DialogHeader>
                 <DialogTitle>{editing ? 'Edit Subject' : 'Add Subject'}</DialogTitle>
               </DialogHeader>
