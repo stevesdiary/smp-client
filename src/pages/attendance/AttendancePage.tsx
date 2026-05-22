@@ -66,7 +66,7 @@ export default function AttendancePage() {
   // Save attendance mutation
   const { mutate: saveAttendance, isPending: isSaving } = useMutation({
     mutationFn: async () => {
-      const response = await api.post('/attendance/bulk', {
+      const response = await api.post('/attendances/bulk', {
         records: attendanceRecords,
         date,
       })
