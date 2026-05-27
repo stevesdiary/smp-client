@@ -1,0 +1,150 @@
+<h2>Web List View — Layout Options</h2>
+<p class="subtitle">Desktop/tablet: teacher sees all students at once and marks each one. Which row style feels right?</p>
+
+<div class="cards">
+
+  <!-- Option A: Compact rows, icon buttons -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8fafc;padding:16px;font-family:system-ui,sans-serif;">
+      <!-- Header row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:8px 12px;background:#f1f5f9;border-radius:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:80px;height:28px;background:#e2e8f0;border-radius:6px;font-size:11px;display:flex;align-items:center;justify-content:center;color:#64748b;">JSS 2A ▾</div>
+          <div style="width:90px;height:28px;background:#e2e8f0;border-radius:6px;font-size:11px;display:flex;align-items:center;justify-content:center;color:#64748b;">2026-05-21</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <div style="padding:4px 10px;background:#dcfce7;border-radius:6px;font-size:11px;color:#15803d;font-weight:600;">✓ 3 Present</div>
+          <div style="padding:4px 10px;background:#fee2e2;border-radius:6px;font-size:11px;color:#dc2626;font-weight:600;">✗ 1 Absent</div>
+        </div>
+      </div>
+      <!-- Student rows -->
+      <div style="background:white;border-radius:10px;border:1px solid #e2e8f0;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#0f172a;">Adaeze Okonkwo</div>
+            <div style="font-size:10px;color:#94a3b8;">EDP-2025-001</div>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <button style="width:30px;height:30px;border-radius:8px;border:none;background:#dcfce7;color:#15803d;font-size:14px;cursor:pointer;font-weight:700;">✓</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:14px;cursor:pointer;">✗</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:11px;cursor:pointer;">L</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:11px;cursor:pointer;">Ex</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#0f172a;">Babatunde Afolabi</div>
+            <div style="font-size:10px;color:#94a3b8;">EDP-2025-002</div>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:14px;cursor:pointer;">✓</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:none;background:#fee2e2;color:#dc2626;font-size:14px;cursor:pointer;font-weight:700;">✗</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:11px;cursor:pointer;">L</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:11px;cursor:pointer;">Ex</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #f1f5f9;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#0f172a;">Chioma Eze</div>
+            <div style="font-size:10px;color:#94a3b8;">EDP-2025-003</div>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <button style="width:30px;height:30px;border-radius:8px;border:none;background:#dcfce7;color:#15803d;font-size:14px;cursor:pointer;font-weight:700;">✓</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:14px;cursor:pointer;">✗</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:11px;cursor:pointer;">L</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:11px;cursor:pointer;">Ex</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#0f172a;">Emeka Nwosu</div>
+            <div style="font-size:10px;color:#94a3b8;">EDP-2025-004</div>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:14px;cursor:pointer;">✓</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:14px;cursor:pointer;">✗</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:none;background:#fef9c3;color:#854d0e;font-size:11px;cursor:pointer;font-weight:600;">L</button>
+            <button style="width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#94a3b8;font-size:11px;cursor:pointer;">Ex</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Compact: icon buttons per row</h3>
+      <p>Fits more students on screen. Icon buttons for ✓ ✗ L Ex. Fast for scanning a long list. Less touch-friendly.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Larger row with labelled buttons -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#f8fafc;padding:16px;font-family:system-ui,sans-serif;">
+      <!-- Header row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:8px 12px;background:#f1f5f9;border-radius:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:80px;height:28px;background:#e2e8f0;border-radius:6px;font-size:11px;display:flex;align-items:center;justify-content:center;color:#64748b;">JSS 2A ▾</div>
+          <div style="width:90px;height:28px;background:#e2e8f0;border-radius:6px;font-size:11px;display:flex;align-items:center;justify-content:center;color:#64748b;">2026-05-21</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <div style="padding:4px 10px;background:#dcfce7;border-radius:6px;font-size:11px;color:#15803d;font-weight:600;">3 Present</div>
+          <div style="padding:4px 10px;background:#fee2e2;border-radius:6px;font-size:11px;color:#dc2626;font-weight:600;">1 Absent</div>
+        </div>
+      </div>
+      <!-- Student rows -->
+      <div style="background:white;border-radius:10px;border:1px solid #e2e8f0;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f1f5f9;background:#f0fdf4;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#0f172a;">Adaeze Okonkwo</div>
+            <div style="font-size:10px;color:#94a3b8;">EDP-2025-001</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button style="padding:5px 12px;border-radius:8px;border:none;background:#16a34a;color:white;font-size:11px;cursor:pointer;font-weight:600;">Present</button>
+            <button style="padding:5px 12px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#64748b;font-size:11px;cursor:pointer;">Absent</button>
+            <button style="padding:5px 10px;border-radius:8px;border:1px solid #fcd34d;background:#fffbeb;color:#92400e;font-size:11px;cursor:pointer;">Late</button>
+            <button style="padding:5px 10px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#64748b;font-size:11px;cursor:pointer;">Excused</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f1f5f9;background:#fef2f2;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#0f172a;">Babatunde Afolabi</div>
+            <div style="font-size:10px;color:#94a3b8;">EDP-2025-002</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button style="padding:5px 12px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#64748b;font-size:11px;cursor:pointer;">Present</button>
+            <button style="padding:5px 12px;border-radius:8px;border:none;background:#dc2626;color:white;font-size:11px;cursor:pointer;font-weight:600;">Absent</button>
+            <button style="padding:5px 10px;border-radius:8px;border:1px solid #fcd34d;background:#fffbeb;color:#92400e;font-size:11px;cursor:pointer;">Late</button>
+            <button style="padding:5px 10px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#64748b;font-size:11px;cursor:pointer;">Excused</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #f1f5f9;background:#f0fdf4;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#0f172a;">Chioma Eze</div>
+            <div style="font-size:10px;color:#94a3b8;">EDP-2025-003</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button style="padding:5px 12px;border-radius:8px;border:none;background:#16a34a;color:white;font-size:11px;cursor:pointer;font-weight:600;">Present</button>
+            <button style="padding:5px 12px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#64748b;font-size:11px;cursor:pointer;">Absent</button>
+            <button style="padding:5px 10px;border-radius:8px;border:1px solid #fcd34d;background:#fffbeb;color:#92400e;font-size:11px;cursor:pointer;">Late</button>
+            <button style="padding:5px 10px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#64748b;font-size:11px;cursor:pointer;">Excused</button>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:#0f172a;">Emeka Nwosu</div>
+            <div style="font-size:10px;color:#94a3b8;">EDP-2025-004</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button style="padding:5px 12px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#64748b;font-size:11px;cursor:pointer;">Present</button>
+            <button style="padding:5px 12px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#64748b;font-size:11px;cursor:pointer;">Absent</button>
+            <button style="padding:5px 10px;border-radius:8px;border:none;background:#f59e0b;color:white;font-size:11px;cursor:pointer;font-weight:600;">Late</button>
+            <button style="padding:5px 10px;border-radius:8px;border:1px solid #e2e8f0;background:white;color:#64748b;font-size:11px;cursor:pointer;">Excused</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Spacious: labelled buttons per row</h3>
+      <p>Rows are taller with text buttons (Present / Absent / Late / Excused). Active status highlighted with color. Row background tints green/red. Easier to scan and tap on tablet.</p>
+    </div>
+  </div>
+
+</div>

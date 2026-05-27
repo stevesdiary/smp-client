@@ -159,14 +159,16 @@ Spec: `docs/superpowers/specs/2026-05-21-attendance-rollcall-design.md` — Phas
 
 **Phase 1 — Web List View (implemented):**
 - `AttendancePage` is the orchestrator; sub-components in `src/pages/attendance/components/`:
-  - `ClassSelector.tsx` — class dropdown (`GET /classes`, queryKey `['classes']`) + native date input; shows enrollment count "ClassName (N students)"; has "Clear" button
+  - `ClassSelector.tsx` — class dropdown (`GET /classes`, queryKey `['classes']`) + native date input; shows enrollment count via `cls._count?.enrollments || 0` as "ClassName (N students)"; has "Clear" button
   - `ListMarkingView.tsx` — scrollable list (max-h `600px`), one row per student; four status buttons (Present/Absent/Late/Excused); row bg tints by `ATTENDANCE_STATUS_COLORS[status].row`; "Review & Finish" button
   - `AttendanceSummary.tsx` — shows counts Total/Present/Absent/Late/Excused/Unmarked; yellow warning box lists unmarked students with "Go Back & Edit"; Save + Cancel buttons
   - `attendanceStyles.ts` — `ATTENDANCE_STATUS_COLORS` map (`{ text, bg, row }` hex per status); exports `getStatusTextColor`, `getStatusBgColor`, `getRowBgColor`, `formatStatus`, `countByStatus`
 - State in `AttendancePage`: `classId: string | null`, `date: string (YYYY-MM-DD)`, `marks: Record<string, AttendanceStatus>`, `showSummary: boolean`
 - Student key (marking + summary): `student.studentId || student.studentCode || student.id`
-- API: `GET /classes`, `GET /students?classId={id}&limit=200`, `POST /attendances/bulk { records, date }` (marked students only)
+- API: `GET /classes`, `GET /students?classId={id}&limit=200`, `POST /attendances/bulk { records, date }` (marked students only); on success: resets marks, closes summary, clears classId, resets date to today
 - Status colors: Present green (`#16a34a`/`#dcfce7`/`#f0fdf4`), Absent red (`#dc2626`/`#fee2e2`/`#fef2f2`), Late amber (`#f59e0b`/`#fef9c3`/`#fffbeb`), Excused slate (`#64748b`/`#f1f5f9`/`#f8fafc`) — text/bg/row
+
+**Tests:** `src/pages/attendance/__tests__/AttendancePage.test.tsx` is a spec/documentation stub (not runnable — vitest not yet installed for this); contains behavior contract comments and a type-check import only. `AttendanceSummary.test.tsx` does not exist yet.
 
 **Phase 2 — Mobile Swipe Roll Call (deferred until mobile app):**
 - Will add `RollCallView.tsx`, `SwipeCard.tsx` (framer-motion drag, right=Present/left=Absent, 80px threshold), `ModeToggle.tsx`
@@ -181,6 +183,7 @@ Spec: `docs/superpowers/specs/2026-05-21-attendance-rollcall-design.md` — Phas
 - Core domain interfaces in `src/types/index.ts`: `User`, `Role`, `AuthState`, `Student`, `Teacher`, `Class`, `Attendance`, `Grade`, `Subject`, `Assignment`, `Fee`, `Payment`, `AcademicYear`, `Term`, `Book`, `Course`, `CourseModule`, `Lesson`, `LessonPlaybackProgress`, `CourseEnrollment`, `RecordedCourse`, `LiveClass`, `Discussion`, `DiscussionReply`, `Certificate`, `Event`, `Notice`, `EBook`, `ReadingProgress`
 - Attendance types in `src/types/index.ts`: `AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED'`; `StudentWithAttendance extends Student { status?: AttendanceStatus }`; `AttendanceRecord { studentId, status, date, classId }`; `AttendancePageState { classId: string | null, date, marks: Record<string, AttendanceStatus>, showSummary }`
 - Quiz types in `src/types/index.ts`: `Quiz`, `QuizAttempt`, `QuizQuestion`, `QuizQuestionOption`, `QuizCreatePayload`, `QuizUpdatePayload`, `QuizListFilters`, `StaffQuizSubmitPayload`; enums: `QuizPlacement`, `QuizStatus`, `QuizGradeSinkType`, `QuizResultsVisibility`, `QuizQuestionType`
+- `Class` interface includes `_count?: { enrollments: number }` — populated by `GET /classes`; used by `ClassSelector` to show enrollment count
 - `Subject` client type: `{ id, name, code?, description?, academicYearId?, classId? }` — base interface **includes** `classId?` and `academicYearId?`; `SubjectsPage` still defines a local `SubjectRow` type with full relation objects (`class?: Class`, `teacher?: Teacher`, `academicYear?: AcademicYear`) for form pre-population
 - `Notice`: `{ id, authorId, title, content, targetRoles: UserRole[], createdAt, updatedAt, author?: { id, email?, firstName?, lastName?, role? } }`
 - `EBook`: `{ id, tenantId, bookId?, book?, title, author, description?, coverUrl?, genre?, isbn?, fileKey, fileSize, fileType: 'PDF'|'EPUB', isDownloadable, createdAt }`
