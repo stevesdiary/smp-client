@@ -168,7 +168,7 @@ Spec: `docs/superpowers/specs/2026-05-21-attendance-rollcall-design.md` — Phas
 - API: `GET /classes`, `GET /students?classId={id}&limit=200`, `POST /attendances/bulk { records, date }` (marked students only); on success: resets marks, closes summary, clears classId, resets date to today
 - Status colors: Present green (`#16a34a`/`#dcfce7`/`#f0fdf4`), Absent red (`#dc2626`/`#fee2e2`/`#fef2f2`), Late amber (`#f59e0b`/`#fef9c3`/`#fffbeb`), Excused slate (`#64748b`/`#f1f5f9`/`#f8fafc`) — text/bg/row
 
-**Tests:** `src/pages/attendance/__tests__/AttendancePage.test.tsx` is a spec/documentation stub (not runnable — vitest not yet installed for this); contains behavior contract comments and a type-check import only. `AttendanceSummary.test.tsx` does not exist yet.
+**Tests:** `src/pages/attendance/__tests__/AttendancePage.test.tsx` is a spec/documentation stub (not runnable — vitest not yet installed); contains behavior contract comments and a type-check import only. `AttendanceSummary.test.tsx` does not exist. To add tests: `npm install --save-dev vitest @testing-library/react @testing-library/user-event @types/vitest`, then create `vitest.config.ts`.
 
 **Phase 2 — Mobile Swipe Roll Call (deferred until mobile app):**
 - Will add `RollCallView.tsx`, `SwipeCard.tsx` (framer-motion drag, right=Present/left=Absent, 80px threshold), `ModeToggle.tsx`
