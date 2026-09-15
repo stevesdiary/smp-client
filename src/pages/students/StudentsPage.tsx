@@ -1,10 +1,11 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
-  ChevronLeft, ChevronRight, Pencil, Plus, Trash2, Search,
+  ChevronLeft, ChevronRight, Eye, Pencil, Plus, Trash2, Search,
   Users, Phone, Mail, CalendarDays, ContactRound,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -292,6 +293,14 @@ export default function StudentsPage() {
                     <td className="px-6 py-5 text-sm text-muted-foreground">{formatDate(s.createdAt)}</td>
                     <td className="px-8 py-5">
                       <div className="flex items-center justify-end gap-2">
+                        <Link
+                          to={`/students/${s.id}`}
+                          className="rounded-lg p-2 text-outline transition-all hover:bg-primary/5 hover:text-primary"
+                          title="View profile"
+                          aria-label={`View ${s.firstName} ${s.lastName}`}
+                        >
+                          <Eye className="h-4 w-4" strokeWidth={1.5} />
+                        </Link>
                         <button
                           className="rounded-lg p-2 text-outline transition-all hover:bg-primary/5 hover:text-primary"
                           title="Edit"

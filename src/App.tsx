@@ -15,6 +15,7 @@ const SchoolSetupPage = lazy(() => import('@/pages/auth/SchoolSetupPage'))
 const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'))
 const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'))
 const StudentsPage = lazy(() => import('@/pages/students/StudentsPage'))
+const StudentProfilePage = lazy(() => import('@/pages/students/StudentProfilePage'))
 const AcademicYearsPage = lazy(() => import('@/pages/academic/AcademicYearsPage'))
 const SubjectsPage = lazy(() => import('@/pages/subjects/SubjectsPage'))
 const TimetablePage = lazy(() => import('@/pages/timetable/TimetablePage'))
@@ -80,6 +81,7 @@ export default function App() {
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/students" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><StudentsPage /></ProtectedRoute>} />
+              <Route path="/students/:id" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><StudentProfilePage /></ProtectedRoute>} />
               <Route path="/candidates" element={<ProtectedRoute allowedRoles={['ADMIN']}><CandidatesPage /></ProtectedRoute>} />
               <Route path="/teachers" element={<ProtectedRoute allowedRoles={['ADMIN']}><TeachersPage /></ProtectedRoute>} />
               <Route path="/classes" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><ClassesPage /></ProtectedRoute>} />
