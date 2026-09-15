@@ -1,10 +1,5 @@
 import { Student, AttendanceStatus } from '@/types'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import {
-  ATTENDANCE_STATUS_COLORS,
-  formatStatus,
-} from './attendanceStyles'
+import { formatStatus } from './attendanceStyles'
 
 interface ListMarkingViewProps {
   students: Student[]
@@ -14,70 +9,74 @@ interface ListMarkingViewProps {
   isLoading?: boolean
 }
 
-export default function ListMarkingView({
-  students,
-  marks,
-  onMark,
-  onFinish,
-  isLoading = false,
-}: ListMarkingViewProps) {
-  const statuses: AttendanceStatus[] = ['PRESENT', 'ABSENT', 'LATE', 'EXCUSED']
+const STATUSES: AttendanceStatus[] = ['PRESENT', 'LATE', 'ABSENT', 'EXCUSED']
 
+// Active pill styling per status, using SchoolOS tokens
+const ACTIVE_PILL: Record<AttendanceStatus, string> = {
+  PRESENT: 'border-primary bg-primary-fixed text-on-secondary-fixed',
+  LATE: 'border-secondary-container bg-secondary-fixed text-on-secondary-fixed',
+  ABSENT: 'border-[#ffdad6] bg-[#ffdad6] text-[#93000a]',
+  EXCUSED: 'border-outline-variant bg-surface-container-high text-on-surface',
+}
+const ROW_TINT: Record<AttendanceStatus, string> = {
+  PRESENT: 'bg-primary-fixed/10',
+  LATE: 'bg-secondary-fixed/20',
+  ABSENT: 'bg-[#ffdad6]/25',
+  EXCUSED: 'bg-surface-container-low',
+}
+
+function initials(first?: string, last?: string) {
+  return `${first?.[0] ?? ''}${last?.[0] ?? ''}`.toUpperCase() || '?'
+}
+
+export default function ListMarkingView({ students, marks, onMark, onFinish, isLoading = false }: ListMarkingViewProps) {
   if (!students.length) {
     return (
-      <Card className="p-8 text-center bg-slate-50">
-        <p className="text-sm text-slate-600">No students in this class.</p>
-      </Card>
+      <div className="rounded-3xl bg-surface-container-lowest p-8 text-center text-sm text-muted-foreground shadow-soft">
+        No students in this class.
+      </div>
     )
   }
 
   return (
     <div className="space-y-4">
-      {/* Student list */}
-      <Card className="overflow-hidden border border-slate-200">
-        <div className="max-h-[600px] overflow-y-auto">
-          {students.map(student => {
+      <div className="overflow-hidden rounded-3xl bg-surface-container-lowest shadow-soft">
+        <div className="flex items-center justify-between bg-surface-container-low px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+          <span>Student</span>
+          <span>Attendance Status</span>
+        </div>
+        <div className="max-h-[560px] divide-y divide-outline-variant/10 overflow-y-auto">
+          {students.map((student) => {
             const studentId = student.studentId || student.studentCode || student.id
-            const currentStatus = marks[studentId]
-            const rowBg = currentStatus
-              ? ATTENDANCE_STATUS_COLORS[currentStatus].row
-              : 'white'
-
+            const current = marks[studentId]
             return (
               <div
                 key={student.id}
-                className="flex items-center justify-between p-3 border-b border-slate-100 last:border-b-0 transition-colors"
-                style={{ backgroundColor: rowBg }}
+                className={`flex items-center justify-between gap-4 px-6 py-4 transition-colors ${current ? ROW_TINT[current] : ''}`}
               >
-                {/* Student info */}
-                <div className="min-w-0">
-                  <div className="font-medium text-sm text-slate-900">
-                    {student.firstName} {student.lastName}
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-fixed text-xs font-black text-primary-container">
+                    {initials(student.firstName, student.lastName)}
                   </div>
-                  <div className="text-xs text-slate-500">
-                    {studentId}
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-on-surface">{student.firstName} {student.lastName}</p>
+                    <p className="truncate font-mono text-[11px] text-muted-foreground">{studentId}</p>
                   </div>
                 </div>
 
-                {/* Status buttons */}
-                <div className="flex gap-2 flex-shrink-0 ml-4">
-                  {statuses.map(status => {
-                    const isActive = currentStatus === status
-                    const colors = ATTENDANCE_STATUS_COLORS[status]
-
+                <div className="flex shrink-0 flex-wrap justify-end gap-2">
+                  {STATUSES.map((status) => {
+                    const active = current === status
                     return (
                       <button
                         key={status}
                         onClick={() => onMark(studentId, status)}
                         disabled={isLoading}
-                        className="px-3 py-1.5 text-xs font-medium rounded-md transition-colors border"
-                        style={{
-                          backgroundColor: isActive ? colors.bg : 'white',
-                          color: isActive ? colors.text : '#94a3b8',
-                          borderColor: isActive ? colors.text : '#e2e8f0',
-                        }}
-                        title={`Mark as ${formatStatus(status)}`}
+                        aria-pressed={active}
                         aria-label={`Mark ${student.firstName} as ${formatStatus(status)}`}
+                        className={`rounded-full border px-3.5 py-1.5 text-xs font-bold transition-colors ${
+                          active ? ACTIVE_PILL[status] : 'border-outline-variant/30 text-muted-foreground hover:bg-surface-container-low'
+                        }`}
                       >
                         {formatStatus(status)}
                       </button>
@@ -88,17 +87,16 @@ export default function ListMarkingView({
             )
           })}
         </div>
-      </Card>
+      </div>
 
-      {/* Finish button */}
       <div className="flex justify-end">
-        <Button
+        <button
           onClick={onFinish}
           disabled={isLoading}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white"
+          className="rounded-xl bg-gradient-to-br from-primary to-primary-container px-6 py-3 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
         >
-          Review & Finish
-        </Button>
+          Review &amp; Finish
+        </button>
       </div>
     </div>
   )

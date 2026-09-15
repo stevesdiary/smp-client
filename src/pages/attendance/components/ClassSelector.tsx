@@ -1,17 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
+import { CheckCheck } from 'lucide-react'
 import api from '@/lib/api'
 import { Class } from '@/types'
-import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card } from '@/components/ui/card'
 
 interface ClassSelectorProps {
   selectedClassId: string | null
   selectedDate: string
   onClassSelect: (classId: string) => void
   onDateChange: (date: string) => void
+  onMarkAllPresent?: () => void
 }
 
 export default function ClassSelector({
@@ -19,6 +18,7 @@ export default function ClassSelector({
   selectedDate,
   onClassSelect,
   onDateChange,
+  onMarkAllPresent,
 }: ClassSelectorProps) {
   const { data: classes = [], isLoading, error } = useQuery({
     queryKey: ['classes'],
@@ -30,66 +30,66 @@ export default function ClassSelector({
 
   if (error) {
     return (
-      <Card className="p-4 bg-red-50 border-red-200">
-        <p className="text-sm text-red-600">Failed to load classes. Please try again.</p>
-      </Card>
+      <div className="rounded-3xl bg-[#ffdad6]/40 p-4 text-sm font-medium text-[#93000a]">
+        Failed to load classes. Please try again.
+      </div>
     )
   }
 
   return (
-    <Card className="p-6 bg-slate-50 border-slate-200">
-      <div className="flex gap-6 items-end">
-        {/* Class Selector */}
-        <div className="flex-1 min-w-[200px]">
-          <Label htmlFor="class-select" className="block text-sm font-medium mb-2 text-slate-700">
-            Select Class
-          </Label>
-          <Select value={selectedClassId || ''} onValueChange={onClassSelect} disabled={isLoading}>
-            <SelectTrigger id="class-select" className="w-full">
-              <SelectValue placeholder={isLoading ? 'Loading classes...' : 'Choose a class'} />
-            </SelectTrigger>
-            <SelectContent>
-              {classes.map(cls => (
-                <SelectItem key={cls.id} value={cls.id}>
-                  {cls.name} ({cls._count?.enrollments || 0} students)
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <section className="rounded-3xl bg-surface-container-low p-5">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="min-w-[220px]">
+            <Label htmlFor="class-select" className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Class
+            </Label>
+            <Select value={selectedClassId || ''} onValueChange={onClassSelect} disabled={isLoading}>
+              <SelectTrigger id="class-select" className="h-11 w-full rounded-xl border-outline-variant/30 bg-surface-container-lowest">
+                <SelectValue placeholder={isLoading ? 'Loading classes…' : 'Choose a class'} />
+              </SelectTrigger>
+              <SelectContent>
+                {classes.map((cls) => (
+                  <SelectItem key={cls.id} value={cls.id}>
+                    {cls.name} ({cls._count?.enrollments || 0} students)
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="min-w-[180px]">
+            <Label htmlFor="date-input" className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Date
+            </Label>
+            <input
+              id="date-input"
+              type="date"
+              value={selectedDate}
+              onChange={(e) => onDateChange(e.target.value)}
+              className="h-11 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-3 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary-container/30"
+            />
+          </div>
+
+          {selectedClassId && (
+            <button
+              onClick={() => onClassSelect('')}
+              className="h-11 rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container-high"
+            >
+              Clear
+            </button>
+          )}
         </div>
 
-        {/* Date Picker */}
-        <div className="flex-1 min-w-[200px]">
-          <Label htmlFor="date-input" className="block text-sm font-medium mb-2 text-slate-700">
-            Date
-          </Label>
-          <Input
-            id="date-input"
-            type="date"
-            value={selectedDate}
-            onChange={e => onDateChange(e.target.value)}
-            className="w-full"
-          />
-        </div>
-
-        {/* Clear selection button */}
-        {selectedClassId && (
-          <Button
-            variant="outline"
-            onClick={() => onClassSelect('')}
-            className="px-4"
+        {onMarkAllPresent && (
+          <button
+            onClick={onMarkAllPresent}
+            className="flex h-11 items-center gap-2 rounded-xl bg-primary-fixed px-5 text-sm font-bold text-primary-container transition-colors hover:bg-primary-fixed-dim"
           >
-            Clear
-          </Button>
+            <CheckCheck className="h-4 w-4" strokeWidth={1.5} /> Mark All Present
+          </button>
         )}
       </div>
-
-      {/* Help text */}
-      {selectedClassId && (
-        <p className="text-xs text-slate-600 mt-3">
-          Class selected. Scroll down to mark attendance for each student.
-        </p>
-      )}
-    </Card>
+    </section>
   )
 }
