@@ -5,8 +5,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Geist', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['ui-monospace', 'SFMono-Regular', 'monospace'],
+        sans: ['Manrope', 'system-ui', '-apple-system', 'sans-serif'],
+        body: ['Manrope', 'system-ui', 'sans-serif'],
+        headline: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -70,6 +72,43 @@ export default {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+
+        // ─── SchoolOS "Digital Hearth" Material tokens (literal, light-mode) ──
+        // Used for faithful reproduction of the Stitch design system.
+        surface: {
+          DEFAULT: '#f7f9ff',
+          dim: '#d1dbe9',
+          bright: '#f7f9ff',
+          variant: '#d9e3f2',
+          container: '#e5effd',
+          'container-low': '#edf4ff',
+          'container-lowest': '#ffffff',
+          'container-high': '#dfe9f7',
+          'container-highest': '#d9e3f2',
+        },
+        'on-surface': {
+          DEFAULT: '#121c27',
+          variant: '#404941',
+        },
+        'primary-container': '#1a5c38',
+        'primary-fixed': {
+          DEFAULT: '#aef2c2',
+          dim: '#93d5a7',
+        },
+        'on-primary-container': '#90d2a5',
+        'secondary-container': '#feae2c',
+        'secondary-fixed': {
+          DEFAULT: '#ffddb4',
+          dim: '#ffb955',
+        },
+        'on-secondary-fixed': {
+          DEFAULT: '#291800',
+          variant: '#633f00',
+        },
+        outline: {
+          DEFAULT: '#707971',
+          variant: '#c0c9bf',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -84,6 +123,9 @@ export default {
         DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05)',
         md: '0 4px 16px -2px rgb(0 0 0 / 0.08), 0 2px 8px -2px rgb(0 0 0 / 0.06)',
         lg: '0 8px 24px -4px rgb(0 0 0 / 0.10), 0 4px 12px -4px rgb(0 0 0 / 0.08)',
+        // Ambient "soft lift" — the hallmark of the Digital Hearth system
+        soft: '0 8px 32px rgba(18, 28, 39, 0.04)',
+        'soft-lg': '0 8px 32px rgba(18, 28, 39, 0.10)',
       },
       keyframes: {
         'fade-in': { from: { opacity: '0', transform: 'translateY(4px)' }, to: { opacity: '1', transform: 'translateY(0)' } },

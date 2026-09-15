@@ -25,6 +25,7 @@ import { useAuthStore } from '@/store/authStore'
 import { getUserRole } from '@/lib/auth'
 import api from '@/lib/api'
 import { StudentDashboard } from './StudentDashboard'
+import { AdminDashboard } from './AdminDashboard'
 
 type DashboardEvent = {
   id: string
@@ -130,33 +131,23 @@ export default function DashboardPage() {
   const role = getUserRole(user)
 
   const canViewAcademic = role === 'ADMIN' || role === 'TEACHER'
-  const canViewPayments = role === 'ADMIN'
   const canViewEvents = role === 'ADMIN' || role === 'TEACHER'
   const isParent = role === 'PARENT'
   const isStudent = role === 'STUDENT'
   const isStaff = role === 'STAFF'
 
   if (isStudent) return <StudentDashboard />
+  if (role === 'ADMIN') return <AdminDashboard />
 
   const { data: students = [], isLoading: studentsLoading } = useQuery({
     queryKey: ['students'],
     queryFn: () => api.get('/students').then((res) => res.data),
     enabled: canViewAcademic,
   })
-  const { data: teachers = [], isLoading: teachersLoading } = useQuery({
-    queryKey: ['teachers'],
-    queryFn: () => api.get('/teachers').then((res) => res.data),
-    enabled: role === 'ADMIN',
-  })
   const { data: classes = [] } = useQuery({
     queryKey: ['classes'],
     queryFn: () => api.get('/classes').then((res) => res.data),
     enabled: canViewAcademic,
-  })
-  const { data: payments = [] } = useQuery({
-    queryKey: ['payments', 'all-by-student'],
-    queryFn: fetchAllPaymentsByStudent,
-    enabled: canViewPayments,
   })
   const { data: events = [] } = useQuery<DashboardEvent[]>({
     queryKey: ['events'],
@@ -178,10 +169,6 @@ export default function DashboardPage() {
     queryFn: () => api.get('/library/stats').then((res) => res.data),
     enabled: isStaff,
   })
-
-  const totalRevenue = payments.reduce((sum, payment) => (
-    payment.status === 'SUCCESS' ? sum + payment.amount : sum
-  ), 0)
 
   const themeByRole = {
     MASTER: {
@@ -229,15 +216,6 @@ export default function DashboardPage() {
   }[role] ?? { label: 'Command Center', title: '', description: '', badge: 'Admin' }
 
   const stats: DashboardStat[] = (() => {
-    if (role === 'ADMIN') {
-      return [
-        { title: 'Students', value: studentsLoading ? '...' : students.length, detail: 'Active learners currently enrolled.', icon: Users, tone: 'teal' },
-        { title: 'Teachers', value: teachersLoading ? '...' : teachers.length, detail: 'Faculty accounts visible to admin.', icon: GraduationCap, tone: 'gold' },
-        { title: 'Classes', value: classes.length, detail: 'Structured classrooms and homerooms.', icon: School, tone: 'slate' },
-        { title: 'Revenue', value: formatCurrency(totalRevenue), detail: 'Successful payments recorded so far.', icon: DollarSign, tone: 'rose' },
-      ]
-    }
-
     if (role === 'TEACHER') {
       return [
         { title: 'Students', value: studentsLoading ? '...' : students.length, detail: 'Learners currently visible to teaching workflows.', icon: Users, tone: 'teal' },
@@ -283,14 +261,6 @@ export default function DashboardPage() {
   })()
 
   const quickActions = (() => {
-    if (role === 'ADMIN') {
-      return [
-        { to: '/students', title: 'Manage students', description: 'Open learner records and enrollment details.' },
-        { to: '/payments', title: 'Review payments', description: 'See all payment records and collection status.' },
-        { to: '/events', title: 'Publish event schedule', description: 'Coordinate the school calendar from one place.' },
-      ]
-    }
-
     if (role === 'TEACHER') {
       return [
         { to: '/attendance', title: 'Take attendance', description: 'Mark daily attendance and identify gaps early.' },
@@ -321,12 +291,11 @@ export default function DashboardPage() {
   })()
 
   const insightItems: InsightItem[] = (() => {
-    if (role === 'ADMIN' || role === 'TEACHER') {
+    if (role === 'TEACHER') {
       return [
         { label: 'Students', value: students.length, tone: 'bg-chart-1' },
         { label: 'Classes', value: classes.length, tone: 'bg-chart-2' },
         { label: 'Events', value: events.length, tone: 'bg-chart-3' },
-        { label: 'Revenue units', value: Math.round(totalRevenue / 1000), tone: 'bg-chart-4' },
       ]
     }
 

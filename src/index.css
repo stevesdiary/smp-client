@@ -1,133 +1,125 @@
-/* ─── Geist Variable Font ────────────────────────────────────────────────── */
-@font-face {
-  font-family: 'Geist';
-  src: url('/node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2') format('woff2');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
+/* ─── SchoolOS "Digital Hearth" type system ──────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  /* ─── Light mode ─────────────────────────────────────────────────────── */
+  /* ─── Light mode — "Digital Hearth" (deep forest green + warm amber) ───── */
   :root {
-    /* Backgrounds */
-    --background:           0 0% 98%;
-    --card:                 0 0% 100%;
-    --card-foreground:      220 15% 12%;
+    /* Backgrounds — cool near-white surface */
+    --background:           226 100% 98%;   /* surface #f7f9ff */
+    --card:                 0 0% 100%;       /* surface-container-lowest #ffffff */
+    --card-foreground:      211 37% 11%;     /* on-surface #121c27 */
     --popover:              0 0% 100%;
-    --popover-foreground:   220 15% 12%;
+    --popover-foreground:   211 37% 11%;
 
     /* Text */
-    --foreground:           220 15% 12%;
-    --muted-foreground:     220 10% 46%;
+    --foreground:           211 37% 11%;     /* on-surface #121c27 (never pure black) */
+    --muted-foreground:     215 16% 47%;     /* slate-500 — secondary text */
 
-    /* Primary — deep teal */
-    --primary:              186 72% 28%;
+    /* Primary — deep forest green #004324 */
+    --primary:              152 100% 13%;
     --primary-foreground:   0 0% 100%;
 
-    /* Secondary — soft neutral */
-    --secondary:            220 14% 94%;
-    --secondary-foreground: 220 15% 20%;
+    /* Secondary — cool surface for neutral chips */
+    --secondary:            216 100% 96%;    /* surface-container-low #edf4ff */
+    --secondary-foreground: 147 56% 23%;     /* primary-container #1a5c38 */
 
     /* Muted */
-    --muted:                220 14% 94%;
+    --muted:                216 100% 96%;
 
     /* Accent — warm amber wash */
-    --accent:               38 80% 94%;
-    --accent-foreground:    38 60% 28%;
+    --accent:               33 100% 92%;
+    --accent-foreground:    35 100% 12%;     /* on-secondary-fixed */
 
     /* Semantic */
-    --destructive:          0 72% 51%;
+    --destructive:          0 75% 42%;       /* error #ba1a1a */
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders & inputs */
-    --border:               220 13% 88%;
-    --input:                220 13% 88%;
-    --ring:                 186 72% 28%;
+    /* Borders & inputs — felt, not seen (soft cool grey) */
+    --border:               216 40% 90%;
+    --input:                216 40% 90%;
+    --ring:                 152 100% 13%;
 
-    /* Sidebar */
-    --sidebar:              220 20% 97%;
-    --sidebar-foreground:   220 15% 12%;
-    --sidebar-accent:       186 72% 28%;
+    /* Sidebar — same tone as canvas, no hard border */
+    --sidebar:              226 100% 98%;
+    --sidebar-foreground:   211 37% 11%;
+    --sidebar-accent:       147 56% 23%;     /* primary-container */
     --sidebar-accent-foreground: 0 0% 100%;
 
     /* Semantic status */
-    --success:              145 55% 38%;
+    --success:              145 90% 20%;
     --success-foreground:   0 0% 100%;
-    --success-light:        145 55% 94%;
-    --warning:              38 90% 50%;
-    --warning-foreground:   38 60% 15%;
-    --warning-light:        38 90% 94%;
-    --info:                 210 72% 45%;
+    --success-light:        138 72% 88%;     /* primary-fixed wash */
+    --warning:              37 99% 58%;      /* secondary-container #feae2c */
+    --warning-foreground:   35 100% 12%;
+    --warning-light:        33 100% 90%;     /* secondary-fixed wash */
+    --info:                 216 90% 56%;
     --info-foreground:      0 0% 100%;
-    --info-light:           210 72% 94%;
+    --info-light:           216 100% 94%;
 
-    /* Chart / insight bars — named by role, not hue */
-    --chart-1:              186 72% 28%;   /* primary teal */
-    --chart-2:              38 80% 50%;    /* amber */
-    --chart-3:              220 14% 60%;   /* slate */
-    --chart-4:              0 72% 51%;     /* rose */
-    --chart-5:              145 55% 38%;   /* green */
+    /* Chart / insight bars */
+    --chart-1:              152 100% 13%;    /* forest green */
+    --chart-2:              37 99% 58%;      /* amber */
+    --chart-3:              138 72% 82%;     /* primary-fixed green */
+    --chart-4:              0 75% 42%;       /* error red */
+    --chart-5:              145 90% 30%;     /* mid green */
 
     /* Design tokens */
-    --radius:               0.75rem;   /* 12px — one radius for everything */
+    --radius:               0.75rem;         /* 12px base radius */
   }
 
-  /* ─── Dark mode ──────────────────────────────────────────────────────── */
+  /* ─── Dark mode — deep forest, lighter accents ──────────────────────────── */
   .dark {
-    --background:           222 20% 10%;
-    --card:                 222 18% 14%;
+    --background:           222 24% 9%;
+    --card:                 222 20% 13%;
     --card-foreground:      220 15% 93%;
-    --popover:              222 18% 14%;
+    --popover:              222 20% 13%;
     --popover-foreground:   220 15% 93%;
 
     --foreground:           220 15% 93%;
-    --muted-foreground:     220 10% 58%;
+    --muted-foreground:     215 14% 62%;
 
-    --primary:              186 55% 56%;
-    --primary-foreground:   222 20% 10%;
+    --primary:              138 44% 71%;     /* primary-fixed-dim #93d5a7 */
+    --primary-foreground:   152 100% 6%;
 
-    --secondary:            220 14% 20%;
-    --secondary-foreground: 220 15% 85%;
+    --secondary:            216 14% 20%;
+    --secondary-foreground: 220 15% 88%;
 
-    --muted:                220 14% 20%;
+    --muted:                216 14% 20%;
 
-    --accent:               38 28% 18%;
-    --accent-foreground:    38 70% 72%;
+    --accent:               35 40% 18%;
+    --accent-foreground:    33 100% 78%;
 
     --destructive:          0 68% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --border:               220 14% 22%;
-    --input:                220 14% 22%;
-    --ring:                 186 55% 56%;
+    --border:               216 14% 22%;
+    --input:                216 14% 22%;
+    --ring:                 138 44% 71%;
 
-    --sidebar:              222 22% 8%;
+    --sidebar:              222 26% 7%;
     --sidebar-foreground:   220 15% 88%;
-    --sidebar-accent:       186 55% 56%;
-    --sidebar-accent-foreground: 222 20% 10%;
+    --sidebar-accent:       138 44% 71%;
+    --sidebar-accent-foreground: 152 100% 6%;
 
-    /* Semantic status */
-    --success:              145 45% 50%;
-    --success-foreground:   222 20% 10%;
-    --success-light:        145 35% 18%;
-    --warning:              38 80% 58%;
-    --warning-foreground:   38 60% 10%;
-    --warning-light:        38 40% 18%;
-    --info:                 210 65% 58%;
-    --info-foreground:      222 20% 10%;
-    --info-light:           210 40% 18%;
+    --success:              138 55% 55%;
+    --success-foreground:   152 100% 6%;
+    --success-light:        145 30% 18%;
+    --warning:              37 90% 60%;
+    --warning-foreground:   35 100% 8%;
+    --warning-light:        35 40% 18%;
+    --info:                 216 70% 62%;
+    --info-foreground:      222 24% 9%;
+    --info-light:           216 40% 18%;
 
-    /* Chart / insight bars */
-    --chart-1:              186 55% 56%;
-    --chart-2:              38 80% 58%;
-    --chart-3:              220 14% 55%;
+    --chart-1:              138 44% 71%;
+    --chart-2:              37 90% 60%;
+    --chart-3:              138 40% 45%;
     --chart-4:              0 68% 58%;
-    --chart-5:              145 45% 50%;
+    --chart-5:              145 50% 55%;
   }
 
   /* ─── Base resets ────────────────────────────────────────────────────── */
@@ -139,16 +131,17 @@
     min-height: 100vh;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
     font-feature-settings: 'rlig' 1, 'calt' 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Headlines carry the "authoritative" voice */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Geist', system-ui, sans-serif;
-    letter-spacing: -0.025em;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
 
   #root {

@@ -3,8 +3,8 @@ import {
   LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList, CreditCard,
   DollarSign, Calendar, Library, Bus, Package, Trophy,
   Building2, Heart, AlertTriangle, Video, MessageSquare,
-  Award, Settings, LogOut, School, ShieldCheck, UserCheck, Bell,
-  CalendarDays, BookMarked, CalendarRange, Globe
+  Award, Settings, LogOut, School, UserCheck, Bell,
+  CalendarDays, BookMarked, CalendarRange, Globe, MessageCircle
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
@@ -46,8 +46,12 @@ interface SidebarProps {
   onClose: () => void
 }
 
+function titleCase(value: string) {
+  return value.replace(/[-_]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
 export function Sidebar({ open, onClose }: SidebarProps) {
-  const { user, logout } = useAuthStore()
+  const { user, tenantId, logout } = useAuthStore()
   const roleName = getUserRole(user)
 
   const navItems = allNavItems.filter(item => item.roles.includes(roleName))
@@ -57,13 +61,15 @@ export function Sidebar({ open, onClose }: SidebarProps) {
   }, {})
 
   const displayName = [user?.firstName, user?.lastName].filter(Boolean).join(' ') || 'School User'
+  const schoolName = tenantId ? titleCase(tenantId) : 'SchoolOS'
+  const portalLabel = `${roleName.charAt(0) + roleName.slice(1).toLowerCase()} Portal`
 
   return (
     <>
       {/* Mobile overlay */}
       {open && (
         <div
-          className="fixed inset-0 z-20 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-20 bg-on-surface/40 lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -71,40 +77,50 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-border bg-sidebar transition-transform duration-300',
+          'fixed inset-y-0 left-0 z-30 flex w-64 flex-col bg-sidebar transition-transform duration-300',
           'lg:static lg:z-auto lg:translate-x-0',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        {/* Logo */}
-        <div className="flex h-14 items-center gap-3 border-b border-border px-5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <School className="h-4 w-4" />
+        {/* Brand */}
+        <div className="px-5 py-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
+              <School className="h-5 w-5" strokeWidth={1.5} />
+            </div>
+            <div className="min-w-0">
+              <h2 className="truncate font-headline text-sm font-extrabold leading-tight text-primary-container">
+                {schoolName}
+              </h2>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                {portalLabel}
+              </p>
+            </div>
           </div>
-          <span className="text-sm font-semibold tracking-tight">EduPlus</span>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4">
+        <nav className="flex-1 overflow-y-auto px-3 pb-4">
           {Object.entries(groupedItems).map(([section, items]) => (
             <div key={section} className="mb-5">
-              <p className="mb-1 px-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                 {section}
               </p>
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 {items.map(({ to, icon: Icon, label }) => (
                   <NavLink
                     key={to}
                     to={to}
                     onClick={onClose}
+                    end={to === '/dashboard'}
                     className={({ isActive }) => cn(
-                      'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
+                      'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200',
                       isActive
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        ? 'bg-surface-container-lowest font-bold text-primary-container shadow-sm'
+                        : 'font-medium text-on-surface-variant hover:translate-x-1 hover:text-primary-container'
                     )}
                   >
-                    <Icon className="h-4 w-4 shrink-0" />
+                    <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
                     <span>{label}</span>
                   </NavLink>
                 ))}
@@ -113,23 +129,40 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="border-t border-border p-3">
-          <div className="mb-1 flex items-center gap-2.5 rounded-lg px-2.5 py-2">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary text-[11px] font-bold text-primary-foreground">
+        {/* Help card */}
+        <div className="px-4">
+          <div className="rounded-2xl bg-secondary-fixed p-4">
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-on-secondary-fixed">
+              Need Help?
+            </p>
+            <a
+              href="https://wa.me/2348000000000"
+              target="_blank"
+              rel="noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-surface-container-lowest py-2 text-xs font-bold text-on-secondary-fixed shadow-sm transition-transform hover:scale-[1.02]"
+            >
+              <MessageCircle className="h-3.5 w-3.5" strokeWidth={1.5} />
+              WhatsApp Support
+            </a>
+          </div>
+        </div>
+
+        {/* Footer — user + sign out */}
+        <div className="p-4">
+          <div className="mb-1 flex items-center gap-3 rounded-xl px-2 py-2">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-[11px] font-bold text-primary-container">
               {(user?.firstName?.[0] ?? '') + (user?.lastName?.[0] ?? '')}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{displayName}</p>
+              <p className="truncate text-sm font-bold text-on-surface">{displayName}</p>
               <p className="truncate text-[11px] text-muted-foreground">{roleName}</p>
             </div>
-            <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           </div>
           <button
             onClick={logout}
-            className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
-            <LogOut className="h-4 w-4 shrink-0" />
+            <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
             Sign out
           </button>
         </div>

@@ -10,7 +10,7 @@ export function formatDate(date: string | Date) {
 }
 
 export function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
+  return new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(amount)
 }
 
 export function getInitials(firstName?: string, lastName?: string) {

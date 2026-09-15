@@ -28,7 +28,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const initials = getInitials(user?.firstName, user?.lastName)
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center gap-3 border-b border-border bg-background/95 px-4-sm lg:px-6">
+    <header className="sticky top-0 z-10 flex h-16 items-center gap-3 bg-surface/80 px-4 shadow-soft backdrop-blur-md lg:px-6">
       {/* Mobile menu */}
       <Button
         variant="ghost"
@@ -37,29 +37,32 @@ export function Header({ onMenuClick }: HeaderProps) {
         onClick={onMenuClick}
         aria-label="Open sidebar"
       >
-        <Menu className="h-4 w-4" />
+        <Menu className="h-4 w-4" strokeWidth={1.5} />
       </Button>
 
       {/* Breadcrumb */}
       <div className="hidden items-center gap-2 lg:flex">
-        <span className="text-sm font-semibold">{pageTitle}</span>
+        <span className="font-headline text-base font-bold text-on-surface">{pageTitle}</span>
       </div>
 
       {/* Search */}
       <div className="flex flex-1 items-center justify-center">
         <div className="relative w-full max-w-md">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Search
+            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            strokeWidth={1.5}
+          />
           <input
             type="text"
-            placeholder="Search…"
+            placeholder="Search student ID…"
             aria-label="Search"
-            className="h-9 w-full rounded-lg border border-border bg-muted/60 pl-9 pr-3 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-ring/30 dark:bg-muted/30"
+            className="h-10 w-full rounded-full border-none bg-surface-container-low pl-11 pr-4 text-sm text-on-surface outline-none transition placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20"
           />
         </div>
       </div>
 
       {/* Right actions */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
         <NotificationBell />
 
         <Button
@@ -68,13 +71,13 @@ export function Header({ onMenuClick }: HeaderProps) {
           onClick={toggle}
           aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          {dark ? <Sun className="h-4 w-4" strokeWidth={1.5} /> : <Moon className="h-4 w-4" strokeWidth={1.5} />}
         </Button>
 
         {/* Avatar */}
         <div
-          className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-[11px] font-bold text-primary-foreground"
-          title={`${user?.firstName} ${user?.lastName} — ${roleName}`}
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground"
+          title={`${user?.firstName ?? ''} ${user?.lastName ?? ''} — ${roleName}`}
         >
           {initials}
         </div>
