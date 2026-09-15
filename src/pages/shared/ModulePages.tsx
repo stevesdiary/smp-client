@@ -5,16 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { GraduationCap, Layers3, Pencil, Plus, Trash2, Upload, Wallet, Search, Users, Clock, ChevronLeft, ChevronRight, CalendarDays, TrendingUp, AlertTriangle, Percent, Printer } from 'lucide-react'
 import { toast } from 'sonner'
-import type { ColumnDef } from '@tanstack/react-table'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { DataTable } from '@/components/shared/DataTable'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
-import { PageHeader } from '@/components/shared/PageHeader'
 import { RecordPaymentDialog } from './RecordPaymentDialog'
 import api from '@/lib/api'
 import { fetchAllPaymentsByStudent } from '@/lib/moduleQueries'
@@ -297,6 +292,11 @@ const classSchema = z.object({
 })
 type ClassForm = z.infer<typeof classSchema>
 
+function classInitials(t?: { firstName?: string; lastName?: string }) {
+  if (!t) return '?'
+  return `${t.firstName?.[0] ?? ''}${t.lastName?.[0] ?? ''}`.toUpperCase() || '?'
+}
+
 export function ClassesPage() {
   const [open, setOpen] = useState(false)
   const qc = useQueryClient()
@@ -320,61 +320,117 @@ export function ClassesPage() {
     onError: (err: any) => toast.error(err.response?.data?.error || 'Failed'),
   })
 
-  const columns: ColumnDef<any>[] = [
-    { accessorKey: 'name', header: 'Class Name' },
-    { accessorKey: 'level', header: 'Level', cell: ({ getValue }) => (getValue() as string) || '—' },
-    {
-      id: 'teacher',
-      header: 'Homeroom Teacher',
-      cell: ({ row }) => {
-        const t = row.original.teacher
-        return t ? `${t.firstName} ${t.lastName}` : '—'
-      },
-    },
-    {
-      id: 'enrollments',
-      header: 'Students',
-      cell: ({ row }) => row.original._count?.enrollments ?? 0,
-    },
-  ]
+  const totalStudents = classes.reduce((sum: number, c: any) => sum + (c._count?.enrollments ?? 0), 0)
+  const withTeacher = classes.filter((c: any) => c.teacher || c.teacherId).length
+
+  // Group classes by level (the closest thing to "section")
+  const groups: Record<string, any[]> = {}
+  classes.forEach((c: any) => {
+    const key = c.level || 'Unassigned Level'
+    ;(groups[key] ||= []).push(c)
+  })
 
   return (
     <div className="space-y-8">
-      <PageHeader
-        eyebrow="Class structure"
-        title="Classes"
-        description="Organize classrooms and homeroom assignments."
-        stats={[
-          { label: 'Classes', value: classes.length },
-          { label: 'Students', value: classes.reduce((sum: number, c: any) => sum + (c._count?.enrollments ?? 0), 0) },
-        ]}
-        actions={
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button className="h-10 rounded-xl px-5"><Plus className="mr-2 h-4 w-4" />Add Class</Button>
-            </DialogTrigger>
-            <DialogContent className="rounded-xl">
-              <DialogHeader><DialogTitle>Create Class</DialogTitle></DialogHeader>
-              <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
-                <div className="space-y-1">
-                  <Label>Class Name</Label>
-                  <Input className="h-11 rounded-2xl" {...register('name')} placeholder="Grade 5A" />
-                  {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
-                </div>
-                <div className="space-y-1">
-                  <Label>Level</Label>
-                  <Input className="h-11 rounded-2xl" {...register('level')} placeholder="Primary" />
-                </div>
-                <Button type="submit" className="h-11 w-full rounded-2xl" disabled={isSubmitting}>
-                  {isSubmitting ? 'Creating...' : 'Create Class'}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-        }
-      />
+      {/* Heading */}
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Class structure</p>
+          <h1 className="mt-1 font-headline text-3xl font-extrabold tracking-tight text-on-surface">Class Management</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Manage sections, assign teachers, and monitor student distribution.</p>
+        </div>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <button className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-container px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-90 active:scale-95">
+              <Plus className="h-4 w-4" strokeWidth={2} /> Add New Class
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader><DialogTitle>Create Class</DialogTitle></DialogHeader>
+            <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label>Class Name</Label>
+                <Input {...register('name')} placeholder="PRM 1 Emerald" />
+                {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+              </div>
+              <div className="space-y-1.5">
+                <Label>Level / Section</Label>
+                <Input {...register('level')} placeholder="Primary Section" />
+              </div>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? 'Creating…' : 'Create Class'}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
 
-      <DataTable data={classes} columns={columns} searchKey="name" isLoading={isLoading} />
+      {/* Summary cards */}
+      <section className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {[
+          { label: 'Total Classes', value: classes.length, icon: Layers3, cls: 'bg-primary-container/10 text-primary' },
+          { label: 'Homeroom Teachers', value: withTeacher, icon: GraduationCap, cls: 'bg-secondary-container/10 text-secondary' },
+          { label: 'Total Students', value: totalStudents, icon: Users, cls: 'bg-primary-fixed/40 text-primary' },
+        ].map((s) => (
+          <div key={s.label} className="flex items-center gap-4 rounded-2xl bg-surface-container-lowest p-6 shadow-soft">
+            <div className={`flex h-12 w-12 items-center justify-center rounded-2xl ${s.cls}`}>
+              <s.icon className="h-6 w-6" strokeWidth={1.5} />
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{s.label}</p>
+              <p className="font-mono text-3xl font-black text-on-surface">{s.value}</p>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* Grouped class cards */}
+      {isLoading ? (
+        <div className="h-40 animate-pulse rounded-3xl bg-surface-container-low" />
+      ) : classes.length === 0 ? (
+        <div className="rounded-3xl bg-surface-container-lowest p-10 text-center shadow-soft">
+          <p className="text-sm font-semibold text-on-surface">No classes yet</p>
+          <p className="mt-1 text-xs text-muted-foreground">Create your first class to get started.</p>
+        </div>
+      ) : (
+        Object.entries(groups).map(([level, items]) => (
+          <section key={level} className="space-y-4">
+            <div className="flex items-center gap-3">
+              <h2 className="font-headline text-lg font-extrabold text-on-surface">{level}</h2>
+              <span className="rounded-full bg-primary-fixed/50 px-3 py-0.5 text-[11px] font-bold text-primary-container">
+                {items.length} {items.length === 1 ? 'class' : 'classes'}
+              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((c: any) => (
+                <div key={c.id} className="rounded-3xl bg-surface-container-lowest p-6 shadow-soft">
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="font-headline text-base font-extrabold text-on-surface">{c.name}</h3>
+                    {c.level && <span className="rounded-full bg-surface-container-high px-2.5 py-0.5 text-[10px] font-bold text-primary">{c.level}</span>}
+                  </div>
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-high text-[11px] font-bold text-primary-container">
+                      {classInitials(c.teacher)}
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Class Teacher</p>
+                      <p className={`text-sm font-bold ${c.teacher ? 'text-on-surface' : 'italic text-muted-foreground'}`}>
+                        {c.teacher ? `${c.teacher.firstName} ${c.teacher.lastName}` : 'Unassigned'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between rounded-2xl bg-surface-container-low px-4 py-3">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Students</p>
+                      <p className="font-mono text-lg font-black text-primary-container">{c._count?.enrollments ?? 0}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))
+      )}
     </div>
   )
 }
