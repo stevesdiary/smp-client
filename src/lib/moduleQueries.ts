@@ -18,23 +18,11 @@ export async function fetchStudents() {
   return response.data
 }
 
-export async function fetchAllPaymentsByStudent() {
-  const students = await fetchStudents()
-  const paymentsByStudent = await Promise.all(
-    students.map(async (student) => {
-      try {
-        const response = await api.get<Payment[]>(`/payments/student/${student.id}`)
-        return response.data.map((payment) => ({
-          ...payment,
-          student: payment.student ?? student,
-        }))
-      } catch {
-        return [] as PaymentWithStudent[]
-      }
-    })
-  )
-
-  return paymentsByStudent.flat()
+export async function fetchAllPaymentsByStudent(): Promise<PaymentWithStudent[]> {
+  // Single call — GET /payments returns every Payment for the tenant with
+  // student and fee already included (replaces the old per-student N+1).
+  const response = await api.get<PaymentWithStudent[]>('/payments')
+  return Array.isArray(response.data) ? response.data : []
 }
 
 export async function fetchAllGradesByStudent() {
