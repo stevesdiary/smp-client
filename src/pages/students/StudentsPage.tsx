@@ -112,29 +112,35 @@ export default function StudentsPage() {
   const qc = useQueryClient()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
   const limit = 25
 
-  const [searchTimer, setSearchTimer] = useState<ReturnType<typeof setTimeout>>()
   function onSearch(val: string) {
     setSearch(val)
-    clearTimeout(searchTimer)
-    setSearchTimer(setTimeout(() => { setDebouncedSearch(val); setPage(1) }, 400))
+    setPage(1)
   }
 
-  const { data: studentsResponse, isLoading } = useQuery<{ data: Student[]; total: number; page: number; limit: number }>({
-    queryKey: ['students', page, limit, debouncedSearch],
-    queryFn: () => {
-      const params = new URLSearchParams({ page: String(page), limit: String(limit) })
-      if (debouncedSearch) params.set('search', debouncedSearch)
-      return api.get(`/students?${params}`).then(r => r.data)
-    },
+  // The API returns a plain Student[] (no server-side pagination/search),
+  // so we fetch all and filter / paginate on the client. Tolerate a
+  // { data } envelope too, in case the endpoint changes later.
+  const { data: allStudents = [], isLoading } = useQuery<Student[]>({
+    queryKey: ['students'],
+    queryFn: () =>
+      api.get('/students').then((r) => (Array.isArray(r.data) ? r.data : (r.data?.data ?? []))),
     placeholderData: keepPreviousData,
   })
 
-  const students = studentsResponse?.data ?? []
-  const total = studentsResponse?.total ?? 0
-  const totalPages = Math.max(1, Math.ceil(total / limit))
+  const q = search.trim().toLowerCase()
+  const filtered = q
+    ? allStudents.filter((s) =>
+        `${s.firstName} ${s.lastName}`.toLowerCase().includes(q) ||
+        (s.studentId ?? '').toLowerCase().includes(q) ||
+        (s.studentCode ?? '').toLowerCase().includes(q))
+    : allStudents
+
+  const total = allStudents.length
+  const totalPages = Math.max(1, Math.ceil(filtered.length / limit))
+  const current = Math.min(page, totalPages)
+  const students = filtered.slice((current - 1) * limit, current * limit)
   const withGuardian = students.filter(s => s.guardian?.phone || s.guardian?.email).length
   const withDob = students.filter(s => s.dob).length
 
@@ -144,8 +150,8 @@ export default function StudentsPage() {
     onError: () => toast.error('Failed to delete'),
   })
 
-  const from = total === 0 ? 0 : (page - 1) * limit + 1
-  const to = Math.min(page * limit, total)
+  const from = filtered.length === 0 ? 0 : (current - 1) * limit + 1
+  const to = Math.min(current * limit, filtered.length)
 
   return (
     <div className="space-y-8">
@@ -239,7 +245,7 @@ export default function StudentsPage() {
                   <td colSpan={5} className="px-8 py-16 text-center">
                     <p className="text-sm font-semibold text-on-surface">No students found</p>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {debouncedSearch ? 'Try a different search term.' : 'Add your first student to get started.'}
+                      {q ? 'Try a different search term.' : 'Add your first student to get started.'}
                     </p>
                   </td>
                 </tr>
@@ -330,27 +336,27 @@ export default function StudentsPage() {
         <div className="flex flex-col items-center justify-between gap-4 border-t border-outline-variant/10 bg-surface px-8 py-5 sm:flex-row">
           <p className="text-sm text-muted-foreground">
             Showing <span className="font-bold text-on-surface">{from} - {to}</span> of{' '}
-            <span className="font-bold text-on-surface">{total}</span> students
+            <span className="font-bold text-on-surface">{filtered.length}</span> students
           </p>
           <div className="flex items-center gap-2">
             <button
               className="flex h-10 w-10 items-center justify-center rounded-xl border border-outline-variant/20 transition-colors hover:bg-surface-container-high disabled:opacity-30"
-              disabled={page <= 1}
-              onClick={() => setPage(p => p - 1)}
+              disabled={current <= 1}
+              onClick={() => setPage(current - 1)}
               aria-label="Previous page"
             >
               <ChevronLeft className="h-4 w-4" strokeWidth={1.5} />
             </button>
-            {pageList(page, totalPages).map((p, i) =>
+            {pageList(current, totalPages).map((p, i) =>
               p === '…' ? (
                 <span key={`e${i}`} className="px-1 text-outline-variant">…</span>
               ) : (
                 <button
                   key={p}
                   onClick={() => setPage(p)}
-                  aria-current={p === page ? 'page' : undefined}
+                  aria-current={p === current ? 'page' : undefined}
                   className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold transition-colors ${
-                    p === page
+                    p === current
                       ? 'bg-primary text-primary-foreground shadow-md'
                       : 'border border-outline-variant/20 hover:bg-surface-container-high'
                   }`}
@@ -361,8 +367,8 @@ export default function StudentsPage() {
             )}
             <button
               className="flex h-10 w-10 items-center justify-center rounded-xl border border-outline-variant/20 transition-colors hover:bg-surface-container-high disabled:opacity-30"
-              disabled={page >= totalPages}
-              onClick={() => setPage(p => p + 1)}
+              disabled={current >= totalPages}
+              onClick={() => setPage(current + 1)}
               aria-label="Next page"
             >
               <ChevronRight className="h-4 w-4" strokeWidth={1.5} />
