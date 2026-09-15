@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { DataTable } from '@/components/shared/DataTable'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import { PageHeader } from '@/components/shared/PageHeader'
+import { RecordPaymentDialog } from './RecordPaymentDialog'
 import api from '@/lib/api'
 import { fetchAllPaymentsByStudent } from '@/lib/moduleQueries'
 import { formatCurrency, formatDate } from '@/lib/utils'
@@ -446,12 +447,21 @@ export function PaymentsPage() {
           <h1 className="mt-1 font-headline text-3xl font-extrabold tracking-tight text-on-surface">Financial Overview</h1>
           <p className="mt-1 text-sm text-muted-foreground">Session {session} · collections and outstanding balances.</p>
         </div>
-        <button
-          onClick={() => window.print()}
-          className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-container px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-90 active:scale-95"
-        >
-          <Printer className="h-4 w-4" strokeWidth={1.5} /> Generate Report
-        </button>
+        <div className="flex items-center gap-3">
+          <RecordPaymentDialog
+            trigger={
+              <button className="flex items-center gap-2 rounded-xl bg-secondary-fixed px-5 py-2.5 text-sm font-extrabold text-on-secondary-fixed transition-colors hover:bg-secondary-fixed-dim">
+                <Plus className="h-4 w-4" strokeWidth={2} /> Record Payment
+              </button>
+            }
+          />
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-container px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-90 active:scale-95"
+          >
+            <Printer className="h-4 w-4" strokeWidth={1.5} /> Generate Report
+          </button>
+        </div>
       </div>
 
       {/* Stat cards */}
