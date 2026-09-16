@@ -3,20 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import {
-  CheckCircle2, Clock, Plus, UserCheck, UserX, Eye, Upload,
-} from 'lucide-react'
+import { Plus, UserCheck, UserX, Eye, Upload, Users, Clock, GraduationCap, Percent } from 'lucide-react'
 import { toast } from 'sonner'
-import type { ColumnDef } from '@tanstack/react-table'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { DataTable } from '@/components/shared/DataTable'
-import { PageHeader } from '@/components/shared/PageHeader'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
@@ -27,12 +19,7 @@ type Candidate = {
   firstName: string
   lastName: string
   dob?: string
-  applicationData?: {
-    previousSchool?: string
-    classAppliedFor?: string
-    parentPhone?: string
-    [key: string]: unknown
-  }
+  applicationData?: { previousSchool?: string; classAppliedFor?: string; parentPhone?: string; [key: string]: unknown }
   status: 'PENDING' | 'ADMITTED' | 'REJECTED'
   admittedAt?: string
   studentId?: string
@@ -49,312 +36,249 @@ const createSchema = z.object({
 })
 type CreateForm = z.infer<typeof createSchema>
 
-const statusConfig = {
-  PENDING: { label: 'Pending', variant: 'warning' as const, icon: Clock },
-  ADMITTED: { label: 'Admitted', variant: 'success' as const, icon: CheckCircle2 },
-  REJECTED: { label: 'Rejected', variant: 'destructive' as const, icon: UserX },
+const STATUS: Record<Candidate['status'], { label: string; badge: string; seg: string }> = {
+  PENDING: { label: 'Pending', badge: 'bg-secondary-fixed text-on-secondary-fixed', seg: 'bg-secondary-container' },
+  ADMITTED: { label: 'Admitted', badge: 'bg-primary-fixed text-on-secondary-fixed', seg: 'bg-primary' },
+  REJECTED: { label: 'Rejected', badge: 'bg-[#ffdad6] text-[#93000a]', seg: 'bg-[#ba1a1a]' },
 }
+const initials = (f?: string, l?: string) => `${f?.[0] ?? ''}${l?.[0] ?? ''}`.toUpperCase() || '?'
 
 export default function CandidatesPage() {
   const [createOpen, setCreateOpen] = useState(false)
-  const [detailCandidate, setDetailCandidate] = useState<Candidate | null>(null)
+  const [detail, setDetail] = useState<Candidate | null>(null)
+  const [filter, setFilter] = useState<'all' | Candidate['status']>('all')
   const qc = useQueryClient()
 
   const { data: candidates = [], isLoading } = useQuery<Candidate[]>({
     queryKey: ['candidates'],
-    queryFn: () => api.get('/candidates').then(r => r.data),
+    queryFn: () => api.get('/candidates').then(r => (Array.isArray(r.data) ? r.data : r.data?.data ?? [])),
   })
-
   const form = useForm<CreateForm>({ resolver: zodResolver(createSchema) })
 
   const createMutation = useMutation({
     mutationFn: (data: CreateForm) => api.post('/candidates', {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      dob: data.dob || undefined,
-      applicationData: {
-        previousSchool: data.previousSchool || undefined,
-        classAppliedFor: data.classAppliedFor || undefined,
-        parentPhone: data.parentPhone || undefined,
-      },
+      firstName: data.firstName, lastName: data.lastName, dob: data.dob || undefined,
+      applicationData: { previousSchool: data.previousSchool || undefined, classAppliedFor: data.classAppliedFor || undefined, parentPhone: data.parentPhone || undefined },
     }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['candidates'] })
-      toast.success('Candidate registered')
-      setCreateOpen(false)
-      form.reset()
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['candidates'] }); toast.success('Application registered'); setCreateOpen(false); form.reset() },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Failed'),
   })
-
   const admitMutation = useMutation({
     mutationFn: (id: string) => api.post(`/candidates/${id}/admit`),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['candidates'] })
-      qc.invalidateQueries({ queryKey: ['students'] })
-      toast.success('Candidate admitted — student record created')
-      setDetailCandidate(null)
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['candidates'] }); qc.invalidateQueries({ queryKey: ['students'] }); toast.success('Admitted — student record created'); setDetail(null) },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Admission failed'),
   })
-
   const rejectMutation = useMutation({
     mutationFn: (id: string) => api.put(`/candidates/${id}`, { status: 'REJECTED' }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['candidates'] })
-      toast.success('Candidate rejected')
-      setDetailCandidate(null)
-    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['candidates'] }); toast.success('Application rejected'); setDetail(null) },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Failed'),
   })
 
-  const pending = candidates.filter(c => c.status === 'PENDING')
-  const admitted = candidates.filter(c => c.status === 'ADMITTED')
-  const rejected = candidates.filter(c => c.status === 'REJECTED')
+  const pending = candidates.filter(c => c.status === 'PENDING').length
+  const admitted = candidates.filter(c => c.status === 'ADMITTED').length
+  const rejected = candidates.filter(c => c.status === 'REJECTED').length
+  const decided = admitted + rejected
+  const acceptRate = decided > 0 ? Math.round((admitted / decided) * 100) : null
+  const total = candidates.length
+  const rows = filter === 'all' ? candidates : candidates.filter(c => c.status === filter)
 
-  const columns: ColumnDef<Candidate>[] = [
-    { accessorKey: 'candidateCode', header: 'Code' },
-    { id: 'name', header: 'Name', cell: ({ row }) => `${row.original.firstName} ${row.original.lastName}` },
-    { accessorKey: 'dob', header: 'Date of Birth', cell: ({ getValue }) => getValue() ? formatDate(getValue() as string) : '—' },
-    {
-      id: 'classApplied', header: 'Class Applied',
-      cell: ({ row }) => (row.original.applicationData?.classAppliedFor as string) || '—',
-    },
-    {
-      id: 'previousSchool', header: 'Previous School',
-      cell: ({ row }) => (row.original.applicationData?.previousSchool as string) || '—',
-    },
-    {
-      accessorKey: 'status', header: 'Status',
-      cell: ({ getValue }) => {
-        const s = getValue() as Candidate['status']
-        const cfg = statusConfig[s]
-        return <Badge variant={cfg.variant}>{cfg.label}</Badge>
-      },
-    },
-    { accessorKey: 'createdAt', header: 'Applied', cell: ({ getValue }) => formatDate(getValue() as string) },
-    {
-      id: 'actions',
-      cell: ({ row }) => (
-        <div className="flex gap-1">
-          <Button variant="ghost" size="icon" className="rounded-xl" onClick={() => setDetailCandidate(row.original)}>
-            <Eye className="h-4 w-4" />
-          </Button>
-          {row.original.status === 'PENDING' && (
-            <>
-              <Button variant="ghost" aria-label="Admit" size="icon" className="rounded-xl text-success" onClick={() => admitMutation.mutate(row.original.id)}>
-                <UserCheck className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" aria-label="Reject" size="icon" className="rounded-xl text-destructive" onClick={() => rejectMutation.mutate(row.original.id)}>
-                <UserX className="h-4 w-4" />
-              </Button>
-            </>
-          )}
-        </div>
-      ),
-    },
+  const tiles = [
+    { label: 'Total Applicants', value: total, hint: 'All applications', icon: Users, tone: 'bg-primary-container/10 text-primary' },
+    { label: 'Pending Review', value: pending, hint: 'Awaiting decision', icon: Clock, tone: 'bg-secondary-container/15 text-secondary' },
+    { label: 'Admitted', value: admitted, hint: 'Enrolled as students', icon: GraduationCap, tone: 'bg-primary-fixed/50 text-primary' },
+    { label: 'Acceptance Rate', value: acceptRate != null ? `${acceptRate}%` : '—', hint: 'Of decided applications', icon: Percent, tone: 'bg-surface-container-high text-primary-container' },
+  ]
+  const filters: { key: 'all' | Candidate['status']; label: string; count: number }[] = [
+    { key: 'all', label: 'All', count: total },
+    { key: 'PENDING', label: 'Pending', count: pending },
+    { key: 'ADMITTED', label: 'Admitted', count: admitted },
+    { key: 'REJECTED', label: 'Rejected', count: rejected },
   ]
 
   return (
     <div className="space-y-8">
-      <PageHeader
-        eyebrow="Admissions"
-        title="Candidates"
-        description="Register applicants and admit them into the school."
-        stats={[
-          { label: 'Total', value: candidates.length },
-          { label: 'Pending', value: pending.length },
-          { label: 'Admitted', value: admitted.length },
-        ]}
-        actions={
-          <div className="flex gap-2">
-            <CsvUploadDialog
-              title="Upload Candidates CSV"
-              uploadUrl="/candidates/upload-csv"
-              templateUrl="/candidates/csv-template"
-              templateFileName="candidates-template.csv"
-              invalidateKeys={[['candidates']]}
-              trigger={<Button className="h-10 rounded-xl border border-white/30 bg-white/10 px-5 text-white hover:bg-white/20"><Upload className="mr-2 h-4 w-4" />CSV Upload</Button>}
-            />
-            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-              <DialogTrigger asChild>
-                <Button className="h-10 rounded-xl px-5"><Plus className="mr-2 h-4 w-4" />New Candidate</Button>
-              </DialogTrigger>
-              <DialogContent className="rounded-xl">
-                <DialogHeader><DialogTitle>Register Candidate</DialogTitle></DialogHeader>
-                <form onSubmit={form.handleSubmit(d => createMutation.mutate(d))} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <Label>First Name</Label>
-                      <Input className="h-11 rounded-2xl" {...form.register('firstName')} />
-                      {form.formState.errors.firstName && <p className="text-xs text-destructive">{form.formState.errors.firstName.message}</p>}
-                    </div>
-                    <div className="space-y-1">
-                      <Label>Last Name</Label>
-                      <Input className="h-11 rounded-2xl" {...form.register('lastName')} />
-                      {form.formState.errors.lastName && <p className="text-xs text-destructive">{form.formState.errors.lastName.message}</p>}
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <Label>Date of Birth</Label>
-                    <Input className="h-11 rounded-2xl" type="date" {...form.register('dob')} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <Label>Class Applied For</Label>
-                      <Input className="h-11 rounded-2xl" placeholder="e.g. JSS 1" {...form.register('classAppliedFor')} />
-                    </div>
-                    <div className="space-y-1">
-                      <Label>Previous School</Label>
-                      <Input className="h-11 rounded-2xl" {...form.register('previousSchool')} />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <Label>Parent Phone</Label>
-                    <Input className="h-11 rounded-2xl" placeholder="+234..." {...form.register('parentPhone')} />
-                  </div>
-                  <Button type="submit" className="h-11 w-full rounded-2xl" disabled={createMutation.isPending}>
-                    {createMutation.isPending ? 'Registering...' : 'Register Candidate'}
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        }
-      />
+      {/* Heading */}
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Admissions</p>
+          <h1 className="mt-1 font-headline text-3xl font-extrabold tracking-tight text-on-surface">Admissions</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Register applicants and admit them into the school.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <CsvUploadDialog
+            title="Upload Candidates CSV" uploadUrl="/candidates/upload-csv" templateUrl="/candidates/csv-template"
+            templateFileName="candidates-template.csv" invalidateKeys={[['candidates']]}
+            trigger={<button className="flex items-center gap-2 rounded-xl border border-outline-variant/20 bg-surface-container-lowest px-4 py-2.5 text-sm font-bold text-on-surface transition-colors hover:bg-surface-container-high"><Upload className="h-4 w-4" strokeWidth={1.5} /> CSV Upload</button>}
+          />
+          <Dialog open={createOpen} onOpenChange={v => { setCreateOpen(v); if (!v) form.reset() }}>
+            <DialogTrigger asChild>
+              <button className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-container px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-90 active:scale-95">
+                <Plus className="h-4 w-4" strokeWidth={2} /> New Application
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
+              <DialogHeader><DialogTitle>New Application</DialogTitle></DialogHeader>
+              <form onSubmit={form.handleSubmit(d => createMutation.mutate(d))} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5"><Label>First Name</Label><Input {...form.register('firstName')} />{form.formState.errors.firstName && <p className="text-xs text-destructive">{form.formState.errors.firstName.message}</p>}</div>
+                  <div className="space-y-1.5"><Label>Last Name</Label><Input {...form.register('lastName')} />{form.formState.errors.lastName && <p className="text-xs text-destructive">{form.formState.errors.lastName.message}</p>}</div>
+                </div>
+                <div className="space-y-1.5"><Label>Date of Birth</Label><Input type="date" {...form.register('dob')} /></div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5"><Label>Class Applied For</Label><Input placeholder="e.g. JSS 1" {...form.register('classAppliedFor')} /></div>
+                  <div className="space-y-1.5"><Label>Previous School</Label><Input {...form.register('previousSchool')} /></div>
+                </div>
+                <div className="space-y-1.5"><Label>Parent Phone</Label><Input placeholder="+234…" {...form.register('parentPhone')} /></div>
+                <Button type="submit" className="w-full" disabled={createMutation.isPending}>{createMutation.isPending ? 'Registering…' : 'Register Application'}</Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
 
-      {/* Pipeline summary cards */}
-      <section className="grid gap-4 md:grid-cols-3">
-        <Card className="rounded-xl">
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-chart-2/10 text-warning-foreground dark:text-warning">
-              <Clock className="h-5 w-5" />
+      {/* Stat tiles */}
+      <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {tiles.map(t => (
+          <div key={t.label} className="rounded-2xl bg-surface-container-lowest p-6 shadow-soft">
+            <div className="mb-4 flex items-center justify-between">
+              <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.tone}`}><t.icon className="h-5 w-5" strokeWidth={1.5} /></span>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Pending</p>
-              <p className="text-3xl font-semibold">{pending.length}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-xl">
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-success-light text-green-700 dark:text-green-300">
-              <CheckCircle2 className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Admitted</p>
-              <p className="text-3xl font-semibold">{admitted.length}</p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-xl">
-          <CardContent className="flex items-center gap-4 p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-red-500/10 text-red-700 dark:text-red-300">
-              <UserX className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Rejected</p>
-              <p className="text-3xl font-semibold">{rejected.length}</p>
-            </div>
-          </CardContent>
-        </Card>
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t.label}</p>
+            <p className="mt-1 font-mono text-3xl font-black text-primary-container">{t.value}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t.hint}</p>
+          </div>
+        ))}
       </section>
 
-      {/* Tabs: All / Pending / Admitted / Rejected */}
-      <Tabs defaultValue="pending" className="space-y-4">
-        <TabsList className="h-auto rounded-2xl bg-white/70 p-1 shadow-sm dark:bg-card/70">
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="all">All ({candidates.length})</TabsTrigger>
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="pending">Pending ({pending.length})</TabsTrigger>
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="admitted">Admitted ({admitted.length})</TabsTrigger>
-          <TabsTrigger className="rounded-2xl px-5 py-2.5" value="rejected">Rejected ({rejected.length})</TabsTrigger>
-        </TabsList>
-        <TabsContent value="all"><DataTable data={candidates} columns={columns} searchKey="lastName" isLoading={isLoading} /></TabsContent>
-        <TabsContent value="pending"><DataTable data={pending} columns={columns} searchKey="lastName" isLoading={isLoading} /></TabsContent>
-        <TabsContent value="admitted"><DataTable data={admitted} columns={columns} searchKey="lastName" isLoading={isLoading} /></TabsContent>
-        <TabsContent value="rejected"><DataTable data={rejected} columns={columns} searchKey="lastName" isLoading={isLoading} /></TabsContent>
-      </Tabs>
+      {/* Pipeline bar */}
+      {total > 0 && (
+        <section className="rounded-3xl bg-surface-container-lowest p-6 shadow-soft">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-headline text-lg font-extrabold text-on-surface">Application Pipeline</h2>
+            <div className="flex gap-4 text-xs font-bold">
+              <span className="flex items-center gap-1.5 text-secondary"><span className="h-2 w-2 rounded-full bg-secondary-container" /> Pending {pending}</span>
+              <span className="flex items-center gap-1.5 text-primary"><span className="h-2 w-2 rounded-full bg-primary" /> Admitted {admitted}</span>
+              <span className="flex items-center gap-1.5 text-[#93000a]"><span className="h-2 w-2 rounded-full bg-[#ba1a1a]" /> Rejected {rejected}</span>
+            </div>
+          </div>
+          <div className="flex h-4 overflow-hidden rounded-full bg-surface-container-low">
+            {(['PENDING', 'ADMITTED', 'REJECTED'] as const).map(s => {
+              const n = s === 'PENDING' ? pending : s === 'ADMITTED' ? admitted : rejected
+              const pct = total > 0 ? (n / total) * 100 : 0
+              return pct > 0 ? <div key={s} className={STATUS[s].seg} style={{ width: `${pct}%` }} title={`${STATUS[s].label}: ${n}`} /> : null
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Filter chips */}
+      <div className="flex flex-wrap gap-2">
+        {filters.map(f => (
+          <button
+            key={f.key}
+            onClick={() => setFilter(f.key)}
+            className={`rounded-full px-4 py-2 text-sm font-bold transition-colors ${
+              filter === f.key ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'
+            }`}
+          >
+            {f.label} <span className="font-mono opacity-70">({f.count})</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Applicant table */}
+      <section className="overflow-hidden rounded-3xl bg-surface-container-lowest shadow-soft">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-left">
+            <thead>
+              <tr className="bg-surface-container-low text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                <th className="px-8 py-5">Applicant</th>
+                <th className="px-6 py-5">Class Applied</th>
+                <th className="px-6 py-5">Previous School</th>
+                <th className="px-6 py-5">Status</th>
+                <th className="px-6 py-5">Applied</th>
+                <th className="px-8 py-5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-outline-variant/10">
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => <tr key={i}><td colSpan={6} className="px-8 py-5"><div className="h-9 animate-pulse rounded-xl bg-surface-container-low" /></td></tr>)
+              ) : rows.length === 0 ? (
+                <tr><td colSpan={6} className="px-8 py-16 text-center">
+                  <p className="text-sm font-semibold text-on-surface">No applications</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{filter === 'all' ? 'Register your first applicant to get started.' : `No ${filter.toLowerCase()} applications.`}</p>
+                </td></tr>
+              ) : (
+                rows.map(c => (
+                  <tr key={c.id} className="group transition-colors hover:bg-surface-container-low/40">
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-fixed text-xs font-black text-primary-container">{initials(c.firstName, c.lastName)}</div>
+                        <div className="min-w-0">
+                          <p className="truncate font-bold text-on-surface">{c.firstName} {c.lastName}</p>
+                          <p className="truncate font-mono text-[11px] text-muted-foreground">{c.candidateCode}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5">
+                      {c.applicationData?.classAppliedFor ? <span className="inline-flex items-center rounded-full bg-surface-container-high px-3 py-1 text-xs font-bold text-primary">{c.applicationData.classAppliedFor}</span> : <span className="text-sm text-muted-foreground">—</span>}
+                    </td>
+                    <td className="px-6 py-5 text-sm text-muted-foreground">{c.applicationData?.previousSchool || '—'}</td>
+                    <td className="px-6 py-5"><span className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider ${STATUS[c.status].badge}`}>{STATUS[c.status].label}</span></td>
+                    <td className="px-6 py-5 text-sm text-muted-foreground">{formatDate(c.createdAt)}</td>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center justify-end gap-2">
+                        <button onClick={() => setDetail(c)} aria-label="View" title="View" className="rounded-lg p-2 text-outline transition-all hover:bg-primary/5 hover:text-primary"><Eye className="h-4 w-4" strokeWidth={1.5} /></button>
+                        {c.status === 'PENDING' && (
+                          <>
+                            <button onClick={() => admitMutation.mutate(c.id)} aria-label="Admit" title="Admit" className="rounded-lg p-2 text-outline transition-all hover:bg-primary/5 hover:text-primary"><UserCheck className="h-4 w-4" strokeWidth={1.5} /></button>
+                            <button onClick={() => rejectMutation.mutate(c.id)} aria-label="Reject" title="Reject" className="rounded-lg p-2 text-outline transition-all hover:bg-destructive/5 hover:text-destructive"><UserX className="h-4 w-4" strokeWidth={1.5} /></button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
       {/* Detail dialog */}
-      <Dialog open={!!detailCandidate} onOpenChange={(v) => { if (!v) setDetailCandidate(null) }}>
-        <DialogContent className="rounded-xl max-w-lg">
-          <DialogHeader><DialogTitle>Candidate Details</DialogTitle></DialogHeader>
-          {detailCandidate && (
+      <Dialog open={!!detail} onOpenChange={v => { if (!v) setDetail(null) }}>
+        <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
+          <DialogHeader><DialogTitle>Applicant Details</DialogTitle></DialogHeader>
+          {detail && (
             <div className="space-y-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold">{detailCandidate.firstName} {detailCandidate.lastName}</h3>
-                  <p className="text-sm text-muted-foreground">{detailCandidate.candidateCode}</p>
+                  <h3 className="font-headline text-lg font-extrabold text-on-surface">{detail.firstName} {detail.lastName}</h3>
+                  <p className="font-mono text-sm text-muted-foreground">{detail.candidateCode}</p>
                 </div>
-                <Badge variant={statusConfig[detailCandidate.status].variant} className="text-sm px-3 py-1">
-                  {statusConfig[detailCandidate.status].label}
-                </Badge>
+                <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black uppercase tracking-wider ${STATUS[detail.status].badge}`}>{STATUS[detail.status].label}</span>
               </div>
-
-              <div className="grid grid-cols-2 gap-4 rounded-2xl bg-secondary/50 p-4">
-                <div>
-                  <p className="text-xs text-muted-foreground">Date of Birth</p>
-                  <p className="font-medium">{detailCandidate.dob ? formatDate(detailCandidate.dob) : '—'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Applied</p>
-                  <p className="font-medium">{formatDate(detailCandidate.createdAt)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Class Applied For</p>
-                  <p className="font-medium">{detailCandidate.applicationData?.classAppliedFor || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Previous School</p>
-                  <p className="font-medium">{detailCandidate.applicationData?.previousSchool || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Parent Phone</p>
-                  <p className="font-medium">{detailCandidate.applicationData?.parentPhone || '—'}</p>
-                </div>
-                {detailCandidate.admittedAt && (
-                  <div>
-                    <p className="text-xs text-muted-foreground">Admitted On</p>
-                    <p className="font-medium">{formatDate(detailCandidate.admittedAt)}</p>
-                  </div>
-                )}
+              <div className="grid grid-cols-2 gap-4 rounded-2xl bg-surface-container-low p-4">
+                <div><p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Date of Birth</p><p className="text-sm font-medium text-on-surface">{detail.dob ? formatDate(detail.dob) : '—'}</p></div>
+                <div><p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Applied</p><p className="text-sm font-medium text-on-surface">{formatDate(detail.createdAt)}</p></div>
+                <div><p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Class Applied For</p><p className="text-sm font-medium text-on-surface">{detail.applicationData?.classAppliedFor || '—'}</p></div>
+                <div><p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Previous School</p><p className="text-sm font-medium text-on-surface">{detail.applicationData?.previousSchool || '—'}</p></div>
+                <div><p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Parent Phone</p><p className="text-sm font-medium text-on-surface">{detail.applicationData?.parentPhone || '—'}</p></div>
+                {detail.admittedAt && <div><p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Admitted On</p><p className="text-sm font-medium text-on-surface">{formatDate(detail.admittedAt)}</p></div>}
               </div>
-
-              {detailCandidate.status === 'PENDING' && (
+              {detail.status === 'PENDING' ? (
                 <div className="flex gap-3">
-                  <Button
-                    className="h-11 flex-1 rounded-2xl bg-success hover:bg-success/90"
-                    onClick={() => admitMutation.mutate(detailCandidate.id)}
-                    disabled={admitMutation.isPending}
-                  >
-                    <UserCheck className="mr-2 h-4 w-4" />
-                    {admitMutation.isPending ? 'Admitting...' : 'Admit'}
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    className="h-11 flex-1 rounded-2xl"
-                    onClick={() => rejectMutation.mutate(detailCandidate.id)}
-                    disabled={rejectMutation.isPending}
-                  >
-                    <UserX className="mr-2 h-4 w-4" />
-                    {rejectMutation.isPending ? 'Rejecting...' : 'Reject'}
-                  </Button>
+                  <button onClick={() => admitMutation.mutate(detail.id)} disabled={admitMutation.isPending} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-container px-4 py-3 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-90 disabled:opacity-50">
+                    <UserCheck className="h-4 w-4" strokeWidth={1.5} /> {admitMutation.isPending ? 'Admitting…' : 'Admit'}
+                  </button>
+                  <button onClick={() => rejectMutation.mutate(detail.id)} disabled={rejectMutation.isPending} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#ffdad6] bg-[#ffdad6]/40 px-4 py-3 text-sm font-bold text-[#93000a] transition-colors hover:bg-[#ffdad6]/60 disabled:opacity-50">
+                    <UserX className="h-4 w-4" strokeWidth={1.5} /> {rejectMutation.isPending ? 'Rejecting…' : 'Reject'}
+                  </button>
                 </div>
-              )}
-
-              {detailCandidate.status === 'ADMITTED' && (
-                <div className="rounded-2xl border border-green-200 bg-green-50 p-4 dark:border-green-900 dark:bg-green-950/30">
-                  <p className="text-sm font-medium text-success dark:text-green-200">
-                    This candidate has been admitted and a student record was created.
-                  </p>
-                </div>
-              )}
-
-              {detailCandidate.status === 'REJECTED' && (
-                <div className="rounded-2xl border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/30">
-                  <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                    This application was rejected.
-                  </p>
-                </div>
+              ) : detail.status === 'ADMITTED' ? (
+                <div className="rounded-2xl bg-primary-fixed/30 p-4 text-sm font-medium text-primary-container">This applicant has been admitted and a student record was created.</div>
+              ) : (
+                <div className="rounded-2xl bg-[#ffdad6]/40 p-4 text-sm font-medium text-[#93000a]">This application was rejected.</div>
               )}
             </div>
           )}
