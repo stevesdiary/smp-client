@@ -119,10 +119,11 @@ export function AdminDashboard() {
   const hasAttendance = attendance.length > 0
 
   // Priority alerts: nearest upcoming events
-  const upcomingEvents = [...events]
-    .filter((e) => new Date(e.startDate).getTime() >= Date.now() - 86_400_000)
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
-    .slice(0, 3)
+  // Prefer upcoming events; if none are upcoming, fall back to the most recent
+  // past ones so the panel still reflects the school calendar.
+  const sortedEvents = [...events].sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+  const upcoming = sortedEvents.filter((e) => new Date(e.startDate).getTime() >= Date.now() - 86_400_000)
+  const upcomingEvents = (upcoming.length ? upcoming : [...sortedEvents].reverse()).slice(0, 3)
 
   // ─── Greeting ───────────────────────────────────────────────────────────
   const hour = new Date().getHours()
