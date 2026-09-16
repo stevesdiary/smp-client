@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { SearchSelect } from '@/components/ui/search-select'
 import api from '@/lib/api'
 import type { Class, Teacher, AcademicYear } from '@/types'
 
@@ -79,7 +80,7 @@ export default function TimetablePage() {
     enabled: !!selectedClassId,
   })
 
-  const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const createMutation = useMutation({
     mutationFn: (data: FormData) => api.post('/timetables', { ...data, classId: selectedClassId }),
@@ -145,18 +146,22 @@ export default function TimetablePage() {
                 <form onSubmit={handleSubmit(d => createMutation.mutate(d))} className="space-y-4">
                   <div className="space-y-1.5">
                     <Label>Subject</Label>
-                    <Select onValueChange={v => setValue('subjectId', v)}>
-                      <SelectTrigger><SelectValue placeholder="Select subject" /></SelectTrigger>
-                      <SelectContent>{classSubjects.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
-                    </Select>
+                    <SearchSelect
+                      value={watch('subjectId')}
+                      onChange={v => setValue('subjectId', v, { shouldValidate: true })}
+                      options={classSubjects.map(s => ({ id: s.id, label: s.name }))}
+                      placeholder="Select subject" searchPlaceholder="Search subjects…" emptyText="No subjects"
+                    />
                     {errors.subjectId && <p className="text-xs text-destructive">{errors.subjectId.message}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <Label>Teacher</Label>
-                    <Select onValueChange={v => setValue('teacherId', v)}>
-                      <SelectTrigger><SelectValue placeholder="Select teacher" /></SelectTrigger>
-                      <SelectContent>{teachers.map(t => <SelectItem key={t.id} value={t.id}>{t.firstName} {t.lastName}</SelectItem>)}</SelectContent>
-                    </Select>
+                    <SearchSelect
+                      value={watch('teacherId')}
+                      onChange={v => setValue('teacherId', v, { shouldValidate: true })}
+                      options={teachers.map(t => ({ id: t.id, label: `${t.firstName} ${t.lastName}`, sub: t.subject }))}
+                      placeholder="Select teacher" searchPlaceholder="Search teachers…" emptyText="No teachers"
+                    />
                     {errors.teacherId && <p className="text-xs text-destructive">{errors.teacherId.message}</p>}
                   </div>
                   <div className="space-y-1.5">

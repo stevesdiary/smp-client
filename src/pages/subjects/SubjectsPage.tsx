@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { SearchSelect } from '@/components/ui/search-select'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
 import api from '@/lib/api'
 import type { Class, Teacher, AcademicYear } from '@/types'
@@ -57,7 +58,7 @@ export default function SubjectsPage() {
   const teacherOf = (s: SubjectRow) => s.teacher ?? (s.teacherId ? teacherById.get(s.teacherId) : undefined)
   const yearOf = (s: SubjectRow) => s.academicYear ?? (s.academicYearId ? yearById.get(s.academicYearId) : undefined)
 
-  const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
     values: editing
       ? { name: editing.name, code: editing.code ?? '', classId: editing.classId ?? '', academicYearId: editing.academicYearId ?? '', teacherId: editing.teacherId ?? '' }
@@ -150,10 +151,12 @@ export default function SubjectsPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label>Assign Teacher <span className="text-xs text-muted-foreground">(optional)</span></Label>
-                  <Select defaultValue={editing?.teacherId} onValueChange={v => setValue('teacherId', v)}>
-                    <SelectTrigger><SelectValue placeholder="Search teacher by name" /></SelectTrigger>
-                    <SelectContent>{teachers.map(t => <SelectItem key={t.id} value={t.id}>{t.firstName} {t.lastName}{t.subject ? ` · ${t.subject}` : ''}</SelectItem>)}</SelectContent>
-                  </Select>
+                  <SearchSelect
+                    value={watch('teacherId') ?? editing?.teacherId}
+                    onChange={v => setValue('teacherId', v)}
+                    options={teachers.map(t => ({ id: t.id, label: `${t.firstName} ${t.lastName}`, sub: t.subject }))}
+                    placeholder="Search teacher by name" searchPlaceholder="Search teachers…" emptyText="No teachers"
+                  />
                 </div>
                 <Button type="submit" className="w-full" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : editing ? 'Update Subject' : 'Save Subject'}</Button>
               </form>

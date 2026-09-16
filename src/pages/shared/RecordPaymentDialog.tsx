@@ -4,6 +4,7 @@ import { Banknote, CreditCard, Landmark, Zap, Receipt } from 'lucide-react'
 import { toast } from 'sonner'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { SearchSelect } from '@/components/ui/search-select'
 import api from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 import type { Payment, Student } from '@/types'
@@ -113,18 +114,14 @@ export function RecordPaymentDialog({ trigger }: { trigger: React.ReactNode }) {
           {/* Student */}
           <div className="space-y-1.5">
             <Label>Student</Label>
-            <select
+            <SearchSelect
               value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-              className="h-11 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-3 text-sm text-on-surface outline-none focus:ring-2 focus:ring-secondary-container/30"
-            >
-              <option value="">Select student…</option>
-              {students.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.firstName} {s.lastName}{s.studentId ? ` · ${s.studentId}` : ''}
-                </option>
-              ))}
-            </select>
+              onChange={setStudentId}
+              options={students.map((s) => ({ id: s.id, label: `${s.firstName} ${s.lastName}`, sub: s.studentId ?? s.studentCode }))}
+              placeholder="Select student…"
+              searchPlaceholder="Search by name or ID…"
+              emptyText="No students"
+            />
           </div>
 
           {/* Fee category */}

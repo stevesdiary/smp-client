@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { CheckCheck } from 'lucide-react'
 import api from '@/lib/api'
 import { Class } from '@/types'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { SearchSelect } from '@/components/ui/search-select'
 import { Label } from '@/components/ui/label'
 
 interface ClassSelectorProps {
@@ -40,22 +40,16 @@ export default function ClassSelector({
     <section className="rounded-3xl bg-surface-container-low p-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-wrap items-end gap-4">
-          <div className="min-w-[220px]">
-            <Label htmlFor="class-select" className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Class
-            </Label>
-            <Select value={selectedClassId || ''} onValueChange={onClassSelect} disabled={isLoading}>
-              <SelectTrigger id="class-select" className="h-11 w-full rounded-xl border-outline-variant/30 bg-surface-container-lowest">
-                <SelectValue placeholder={isLoading ? 'Loading classes…' : 'Choose a class'} />
-              </SelectTrigger>
-              <SelectContent>
-                {classes.map((cls) => (
-                  <SelectItem key={cls.id} value={cls.id}>
-                    {cls.name} ({cls._count?.enrollments || 0} students)
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="min-w-[240px]">
+            <Label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">Class</Label>
+            <SearchSelect
+              value={selectedClassId || ''}
+              onChange={onClassSelect}
+              options={classes.map((cls) => ({ id: cls.id, label: cls.name, sub: `${cls._count?.enrollments || 0} students` }))}
+              placeholder={isLoading ? 'Loading classes…' : 'Choose a class'}
+              searchPlaceholder="Search classes…"
+              emptyText="No classes"
+            />
           </div>
 
           <div className="min-w-[180px]">

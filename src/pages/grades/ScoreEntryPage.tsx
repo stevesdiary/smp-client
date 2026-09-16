@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ClipboardEdit, Save, TrendingUp, AlertTriangle, Award } from 'lucide-react'
 import { toast } from 'sonner'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
+import { SearchSelect } from '@/components/ui/search-select'
 import api from '@/lib/api'
 import type { Student, Grade } from '@/types'
 
@@ -122,10 +122,14 @@ export default function ScoreEntryPage() {
       <section className="rounded-3xl bg-surface-container-low p-5">
         <div className="max-w-sm">
           <Label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">Subject</Label>
-          <Select value={subjectId} onValueChange={(v) => { setSubjectId(v); setEdits({}) }}>
-            <SelectTrigger className="h-11 w-full rounded-xl border-outline-variant/30 bg-surface-container-lowest"><SelectValue placeholder="Choose a subject…" /></SelectTrigger>
-            <SelectContent>{subjects.map(s => <SelectItem key={s.id} value={s.id}>{s.name}{s.code ? ` · ${s.code}` : ''}</SelectItem>)}</SelectContent>
-          </Select>
+          <SearchSelect
+            value={subjectId}
+            onChange={(v) => { setSubjectId(v); setEdits({}) }}
+            options={subjects.map(s => ({ id: s.id, label: s.name, sub: s.code }))}
+            placeholder="Choose a subject…"
+            searchPlaceholder="Search subjects…"
+            emptyText="No subjects"
+          />
         </div>
       </section>
 
