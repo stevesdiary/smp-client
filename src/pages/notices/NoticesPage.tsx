@@ -1,21 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Bell, Pencil, Plus, Trash2, Users } from 'lucide-react'
+import { Bell, Pencil, Plus, Trash2, Users, Megaphone } from 'lucide-react'
 import { toast } from 'sonner'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
-import { PageHeader } from '@/components/shared/PageHeader'
 import { getUserRole } from '@/lib/auth'
 import api from '@/lib/api'
-import { formatDate } from '@/lib/utils'
+import { formatDate, getInitials } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
 import type { Notice, UserRole } from '@/types'
 
@@ -26,7 +22,6 @@ const schema = z.object({
   title: z.string().min(1, 'Required'),
   content: z.string().min(1, 'Required'),
 })
-
 type NoticeForm = z.infer<typeof schema>
 
 function formatAuthor(notice: Notice) {
@@ -53,17 +48,9 @@ export default function NoticesPage() {
     queryFn: () => api.get('/notices').then((response) => response.data),
   })
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<NoticeForm>({
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<NoticeForm>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      title: '',
-      content: '',
-    },
+    defaultValues: { title: '', content: '' },
   })
 
   const saveMutation = useMutation({
@@ -90,8 +77,8 @@ export default function NoticesPage() {
     onError: (err: any) => toast.error(err.response?.data?.error || 'Failed'),
   })
 
-  const latestNotice = notices[0]
-  const authorCount = new Set(notices.map((notice) => notice.author?.id || notice.authorId)).size
+  const authorCount = useMemo(() => new Set(notices.map((n) => n.author?.id || n.authorId)).size, [notices])
+  const broadcastCount = useMemo(() => notices.filter((n) => (n.targetRoles ?? []).length === 0).length, [notices])
 
   function closeDialog() {
     setOpen(false)
@@ -99,216 +86,130 @@ export default function NoticesPage() {
     setTargetRoles([])
     reset({ title: '', content: '' })
   }
-
   function openCreate() {
     setEditingNotice(null)
     setTargetRoles([])
     reset({ title: '', content: '' })
     setOpen(true)
   }
-
   function openEdit(notice: Notice) {
     setEditingNotice(notice)
     setTargetRoles(notice.targetRoles ?? [])
-    reset({
-      title: notice.title,
-      content: notice.content,
-    })
+    reset({ title: notice.title, content: notice.content })
     setOpen(true)
   }
-
   function toggleRole(targetRole: UserRole) {
     setTargetRoles((current) =>
-      current.includes(targetRole)
-        ? current.filter((roleValue) => roleValue !== targetRole)
-        : [...current, targetRole]
+      current.includes(targetRole) ? current.filter((r) => r !== targetRole) : [...current, targetRole]
     )
   }
-
   function handleDelete(notice: Notice) {
-    if (!window.confirm(`Delete "${notice.title}"?`)) {
-      return
-    }
+    if (!window.confirm(`Delete "${notice.title}"?`)) return
     deleteMutation.mutate(notice.id)
   }
 
+  const tiles = [
+    { label: 'Notices', value: notices.length, icon: Bell, tone: 'bg-primary-fixed/40 text-primary' },
+    { label: 'Authors', value: authorCount, icon: Users, tone: 'bg-secondary-container/15 text-secondary' },
+    { label: 'Broadcast', value: broadcastCount, icon: Megaphone, tone: 'bg-primary-container/10 text-primary' },
+  ]
+
   return (
     <div className="space-y-8">
-      <PageHeader
-        eyebrow="School updates"
-        title="Notices"
-        description={canManage ? 'Create targeted announcements for staff, families, and learners.' : 'Review notices addressed to your role.'}
-        stats={[
-          { label: 'Visible', value: notices.length },
-          { label: 'Authors', value: authorCount },
-        ]}
-        actions={canManage ? (
-          <div>
-            <Dialog open={open} onOpenChange={(nextOpen) => {
-              if (!nextOpen) {
-                closeDialog()
-                return
-              }
-              setOpen(true)
-            }}>
-              <DialogTrigger asChild>
-                <Button className="h-10 rounded-xl px-5" onClick={openCreate}>
-                  <Plus className="h-4 w-4" />
-                  New Notice
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="rounded-xl">
-                <DialogHeader>
-                  <DialogTitle>{editingNotice ? 'Edit Notice' : 'Publish Notice'}</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit((data) => saveMutation.mutate(data))} className="space-y-4">
-                  <div className="space-y-1">
-                    <Label>Title</Label>
-                    <Input className="h-11 rounded-2xl" {...register('title')} />
-                    {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label>Content</Label>
-                    <textarea
-                      className="min-h-32 w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring"
-                      {...register('content')}
-                    />
-                    {errors.content && <p className="text-xs text-destructive">{errors.content.message}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label>Audience</Label>
-                      <Button
-                        type="button"
-                        variant={targetRoles.length === 0 ? 'default' : 'outline'}
-                        size="sm"
-                        className="rounded-full"
-                        onClick={() => setTargetRoles([])}
-                      >
-                        All roles
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {audienceRoles.map((targetRole) => (
-                        <Button
-                          key={targetRole}
-                          type="button"
-                          variant={targetRoles.includes(targetRole) ? 'default' : 'outline'}
-                          size="sm"
-                          className="rounded-full"
-                          onClick={() => toggleRole(targetRole)}
-                        >
-                          {targetRole}
-                        </Button>
-                      ))}
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Leave all roles selected off to broadcast to every signed-in user.
-                    </p>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="h-11 w-full rounded-2xl"
-                    disabled={isSubmitting || saveMutation.isPending}
-                  >
-                    {editingNotice ? 'Save Notice' : 'Publish Notice'}
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        ) : undefined}
-      />
-
-      <div className="flex items-center justify-between">
+      {/* Heading */}
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold">Notices</h1>
-          <p className="text-muted-foreground">
-            {latestNotice ? `Latest update ${formatDate(latestNotice.createdAt)}` : 'No notices published yet.'}
-          </p>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">School updates</p>
+          <h1 className="mt-1 font-headline text-3xl font-extrabold tracking-tight text-on-surface">Notices &amp; Announcements</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{canManage ? 'Publish targeted announcements for staff, families and learners.' : 'Review notices addressed to your role.'}</p>
         </div>
-        <Badge className="rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.2em]">
-          {role}
-        </Badge>
+        {canManage && (
+          <Dialog open={open} onOpenChange={(next) => { if (!next) { closeDialog(); return } setOpen(true) }}>
+            <DialogTrigger asChild>
+              <button onClick={openCreate} className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-container px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-90 active:scale-95"><Plus className="h-4 w-4" strokeWidth={2} /> New Notice</button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
+              <DialogHeader><DialogTitle>{editingNotice ? 'Edit Notice' : 'Publish Notice'}</DialogTitle></DialogHeader>
+              <form onSubmit={handleSubmit((data) => saveMutation.mutate(data))} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label>Title</Label>
+                  <Input {...register('title')} placeholder="Mid-term break" />
+                  {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Content</Label>
+                  <textarea className="min-h-32 w-full rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-4 py-3 text-sm text-on-surface outline-none transition-colors focus-visible:ring-2 focus-visible:ring-secondary-container/30" {...register('content')} />
+                  {errors.content && <p className="text-xs text-destructive">{errors.content.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Audience</Label>
+                    <button type="button" onClick={() => setTargetRoles([])} className={`rounded-full px-3 py-1 text-xs font-bold transition-colors ${targetRoles.length === 0 ? 'bg-primary text-primary-foreground' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'}`}>All roles</button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {audienceRoles.map((targetRole) => (
+                      <button key={targetRole} type="button" onClick={() => toggleRole(targetRole)} className={`rounded-full px-3 py-1.5 text-xs font-bold capitalize transition-colors ${targetRoles.includes(targetRole) ? 'bg-primary text-primary-foreground' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'}`}>{targetRole}</button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Leave every role off to broadcast to all signed-in users.</p>
+                </div>
+                <Button type="submit" className="w-full" disabled={isSubmitting || saveMutation.isPending}>{editingNotice ? 'Save Notice' : 'Publish Notice'}</Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
 
+      {/* Stat tiles */}
+      <section className="grid grid-cols-3 gap-6">
+        {tiles.map(t => (
+          <div key={t.label} className="flex items-center gap-4 rounded-2xl bg-surface-container-lowest p-5 shadow-soft">
+            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${t.tone}`}><t.icon className="h-5 w-5" strokeWidth={1.5} /></div>
+            <div><p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t.label}</p><p className="font-mono text-2xl font-black text-on-surface">{t.value}</p></div>
+          </div>
+        ))}
+      </section>
+
       {isLoading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-40 rounded-xl" />
-          ))}
-        </div>
+        <div className="space-y-4">{Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-36 animate-pulse rounded-3xl bg-surface-container-low" />)}</div>
       ) : notices.length === 0 ? (
-        <Card className="rounded-xl border-dashed">
-          <CardContent className="flex flex-col items-center gap-3 py-14 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Bell className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="font-semibold">No notices yet</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {canManage ? 'Publish the first notice to start the school communication feed.' : 'New notices targeted to your role will appear here.'}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="rounded-3xl bg-surface-container-lowest p-14 text-center shadow-soft">
+          <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-primary-fixed/50 text-primary"><Bell className="h-6 w-6" strokeWidth={1.5} /></div>
+          <p className="font-semibold text-on-surface">No notices yet</p>
+          <p className="mt-1 text-sm text-muted-foreground">{canManage ? 'Publish the first notice to start the communication feed.' : 'New notices targeted to your role will appear here.'}</p>
+        </div>
       ) : (
         <div className="space-y-4">
           {notices.map((notice) => (
-            <Card key={notice.id} className="rounded-xl">
-              <CardContent className="space-y-4 p-5">
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                        <Bell className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <h2 className="text-lg font-semibold">{notice.title}</h2>
-                        <p className="text-sm text-muted-foreground">
-                          {formatAuthor(notice)}{notice.author?.role?.name ? ` · ${notice.author.role.name}` : ''} · {formatDate(notice.createdAt)}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      {formatAudience(notice.targetRoles).map((audience) => (
-                        <Badge key={audience} variant="secondary" className="rounded-full">
-                          <Users className="mr-1 h-3 w-3" />
-                          {audience}
-                        </Badge>
-                      ))}
-                    </div>
+            <article key={notice.id} className="rounded-3xl bg-surface-container-lowest p-6 shadow-soft">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div className="flex min-w-0 items-start gap-3.5">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary-fixed/50 text-[12px] font-bold text-primary">{getInitials(notice.author?.firstName, notice.author?.lastName)}</span>
+                  <div className="min-w-0">
+                    <h2 className="font-headline text-lg font-bold text-on-surface">{notice.title}</h2>
+                    <p className="text-sm text-muted-foreground">
+                      {formatAuthor(notice)}{notice.author?.role?.name ? ` · ${notice.author.role.name}` : ''} · {formatDate(notice.createdAt)}
+                    </p>
                   </div>
-
-                  {canManage && (
-                    <div className="flex gap-2">
-                      <Button type="button" variant="outline" size="sm" className="rounded-full" onClick={() => openEdit(notice)}>
-                        <Pencil className="h-3.5 w-3.5" />
-                        Edit
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="rounded-full text-destructive hover:text-destructive"
-                        onClick={() => handleDelete(notice)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        Delete
-                      </Button>
-                    </div>
-                  )}
                 </div>
+                {canManage && (
+                  <div className="flex shrink-0 gap-2">
+                    <button type="button" onClick={() => openEdit(notice)} className="flex items-center gap-1.5 rounded-xl border border-outline-variant/25 bg-surface-container-lowest px-3.5 py-2 text-xs font-bold text-on-surface transition-colors hover:bg-surface-container-high"><Pencil className="h-3.5 w-3.5" strokeWidth={1.5} /> Edit</button>
+                    <button type="button" onClick={() => handleDelete(notice)} className="flex items-center gap-1.5 rounded-xl border border-outline-variant/25 bg-surface-container-lowest px-3.5 py-2 text-xs font-bold text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/40"><Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} /> Delete</button>
+                  </div>
+                )}
+              </div>
 
-                <p className="whitespace-pre-line text-sm leading-6 text-foreground/90">
-                  {notice.content}
-                </p>
-              </CardContent>
-            </Card>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {formatAudience(notice.targetRoles).map((audience) => (
+                  <span key={audience} className="inline-flex items-center gap-1 rounded-full bg-secondary-fixed px-3 py-1 text-[11px] font-bold capitalize text-on-secondary-fixed">
+                    <Users className="h-3 w-3" strokeWidth={2} /> {audience}
+                  </span>
+                ))}
+              </div>
+
+              <p className="mt-4 whitespace-pre-line text-sm leading-6 text-on-surface-variant">{notice.content}</p>
+            </article>
           ))}
         </div>
       )}
