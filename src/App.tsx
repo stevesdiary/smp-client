@@ -21,6 +21,7 @@ const SubjectsPage = lazy(() => import('@/pages/subjects/SubjectsPage'))
 const TimetablePage = lazy(() => import('@/pages/timetable/TimetablePage'))
 const AttendancePage = lazy(() => import('@/pages/attendance/AttendancePage'))
 const GradebookPage = lazy(() => import('@/pages/grades/GradesPage'))
+const ScoreEntryPage = lazy(() => import('@/pages/grades/ScoreEntryPage'))
 const EventsPage = lazy(() => import('@/pages/events/EventsPage'))
 const NoticesPage = lazy(() => import('@/pages/notices/NoticesPage'))
 const LibraryPage = lazy(() => import('@/pages/library/LibraryPage'))
@@ -90,6 +91,7 @@ export default function App() {
               <Route path="/timetable" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><TimetablePage /></ProtectedRoute>} />
               <Route path="/attendance" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><AttendancePage /></ProtectedRoute>} />
               <Route path="/gradebook" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><GradebookPage /></ProtectedRoute>} />
+              <Route path="/score-entry" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><ScoreEntryPage /></ProtectedRoute>} />
               <Route path="/payments" element={<ProtectedRoute allowedRoles={['ADMIN']}><PaymentsPage /></ProtectedRoute>} />
               <Route path="/events" element={<ProtectedRoute allowedRoles={['ADMIN', 'TEACHER']}><EventsPage /></ProtectedRoute>} />
               <Route path="/notices" element={<NoticesPage />} />

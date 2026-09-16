@@ -4,7 +4,7 @@ import {
   DollarSign, Calendar, Library, Bus, Package, Trophy,
   Building2, Heart, AlertTriangle, Video, MessageSquare,
   Award, Settings, LogOut, School, UserCheck, Bell,
-  CalendarDays, BookMarked, CalendarRange, Globe, MessageCircle
+  CalendarDays, BookMarked, CalendarRange, Globe, MessageCircle, SquarePen
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
@@ -22,6 +22,7 @@ const allNavItems = [
   { to: '/timetable',       icon: CalendarRange,   label: 'Timetable',       section: 'Academic',        roles: ['ADMIN', 'TEACHER'] },
   { to: '/attendance',      icon: ClipboardList,   label: 'Attendance',      section: 'Academic',        roles: ['ADMIN', 'TEACHER'] },
   { to: '/gradebook',       icon: BookOpen,        label: 'Gradebook',       section: 'Academic',        roles: ['ADMIN', 'TEACHER'] },
+  { to: '/score-entry',     icon: SquarePen,       label: 'Score Entry',     section: 'Academic',        roles: ['ADMIN', 'TEACHER'] },
   { to: '/payments',        icon: DollarSign,      label: 'Payments',        section: 'Operations',      roles: ['ADMIN'] },
   { to: '/events',          icon: Calendar,        label: 'Events',          section: 'Operations',      roles: ['ADMIN', 'TEACHER'] },
   { to: '/library',         icon: Library,         label: 'Library',         section: 'Operations',      roles: ['ADMIN', 'TEACHER', 'STAFF', 'STUDENT', 'PARENT'] },
