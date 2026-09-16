@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { SearchSelect } from '@/components/ui/search-select'
 import { ELibraryTab } from '@/components/library/ELibraryTab'
 import { formatDate } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
@@ -94,12 +95,22 @@ export default function LibraryPage() {
                 <DialogHeader><DialogTitle>New Checkout</DialogTitle></DialogHeader>
                 <form onSubmit={borrowForm.handleSubmit(d => borrowMutation.mutate(d))} className="space-y-4">
                   <div className="space-y-1.5"><Label>Book</Label>
-                    <Select onValueChange={v => borrowForm.setValue('bookId', v)}><SelectTrigger><SelectValue placeholder="Select book" /></SelectTrigger>
-                      <SelectContent>{books.filter(b => (b.available ?? 0) > 0).map(b => <SelectItem key={b.id} value={b.id}>{b.title}</SelectItem>)}</SelectContent></Select>
+                    <SearchSelect
+                      value={borrowForm.watch('bookId')}
+                      onChange={v => borrowForm.setValue('bookId', v, { shouldValidate: true })}
+                      options={books.filter(b => (b.available ?? 0) > 0).map(b => ({ id: b.id, label: b.title, sub: [b.author, b.isbn].filter(Boolean).join(' · ') }))}
+                      placeholder="Select book" searchPlaceholder="Search by title, author or ISBN…" emptyText="No available books"
+                    />
+                    {borrowForm.formState.errors.bookId && <p className="text-xs text-destructive">Select a book</p>}
                   </div>
                   <div className="space-y-1.5"><Label>Borrower</Label>
-                    <Select onValueChange={v => borrowForm.setValue('borrowerId', v)}><SelectTrigger><SelectValue placeholder="Select student" /></SelectTrigger>
-                      <SelectContent>{students.map(s => <SelectItem key={s.id} value={s.id}>{s.firstName} {s.lastName}</SelectItem>)}</SelectContent></Select>
+                    <SearchSelect
+                      value={borrowForm.watch('borrowerId')}
+                      onChange={v => borrowForm.setValue('borrowerId', v, { shouldValidate: true })}
+                      options={students.map(s => ({ id: s.id, label: `${s.firstName} ${s.lastName}`, sub: s.studentId ?? s.studentCode }))}
+                      placeholder="Select student" searchPlaceholder="Search by name or ID…" emptyText="No students"
+                    />
+                    {borrowForm.formState.errors.borrowerId && <p className="text-xs text-destructive">Select a borrower</p>}
                   </div>
                   <input type="hidden" {...borrowForm.register('borrowerType')} value="STUDENT" />
                   <div className="space-y-1.5"><Label>Due Date</Label><Input type="date" {...borrowForm.register('dueDate')} /></div>
