@@ -8,6 +8,7 @@ import {
 import api from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import type { Attendance, Grade, Payment, Student } from '@/types'
+import { StudentAIInsights } from './components/StudentAIInsights'
 
 function initials(first?: string, last?: string) {
   return `${first?.[0] ?? ''}${last?.[0] ?? ''}`.toUpperCase() || '?'
@@ -189,6 +190,9 @@ export default function StudentProfilePage() {
           icon={ShieldCheck} iconClass="bg-surface-container-high text-primary-container"
         />
       </div>
+
+      {/* AI Insights */}
+      <StudentAIInsights studentId={id} />
 
       {/* Main bento */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
