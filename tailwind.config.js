@@ -5,9 +5,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Manrope', 'system-ui', '-apple-system', 'sans-serif'],
-        body: ['Manrope', 'system-ui', 'sans-serif'],
-        headline: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
@@ -73,23 +71,31 @@ export default {
           '5': 'hsl(var(--chart-5))',
         },
 
-        // ─── SchoolOS "Digital Hearth" Material tokens (literal, light-mode) ──
-        // Used for faithful reproduction of the Stitch design system.
+        // ─── SchoolOS "Digital Hearth" Material tokens ───────────────────────
+        // Surfaces / text / outline are theme-aware via CSS vars (see index.css
+        // :root + .dark). Brand "fixed" tones stay constant across themes by
+        // design — they are light chips with dark text and read on dark cards.
         surface: {
-          DEFAULT: '#f7f9ff',
-          dim: '#d1dbe9',
-          bright: '#f7f9ff',
-          variant: '#d9e3f2',
-          container: '#e5effd',
-          'container-low': '#edf4ff',
-          'container-lowest': '#ffffff',
-          'container-high': '#dfe9f7',
-          'container-highest': '#d9e3f2',
+          DEFAULT: 'var(--surface)',
+          dim: 'var(--surface-dim)',
+          bright: 'var(--surface-bright)',
+          variant: 'var(--surface-variant)',
+          container: 'var(--surface-container)',
+          'container-low': 'var(--surface-container-low)',
+          'container-lowest': 'var(--surface-container-lowest)',
+          'container-high': 'var(--surface-container-high)',
+          'container-highest': 'var(--surface-container-highest)',
         },
         'on-surface': {
-          DEFAULT: '#121c27',
-          variant: '#404941',
+          DEFAULT: 'var(--on-surface)',
+          variant: 'var(--on-surface-variant)',
         },
+        outline: {
+          DEFAULT: 'var(--outline)',
+          variant: 'var(--outline-variant)',
+        },
+
+        // Brand fixed tones — constant across light/dark (MD3 "fixed" role)
         'primary-container': '#1a5c38',
         'primary-fixed': {
           DEFAULT: '#aef2c2',
@@ -105,27 +111,35 @@ export default {
           DEFAULT: '#291800',
           variant: '#633f00',
         },
-        outline: {
-          DEFAULT: '#707971',
-          variant: '#c0c9bf',
+
+        // Semantic container families — flip light↔dark (see index.css)
+        error: {
+          DEFAULT: 'var(--error)',
+          container: 'var(--error-container)',
+          on: 'var(--on-error-container)',
         },
+        tertiary: {
+          DEFAULT: 'var(--amber)',
+          container: 'var(--amber-container)',
+          on: 'var(--on-amber-container)',
+        },
+        'info-accent': 'var(--info)',
+        'info-container': 'var(--info-container)',
+        'on-info-container': 'var(--on-info-container)',
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
-        xl: 'var(--radius)',      // alias — xl = lg = 12px
-        '2xl': 'calc(var(--radius) + 4px)',  // 16px for larger containers
-        '3xl': 'calc(var(--radius) + 8px)',  // 20px for hero/modal
+        xl: 'var(--radius)',
+        '2xl': 'calc(var(--radius) + 4px)',
+        '3xl': 'calc(var(--radius) + 8px)',
       },
       boxShadow: {
         sm: '0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05)',
         DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05)',
         md: '0 4px 16px -2px rgb(0 0 0 / 0.08), 0 2px 8px -2px rgb(0 0 0 / 0.06)',
         lg: '0 8px 24px -4px rgb(0 0 0 / 0.10), 0 4px 12px -4px rgb(0 0 0 / 0.08)',
-        // Ambient "soft lift" — the hallmark of the Digital Hearth system
-        soft: '0 8px 32px rgba(18, 28, 39, 0.04)',
-        'soft-lg': '0 8px 32px rgba(18, 28, 39, 0.10)',
       },
       keyframes: {
         'fade-in': { from: { opacity: '0', transform: 'translateY(4px)' }, to: { opacity: '1', transform: 'translateY(0)' } },

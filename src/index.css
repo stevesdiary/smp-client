@@ -1,128 +1,116 @@
-/* ─── SchoolOS "Digital Hearth" type system ──────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  /* ─── Light mode — "Digital Hearth" (deep forest green + warm amber) ───── */
   :root {
-    /* Backgrounds — cool near-white surface */
-    --background:           226 100% 98%;   /* surface #f7f9ff */
-    --card:                 0 0% 100%;       /* surface-container-lowest #ffffff */
-    --card-foreground:      211 37% 11%;     /* on-surface #121c27 */
-    --popover:              0 0% 100%;
-    --popover-foreground:   211 37% 11%;
+    /* Backgrounds — pure and clean */
+    --background:        0 0% 99%;          /* near-white */
+    --surface:           0 0% 97%;          /* soft off-white for cards, inputs */
+    --surface-raised:    0 0% 100%;         /* pure white — modal, dropdown */
+
+    /* Primary — refined teal */
+    --primary:           186 72% 30%;       /* deep teal */
+    --primary-light:     186 60% 94%;       /* teal wash for hover states */
+    --primary-foreground: 0 0% 100%;
 
     /* Text */
-    --foreground:           211 37% 11%;     /* on-surface #121c27 (never pure black) */
-    --muted-foreground:     215 16% 47%;     /* slate-500 — secondary text */
+    --foreground:        220 15% 12%;       /* near-black, warm */
+    --muted-foreground:  220 10% 45%;       /* grey for secondary text */
+    --subtle-foreground: 220 8% 65%;        /* placeholder, timestamps */
 
-    /* Primary — deep forest green #004324 */
-    --primary:              152 100% 13%;
-    --primary-foreground:   0 0% 100%;
+    /* Border — opaque and intentional */
+    --border:            220 13% 90%;       /* light grey */
+    --border-strong:     220 13% 80%;       /* focused/active border */
 
-    /* Secondary — cool surface for neutral chips */
-    --secondary:            216 100% 96%;    /* surface-container-low #edf4ff */
-    --secondary-foreground: 147 56% 23%;     /* primary-container #1a5c38 */
+    /* Input & Ring */
+    --input:             220 13% 90%;
+    --ring:              186 72% 30%;
 
-    /* Muted */
-    --muted:                216 100% 96%;
-
-    /* Accent — warm amber wash */
-    --accent:               33 100% 92%;
-    --accent-foreground:    35 100% 12%;     /* on-secondary-fixed */
+    /* Card & Popover fallback mapping */
+    --card:              0 0% 100%;
+    --card-foreground:   220 15% 12%;
+    --popover:           0 0% 100%;
+    --popover-foreground: 220 15% 12%;
+    --muted:             220 14% 96%;
 
     /* Semantic */
-    --destructive:          0 75% 42%;       /* error #ba1a1a */
+    --destructive:       0 72% 52%;
     --destructive-foreground: 0 0% 100%;
+    --success:           145 55% 38%;
+    --success-foreground: 0 0% 100%;
+    --warning:           38 90% 50%;
+    --warning-foreground: 38 60% 30%;
+    --info:              216 90% 56%;
+    --info-foreground:   0 0% 100%;
 
-    /* Borders & inputs — felt, not seen (soft cool grey) */
-    --border:               216 40% 90%;
-    --input:                216 40% 90%;
-    --ring:                 152 100% 13%;
+    /* Accent — amber for warmth (used sparingly) */
+    --accent:            38 80% 94%;        /* amber wash */
+    --accent-foreground: 38 60% 30%;
 
-    /* Sidebar — same tone as canvas, no hard border */
-    --sidebar:              226 100% 98%;
-    --sidebar-foreground:   211 37% 11%;
-    --sidebar-accent:       147 56% 23%;     /* primary-container */
+    /* Secondary */
+    --secondary:         220 14% 96%;
+    --secondary-foreground: 220 15% 12%;
+
+    /* Sidebar — kept distinct */
+    --sidebar:           220 20% 97%;
+    --sidebar-foreground: 220 15% 12%;
+    --sidebar-border:    220 13% 90%;
+    --sidebar-accent:    186 72% 30%;       /* same as primary */
     --sidebar-accent-foreground: 0 0% 100%;
 
-    /* Semantic status */
-    --success:              145 90% 20%;
-    --success-foreground:   0 0% 100%;
-    --success-light:        138 72% 88%;     /* primary-fixed wash */
-    --warning:              37 99% 58%;      /* secondary-container #feae2c */
-    --warning-foreground:   35 100% 12%;
-    --warning-light:        33 100% 90%;     /* secondary-fixed wash */
-    --info:                 216 90% 56%;
-    --info-foreground:      0 0% 100%;
-    --info-light:           216 100% 94%;
-
-    /* Chart / insight bars */
-    --chart-1:              152 100% 13%;    /* forest green */
-    --chart-2:              37 99% 58%;      /* amber */
-    --chart-3:              138 72% 82%;     /* primary-fixed green */
-    --chart-4:              0 75% 42%;       /* error red */
-    --chart-5:              145 90% 30%;     /* mid green */
-
-    /* Design tokens */
-    --radius:               0.75rem;         /* 12px base radius */
+    --radius: 12px;
   }
 
-  /* ─── Dark mode — deep forest, lighter accents ──────────────────────────── */
   .dark {
-    --background:           222 24% 9%;
-    --card:                 222 20% 13%;
-    --card-foreground:      220 15% 93%;
-    --popover:              222 20% 13%;
-    --popover-foreground:   220 15% 93%;
+    --background:        222 20% 10%;
+    --surface:           222 18% 14%;
+    --surface-raised:    222 16% 18%;
 
-    --foreground:           220 15% 93%;
-    --muted-foreground:     215 14% 62%;
+    --primary:           186 55% 55%;
+    --primary-light:     186 50% 18%;
+    --primary-foreground: 222 20% 10%;
 
-    --primary:              138 44% 71%;     /* primary-fixed-dim #93d5a7 */
-    --primary-foreground:   152 100% 6%;
+    --foreground:        220 15% 93%;
+    --muted-foreground:  220 10% 58%;
+    --subtle-foreground: 220 8% 42%;
 
-    --secondary:            216 14% 20%;
-    --secondary-foreground: 220 15% 88%;
+    --border:            220 14% 22%;
+    --border-strong:     220 14% 32%;
 
-    --muted:                216 14% 20%;
+    --input:             220 14% 22%;
+    --ring:              186 55% 55%;
 
-    --accent:               35 40% 18%;
-    --accent-foreground:    33 100% 78%;
+    --card:              222 18% 14%;
+    --card-foreground:   220 15% 93%;
+    --popover:           222 16% 18%;
+    --popover-foreground: 220 15% 93%;
+    --muted:             216 14% 20%;
 
-    --destructive:          0 68% 58%;
+    --destructive:       0 68% 58%;
     --destructive-foreground: 0 0% 100%;
+    --success:           145 45% 50%;
+    --success-foreground: 152 100% 6%;
+    --warning:           38 80% 58%;
+    --warning-foreground: 35 100% 8%;
+    --info:              216 70% 62%;
+    --info-foreground:   222 24% 9%;
 
-    --border:               216 14% 22%;
-    --input:                216 14% 22%;
-    --ring:                 138 44% 71%;
+    --accent:            38 30% 18%;
+    --accent-foreground: 38 70% 70%;
 
-    --sidebar:              222 26% 7%;
-    --sidebar-foreground:   220 15% 88%;
-    --sidebar-accent:       138 44% 71%;
-    --sidebar-accent-foreground: 152 100% 6%;
+    --secondary:         216 14% 20%;
+    --secondary-foreground: 220 15% 93%;
 
-    --success:              138 55% 55%;
-    --success-foreground:   152 100% 6%;
-    --success-light:        145 30% 18%;
-    --warning:              37 90% 60%;
-    --warning-foreground:   35 100% 8%;
-    --warning-light:        35 40% 18%;
-    --info:                 216 70% 62%;
-    --info-foreground:      222 24% 9%;
-    --info-light:           216 40% 18%;
-
-    --chart-1:              138 44% 71%;
-    --chart-2:              37 90% 60%;
-    --chart-3:              138 40% 45%;
-    --chart-4:              0 68% 58%;
-    --chart-5:              145 50% 55%;
+    --sidebar:           222 22% 8%;
+    --sidebar-foreground: 220 15% 93%;
+    --sidebar-border:    220 14% 18%;
+    --sidebar-accent:    186 55% 55%;
+    --sidebar-accent-foreground: 222 20% 10%;
   }
 
-  /* ─── Base resets ────────────────────────────────────────────────────── */
   * { @apply border-border; }
 
   html { min-height: 100%; }
@@ -131,17 +119,16 @@
     min-height: 100vh;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     font-feature-settings: 'rlig' 1, 'calt' 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Headlines carry the "authoritative" voice */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-    letter-spacing: -0.02em;
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.025em;
   }
 
   #root {
