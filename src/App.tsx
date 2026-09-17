@@ -41,8 +41,11 @@ const WebsiteEditorPage = lazy(() => import('@/pages/admin/WebsiteEditor'))
 const CustomDomainSetupPage = lazy(() => import('@/pages/admin/CustomDomainSetup'))
 const UnauthorizedPage = lazy(() => import('@/pages/system/UnauthorizedPage'))
 const NotFoundPage = lazy(() => import('@/pages/system/NotFoundPage'))
+const RolesPage = lazy(() => import('@/pages/admin/RolesPage'))
 const CandidatesPage = lazy(() => import('@/pages/candidates/CandidatesPage'))
 const BillingPage = lazy(() => import('@/pages/billing/BillingPage'))
+const FeeTemplatesPage = lazy(() => import('@/pages/billing/FeeTemplatesPage'))
+const FeeAssignmentsPage = lazy(() => import('@/pages/billing/FeeAssignmentsPage'))
 const StudentPortalPage = lazy(() => import('@/pages/student/StudentPortalPage'))
 
 const queryClient = new QueryClient({
@@ -108,7 +111,10 @@ export default function App() {
               <Route path="/certificates" element={<CertificatesPage />} />
               <Route path="/parent" element={<ProtectedRoute allowedRoles={['PARENT']}><ParentPage /></ProtectedRoute>} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/settings/roles" element={<ProtectedRoute allowedRoles={['ADMIN']}><RolesPage /></ProtectedRoute>} />
               <Route path="/billing" element={<ProtectedRoute allowedRoles={['ADMIN']}><BillingPage /></ProtectedRoute>} />
+              <Route path="/billing/templates" element={<ProtectedRoute allowedRoles={['ADMIN']}><FeeTemplatesPage /></ProtectedRoute>} />
+              <Route path="/billing/assignments" element={<ProtectedRoute allowedRoles={['ADMIN']}><FeeAssignmentsPage /></ProtectedRoute>} />
               <Route path="/website-editor" element={<ProtectedRoute allowedRoles={['ADMIN']}><WebsiteEditorPage /></ProtectedRoute>} />
               <Route path="/custom-domain-setup" element={<ProtectedRoute allowedRoles={['ADMIN']}><CustomDomainSetupPage /></ProtectedRoute>} />
               <Route path="/student-portal" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentPortalPage /></ProtectedRoute>} />
