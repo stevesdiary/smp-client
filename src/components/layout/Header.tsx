@@ -28,7 +28,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const initials = getInitials(user?.firstName, user?.lastName)
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-3 bg-surface/80 px-4 shadow-soft backdrop-blur-md lg:px-6">
+    <header className="sticky top-0 z-10 flex h-14 items-center gap-3 bg-background/95 border-b border-border px-4 backdrop-blur-sm lg:px-6">
       {/* Mobile menu */}
       <Button
         variant="ghost"
@@ -42,7 +42,7 @@ export function Header({ onMenuClick }: HeaderProps) {
 
       {/* Breadcrumb */}
       <div className="hidden items-center gap-2 lg:flex">
-        <span className="font-headline text-base font-bold text-on-surface">{pageTitle}</span>
+        <span className="text-base font-semibold text-foreground">{pageTitle}</span>
       </div>
 
       {/* Search */}
@@ -56,7 +56,7 @@ export function Header({ onMenuClick }: HeaderProps) {
             type="text"
             placeholder="Search student ID…"
             aria-label="Search"
-            className="h-10 w-full rounded-full border-none bg-surface-container-low pl-11 pr-4 text-sm text-on-surface outline-none transition placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20"
+            className="h-9 w-full rounded-full border border-border bg-surface pl-11 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20"
           />
         </div>
       </div>

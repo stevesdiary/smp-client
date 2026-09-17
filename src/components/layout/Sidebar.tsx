@@ -86,14 +86,14 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         {/* Brand */}
         <div className="px-5 py-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg">
-              <School className="h-5 w-5" strokeWidth={1.5} />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <School className="h-4 w-4" strokeWidth={1.5} />
             </div>
             <div className="min-w-0">
-              <h2 className="truncate font-headline text-sm font-extrabold leading-tight text-primary-container">
+              <h2 className="truncate font-semibold text-sm leading-tight text-foreground">
                 {schoolName}
               </h2>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
                 {portalLabel}
               </p>
             </div>
@@ -104,7 +104,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         <nav className="flex-1 overflow-y-auto px-3 pb-4">
           {Object.entries(groupedItems).map(([section, items]) => (
             <div key={section} className="mb-5">
-              <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <p className="mb-1.5 px-3 text-[10px] font-medium uppercase tracking-widest text-subtle-foreground">
                 {section}
               </p>
               <div className="space-y-1">
@@ -115,13 +115,13 @@ export function Sidebar({ open, onClose }: SidebarProps) {
                     onClick={onClose}
                     end={to === '/dashboard'}
                     className={({ isActive }) => cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200',
+                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200',
                       isActive
-                        ? 'bg-surface-container-lowest font-bold text-primary-container shadow-sm'
-                        : 'font-medium text-on-surface-variant hover:translate-x-1 hover:text-primary-container'
+                        ? 'bg-primary/10 font-medium text-primary'
+                        : 'font-medium text-muted-foreground hover:bg-muted hover:text-foreground'
                     )}
                   >
-                    <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
+                    <Icon className="h-4 w-4 shrink-0" strokeWidth={1.5} />
                     <span>{label}</span>
                   </NavLink>
                 ))}
@@ -132,15 +132,15 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
         {/* Help card */}
         <div className="px-4">
-          <div className="rounded-2xl bg-secondary-fixed p-4">
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-on-secondary-fixed">
+          <div className="rounded-xl bg-surface border border-border p-4">
+            <p className="mb-2 text-[10px] font-medium uppercase tracking-wide text-foreground">
               Need Help?
             </p>
             <a
               href="https://wa.me/2348000000000"
               target="_blank"
               rel="noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-surface-container-lowest py-2 text-xs font-bold text-on-secondary-fixed shadow-sm transition-transform hover:scale-[1.02]"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-background border border-border py-2 text-xs font-medium text-foreground transition-transform hover:bg-muted"
             >
               <MessageCircle className="h-3.5 w-3.5" strokeWidth={1.5} />
               WhatsApp Support
@@ -150,20 +150,20 @@ export function Sidebar({ open, onClose }: SidebarProps) {
 
         {/* Footer — user + sign out */}
         <div className="p-4">
-          <div className="mb-1 flex items-center gap-3 rounded-xl px-2 py-2">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-[11px] font-bold text-primary-container">
+          <div className="mb-1 flex items-center gap-3 rounded-lg px-2 py-2">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
               {(user?.firstName?.[0] ?? '') + (user?.lastName?.[0] ?? '')}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold text-on-surface">{displayName}</p>
+              <p className="truncate text-sm font-medium text-foreground">{displayName}</p>
               <p className="truncate text-[11px] text-muted-foreground">{roleName}</p>
             </div>
           </div>
           <button
             onClick={logout}
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:bg-destructive/10 hover:text-destructive"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
-            <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={1.5} />
+            <LogOut className="h-4 w-4 shrink-0" strokeWidth={1.5} />
             Sign out
           </button>
         </div>
