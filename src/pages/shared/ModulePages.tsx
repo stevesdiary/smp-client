@@ -21,6 +21,8 @@ const teacherSchema = z.object({
   firstName: z.string().min(1, 'Required'),
   lastName: z.string().min(1, 'Required'),
   subject: z.string().optional(),
+  email: z.string().email('Invalid email').optional().or(z.literal('')),
+  roleId: z.string().optional().or(z.literal('')),
 })
 type TeacherForm = z.infer<typeof teacherSchema>
 
@@ -57,6 +59,11 @@ export function TeachersPage() {
   const { data: teachers = [], isLoading } = useQuery({
     queryKey: ['teachers'],
     queryFn: () => api.get('/teachers').then(r => r.data),
+  })
+
+  const { data: roles = [] } = useQuery({
+    queryKey: ['roles'],
+    queryFn: () => api.get('/roles').then(r => r.data),
   })
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<TeacherForm>({
@@ -124,6 +131,25 @@ export function TeachersPage() {
               <div className="space-y-1.5">
                 <Label>Specialty / Subject</Label>
                 <Input {...register('subject')} placeholder="Mathematics" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label>Email (Optional)</Label>
+                  <Input type="email" {...register('email')} placeholder="teacher@school.com" />
+                  {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+                </div>
+                <div className="space-y-1.5">
+                  <Label>System Role</Label>
+                  <select
+                    {...register('roleId')}
+                    className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="">No Role (Staff only)</option>
+                    {roles.map((r: any) => (
+                      <option key={r.id} value={r.id}>{r.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? 'Saving…' : 'Save'}
@@ -215,6 +241,11 @@ export function TeachersPage() {
                         <span className="inline-flex items-center rounded-full bg-surface-container-high px-3 py-1 text-xs font-bold text-primary">{t.subject}</span>
                       ) : (
                         <span className="text-sm text-muted-foreground">General</span>
+                      )}
+                      {t.user?.role?.name && (
+                        <span className="ml-2 inline-flex items-center rounded-full bg-secondary-container/20 px-3 py-1 text-xs font-bold text-secondary">
+                          {t.user.role.name}
+                        </span>
                       )}
                     </td>
                     <td className="px-6 py-5 font-mono text-xs text-muted-foreground">#{String(t.id).slice(0, 8).toUpperCase()}</td>
