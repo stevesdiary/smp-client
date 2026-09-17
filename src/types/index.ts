@@ -12,10 +12,19 @@ export interface User {
   tenantSubdomain?: string
 }
 
+export interface Permission {
+  id: string
+  resource: string
+  action: string
+  description?: string
+}
+
 export interface Role {
   id: string
   name: string
   description?: string
+  isSystem?: boolean
+  permissions?: { permissionId: string; permission: Permission }[]
 }
 
 export interface AuthState {
@@ -429,4 +438,43 @@ export interface PaginatedResponse<T> {
   total: number
   page: number
   limit: number
+}
+
+export type FeeCategory = 'TUITION' | 'TRANSPORT' | 'EXAM' | 'LIBRARY' | 'SPORTS' | 'HOSTEL' | 'OTHER'
+
+export type FeeTargetType = 'ALL' | 'CLASS' | 'TERM' | 'ACADEMIC_YEAR' | 'OPT_IN'
+
+export type FeeAssignmentStatus = 'UNPAID' | 'PARTIAL' | 'PAID' | 'OVERDUE' | 'WAIVED'
+
+export interface FeeTemplate {
+  id: string
+  name: string
+  description?: string
+  category: FeeCategory
+  amount: number
+  currency: string
+  targetType: FeeTargetType
+  targetIds?: string[]
+  isOptIn: boolean
+  isMandatory: boolean
+  allowInstallments: boolean
+  minimumInstallmentPercent?: number
+  dueDate?: string
+  gracePeriodDays: number
+  isActive: boolean
+}
+
+export interface FeeAssignment {
+  id: string
+  feeTemplateId: string
+  feeTemplate?: FeeTemplate
+  studentId: string
+  student?: Student
+  totalAmount: number
+  paidAmount: number
+  currency: string
+  status: FeeAssignmentStatus
+  dueDate?: string
+  gracePeriodDays: number
+  createdAt: string
 }
