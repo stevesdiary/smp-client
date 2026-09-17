@@ -27,7 +27,7 @@ function gradeLetter(pct: number): { letter: string; cls: string } {
   if (pct >= 70) return { letter: 'B', cls: 'bg-surface-container-high text-on-surface' }
   if (pct >= 60) return { letter: 'C', cls: 'bg-secondary-fixed text-on-secondary-fixed' }
   if (pct >= 50) return { letter: 'D', cls: 'bg-secondary-fixed text-on-secondary-fixed' }
-  return { letter: 'F', cls: 'bg-[#ffdad6] text-[#93000a]' }
+  return { letter: 'F', cls: 'bg-error-container text-error-on' }
 }
 
 function StatTile({
@@ -264,7 +264,7 @@ export default function StudentProfilePage() {
                     key={cell.day}
                     className={`flex aspect-square items-center justify-center rounded-lg text-sm font-bold ${
                       present ? 'border-2 border-primary-fixed bg-primary-fixed/30 text-primary'
-                        : absent ? 'border-2 border-[#ffdad6] bg-[#ffdad6]/40 text-destructive'
+                        : absent ? 'border-2 border-error-container bg-error-container/40 text-destructive'
                         : 'bg-surface-container text-outline-variant'
                     }`}
                   >

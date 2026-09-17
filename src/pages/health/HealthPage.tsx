@@ -52,7 +52,7 @@ export default function HealthPage() {
   const tiles = [
     { label: 'Records', value: records.length, icon: HeartPulse, tone: 'bg-primary-fixed/40 text-primary' },
     { label: 'With Conditions', value: withConditions, icon: Stethoscope, tone: 'bg-secondary-container/15 text-secondary' },
-    { label: 'With Allergies', value: withAllergies, icon: TriangleAlert, tone: 'bg-[#ffdad6] text-[#93000a]' },
+    { label: 'With Allergies', value: withAllergies, icon: TriangleAlert, tone: 'bg-error-container text-error-on' },
     { label: 'Incidents Logged', value: incidents, icon: Droplet, tone: 'bg-primary-container/10 text-primary' },
   ]
 
@@ -131,11 +131,11 @@ export default function HealthPage() {
                       </div>
                     </td>
                     <td className="px-6 py-5 text-center">
-                      {r.bloodGroup ? <span className="inline-flex items-center gap-1 rounded-full bg-[#ffdad6] px-3 py-1 font-mono text-[11px] font-bold text-[#93000a]"><Droplet className="h-3 w-3" strokeWidth={2} /> {r.bloodGroup}</span> : <span className="text-muted-foreground">—</span>}
+                      {r.bloodGroup ? <span className="inline-flex items-center gap-1 rounded-full bg-error-container px-3 py-1 font-mono text-[11px] font-bold text-error-on"><Droplet className="h-3 w-3" strokeWidth={2} /> {r.bloodGroup}</span> : <span className="text-muted-foreground">—</span>}
                     </td>
-                    <td className="px-6 py-5 text-sm">{hasValue(r.allergies) ? <span className="rounded-full bg-[#ffdad6] px-3 py-1 text-[11px] font-bold text-[#93000a]">{r.allergies}</span> : <span className="text-muted-foreground">None</span>}</td>
+                    <td className="px-6 py-5 text-sm">{hasValue(r.allergies) ? <span className="rounded-full bg-error-container px-3 py-1 text-[11px] font-bold text-error-on">{r.allergies}</span> : <span className="text-muted-foreground">None</span>}</td>
                     <td className="px-6 py-5 text-sm">{hasValue(r.conditions) ? <span className="rounded-full bg-secondary-fixed px-3 py-1 text-[11px] font-bold text-on-secondary-fixed">{r.conditions}</span> : <span className="text-muted-foreground">None</span>}</td>
-                    <td className="px-6 py-5 text-center"><span className={`font-mono text-sm font-bold ${incidentCount > 0 ? 'text-[#93000a]' : 'text-muted-foreground'}`}>{incidentCount}</span></td>
+                    <td className="px-6 py-5 text-center"><span className={`font-mono text-sm font-bold ${incidentCount > 0 ? 'text-error-on' : 'text-muted-foreground'}`}>{incidentCount}</span></td>
                   </tr>
                 )
               })}

@@ -15,13 +15,13 @@ const STATUSES: AttendanceStatus[] = ['PRESENT', 'LATE', 'ABSENT', 'EXCUSED']
 const ACTIVE_PILL: Record<AttendanceStatus, string> = {
   PRESENT: 'border-primary bg-primary-fixed text-on-secondary-fixed',
   LATE: 'border-secondary-container bg-secondary-fixed text-on-secondary-fixed',
-  ABSENT: 'border-[#ffdad6] bg-[#ffdad6] text-[#93000a]',
+  ABSENT: 'border-error-container bg-error-container text-error-on',
   EXCUSED: 'border-outline-variant bg-surface-container-high text-on-surface',
 }
 const ROW_TINT: Record<AttendanceStatus, string> = {
   PRESENT: 'bg-primary-fixed/10',
   LATE: 'bg-secondary-fixed/20',
-  ABSENT: 'bg-[#ffdad6]/25',
+  ABSENT: 'bg-error-container/25',
   EXCUSED: 'bg-surface-container-low',
 }
 

@@ -15,7 +15,7 @@ function gradeBand(pct: number): { letter: string; cls: string } {
   if (pct >= 60) return { letter: 'B', cls: 'bg-surface-container-high text-on-surface' }
   if (pct >= 50) return { letter: 'C', cls: 'bg-secondary-fixed text-on-secondary-fixed' }
   if (pct >= 45) return { letter: 'D', cls: 'bg-secondary-fixed text-on-secondary-fixed' }
-  return { letter: 'F', cls: 'bg-[#ffdad6] text-[#93000a]' }
+  return { letter: 'F', cls: 'bg-error-container text-error-on' }
 }
 function initials(f?: string, l?: string) { return `${f?.[0] ?? ''}${l?.[0] ?? ''}`.toUpperCase() || '?' }
 const cellKey = (studentId: string, assignmentId: string) => `${studentId}|${assignmentId}`
@@ -194,7 +194,7 @@ export default function ScoreEntryPage() {
                                 onChange={(e) => setEdits(prev => ({ ...prev, [cellKey(st.id, a.id)]: e.target.value }))}
                                 aria-label={`${st.firstName} ${st.lastName} — ${a.title}`}
                                 className={`h-10 w-16 rounded-lg border bg-surface-container-low text-center font-mono text-sm outline-none transition focus:ring-2 focus:ring-primary/20 ${
-                                  invalid ? 'border-[#ba1a1a] bg-[#ffdad6]/40 text-[#93000a]' : 'border-outline-variant/30 text-on-surface'
+                                  invalid ? 'border-error bg-error-container/40 text-error-on' : 'border-outline-variant/30 text-on-surface'
                                 }`}
                               />
                             </td>

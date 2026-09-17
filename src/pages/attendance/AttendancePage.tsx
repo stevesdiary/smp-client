@@ -57,13 +57,13 @@ function StatCards({ present, late, absent, total }: { present: number; late: nu
         <p className="mt-1 text-xs font-medium text-on-secondary-fixed/70">Students marked late</p>
       </div>
       {/* Absent */}
-      <div className="rounded-2xl bg-[#ffdad6]/40 p-6 shadow-soft">
+      <div className="rounded-2xl bg-error-container/40 p-6 shadow-soft">
         <div className="mb-3 flex items-center justify-between">
-          <span className="rounded-xl bg-[#ffdad6] p-2 text-[#93000a]"><UserX className="h-5 w-5" strokeWidth={1.5} /></span>
+          <span className="rounded-xl bg-error-container p-2 text-error-on"><UserX className="h-5 w-5" strokeWidth={1.5} /></span>
         </div>
-        <p className="text-xs font-bold uppercase tracking-wider text-[#93000a]/70">Absent Today</p>
-        <h3 className="mt-1 font-mono text-3xl font-black text-[#93000a]">{absent}</h3>
-        <p className="mt-1 text-xs font-medium text-[#93000a]/70">Requires follow-up</p>
+        <p className="text-xs font-bold uppercase tracking-wider text-error-on/70">Absent Today</p>
+        <h3 className="mt-1 font-mono text-3xl font-black text-error-on">{absent}</h3>
+        <p className="mt-1 text-xs font-medium text-error-on/70">Requires follow-up</p>
       </div>
     </section>
   )
@@ -186,7 +186,7 @@ export default function AttendancePage() {
       />
 
       {studentsError && (
-        <div className="rounded-2xl bg-[#ffdad6]/40 p-4 text-sm font-medium text-[#93000a]">
+        <div className="rounded-2xl bg-error-container/40 p-4 text-sm font-medium text-error-on">
           Failed to load students. Please try again.
         </div>
       )}

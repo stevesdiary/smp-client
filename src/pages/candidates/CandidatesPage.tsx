@@ -39,7 +39,7 @@ type CreateForm = z.infer<typeof createSchema>
 const STATUS: Record<Candidate['status'], { label: string; badge: string; seg: string }> = {
   PENDING: { label: 'Pending', badge: 'bg-secondary-fixed text-on-secondary-fixed', seg: 'bg-secondary-container' },
   ADMITTED: { label: 'Admitted', badge: 'bg-primary-fixed text-on-secondary-fixed', seg: 'bg-primary' },
-  REJECTED: { label: 'Rejected', badge: 'bg-[#ffdad6] text-[#93000a]', seg: 'bg-[#ba1a1a]' },
+  REJECTED: { label: 'Rejected', badge: 'bg-error-container text-error-on', seg: 'bg-error' },
 }
 const initials = (f?: string, l?: string) => `${f?.[0] ?? ''}${l?.[0] ?? ''}`.toUpperCase() || '?'
 
@@ -158,7 +158,7 @@ export default function CandidatesPage() {
             <div className="flex gap-4 text-xs font-bold">
               <span className="flex items-center gap-1.5 text-secondary"><span className="h-2 w-2 rounded-full bg-secondary-container" /> Pending {pending}</span>
               <span className="flex items-center gap-1.5 text-primary"><span className="h-2 w-2 rounded-full bg-primary" /> Admitted {admitted}</span>
-              <span className="flex items-center gap-1.5 text-[#93000a]"><span className="h-2 w-2 rounded-full bg-[#ba1a1a]" /> Rejected {rejected}</span>
+              <span className="flex items-center gap-1.5 text-error-on"><span className="h-2 w-2 rounded-full bg-error" /> Rejected {rejected}</span>
             </div>
           </div>
           <div className="flex h-4 overflow-hidden rounded-full bg-surface-container-low">
@@ -271,14 +271,14 @@ export default function CandidatesPage() {
                   <button onClick={() => admitMutation.mutate(detail.id)} disabled={admitMutation.isPending} className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-container px-4 py-3 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-90 disabled:opacity-50">
                     <UserCheck className="h-4 w-4" strokeWidth={1.5} /> {admitMutation.isPending ? 'Admitting…' : 'Admit'}
                   </button>
-                  <button onClick={() => rejectMutation.mutate(detail.id)} disabled={rejectMutation.isPending} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[#ffdad6] bg-[#ffdad6]/40 px-4 py-3 text-sm font-bold text-[#93000a] transition-colors hover:bg-[#ffdad6]/60 disabled:opacity-50">
+                  <button onClick={() => rejectMutation.mutate(detail.id)} disabled={rejectMutation.isPending} className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-error-container bg-error-container/40 px-4 py-3 text-sm font-bold text-error-on transition-colors hover:bg-error-container/60 disabled:opacity-50">
                     <UserX className="h-4 w-4" strokeWidth={1.5} /> {rejectMutation.isPending ? 'Rejecting…' : 'Reject'}
                   </button>
                 </div>
               ) : detail.status === 'ADMITTED' ? (
                 <div className="rounded-2xl bg-primary-fixed/30 p-4 text-sm font-medium text-primary-container">This applicant has been admitted and a student record was created.</div>
               ) : (
-                <div className="rounded-2xl bg-[#ffdad6]/40 p-4 text-sm font-medium text-[#93000a]">This application was rejected.</div>
+                <div className="rounded-2xl bg-error-container/40 p-4 text-sm font-medium text-error-on">This application was rejected.</div>
               )}
             </div>
           )}

@@ -69,7 +69,7 @@ export default function LibraryPage() {
     (fGenre === 'all' || b.genre === fGenre) &&
     (fAvail === 'all' || (fAvail === 'available' ? (b.available ?? 0) > 0 : (b.available ?? 0) === 0)))
 
-  const txBadge = (s: string) => s === 'RETURNED' ? 'bg-primary-fixed text-on-secondary-fixed' : s === 'OVERDUE' ? 'bg-[#ffdad6] text-[#93000a]' : 'bg-secondary-fixed text-on-secondary-fixed'
+  const txBadge = (s: string) => s === 'RETURNED' ? 'bg-primary-fixed text-on-secondary-fixed' : s === 'OVERDUE' ? 'bg-error-container text-error-on' : 'bg-secondary-fixed text-on-secondary-fixed'
   const tabs: { key: typeof tab; label: string; icon: typeof BookOpen }[] = [
     { key: 'catalog', label: 'Catalog', icon: BookOpen },
     ...(canManage ? [{ key: 'loans' as const, label: 'Loans', icon: ArrowLeftRight }] : []),
@@ -240,7 +240,7 @@ export default function LibraryPage() {
                         <td className="px-6 py-5 font-mono text-xs text-muted-foreground">{b.isbn || '—'}</td>
                         <td className="px-6 py-5">{b.genre ? <span className="inline-flex rounded-full bg-surface-container-high px-3 py-1 text-xs font-bold text-primary">{b.genre}</span> : <span className="text-sm text-muted-foreground">—</span>}</td>
                         <td className="px-6 py-5 text-center font-mono text-sm text-on-surface">{avail}<span className="text-muted-foreground"> / {b.totalCopies ?? avail}</span></td>
-                        <td className="px-6 py-5"><span className={`inline-flex rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider ${avail > 0 ? 'bg-primary-fixed text-on-secondary-fixed' : 'bg-[#ffdad6] text-[#93000a]'}`}>{avail > 0 ? 'Available' : 'Out of Stock'}</span></td>
+                        <td className="px-6 py-5"><span className={`inline-flex rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider ${avail > 0 ? 'bg-primary-fixed text-on-secondary-fixed' : 'bg-error-container text-error-on'}`}>{avail > 0 ? 'Available' : 'Out of Stock'}</span></td>
                         <td className="px-8 py-5 text-right">
                           {canManage && avail > 0 && (
                             <button onClick={() => { borrowForm.setValue('bookId', b.id); borrowForm.setValue('borrowerType', 'STUDENT'); setBorrowOpen(true) }} className="rounded-lg border border-outline-variant/30 px-3 py-1.5 text-xs font-bold text-primary opacity-0 transition-all hover:bg-surface-container-high group-hover:opacity-100">Check Out</button>

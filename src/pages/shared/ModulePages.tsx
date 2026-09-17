@@ -441,7 +441,7 @@ const METHOD_BAR = ['bg-primary', 'bg-secondary-container', 'bg-primary-fixed-di
 
 function paymentStatusBadge(s: string) {
   if (s === 'SUCCESS') return { label: 'Cleared', cls: 'bg-primary-fixed text-on-secondary-fixed' }
-  if (s === 'FAILED') return { label: 'Failed', cls: 'bg-[#ffdad6] text-[#93000a]' }
+  if (s === 'FAILED') return { label: 'Failed', cls: 'bg-error-container text-error-on' }
   return { label: 'Pending', cls: 'bg-secondary-fixed text-on-secondary-fixed' }
 }
 

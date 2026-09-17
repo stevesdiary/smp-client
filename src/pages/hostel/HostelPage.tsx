@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { SearchSelect } from '@/components/ui/search-select'
+import { PageHeader } from '@/components/shared/PageHeader'
 import api from '@/lib/api'
 
 const roomSchema = z.object({ roomNumber: z.string().min(1), building: z.string().min(1), floor: z.coerce.number(), capacity: z.coerce.number().min(1), type: z.string().min(1) })
@@ -18,7 +19,7 @@ type RoomForm = z.infer<typeof roomSchema>
 type AssignForm = z.infer<typeof assignSchema>
 
 function occTone(pct: number) {
-  if (pct >= 100) return { bar: 'bg-[#ba1a1a]', chip: 'bg-[#ffdad6] text-[#93000a]', label: 'Full' }
+  if (pct >= 100) return { bar: 'bg-error', chip: 'bg-error-container text-error-on', label: 'Full' }
   if (pct >= 80) return { bar: 'bg-secondary', chip: 'bg-secondary-fixed text-on-secondary-fixed', label: 'Filling' }
   return { bar: 'bg-primary', chip: 'bg-primary-fixed/60 text-primary', label: 'Available' }
 }
@@ -79,12 +80,13 @@ export default function HostelPage() {
   return (
     <div className="space-y-8">
       {/* Heading */}
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Accommodation</p>
-          <h1 className="mt-1 font-headline text-3xl font-extrabold tracking-tight text-on-surface">Hostel &amp; Boarding</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Rooms, blocks and student assignments.</p>
-        </div>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <PageHeader
+          eyebrow="Accommodation"
+          title="Hostel & Boarding"
+          description="Rooms, blocks and student assignments."
+          className="flex-1 px-0 py-0 pb-0 border-none"
+        />
         <div className="flex items-center gap-3">
           <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
             <DialogTrigger asChild>
@@ -143,7 +145,7 @@ export default function HostelPage() {
 
       {/* Hostel blocks */}
       <section className="space-y-4">
-        <h2 className="font-headline text-lg font-bold text-on-surface">Hostel Blocks</h2>
+        <h2 className="text-lg font-semibold text-foreground">Hostel Blocks</h2>
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-40 animate-pulse rounded-3xl bg-surface-container-low" />)}
@@ -182,7 +184,7 @@ export default function HostelPage() {
 
       {/* Rooms table */}
       <section className="space-y-4">
-        <h2 className="font-headline text-lg font-bold text-on-surface">All Rooms</h2>
+        <h2 className="text-lg font-semibold text-foreground">All Rooms</h2>
         <div className="overflow-hidden rounded-3xl bg-surface-container-lowest shadow-soft">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">

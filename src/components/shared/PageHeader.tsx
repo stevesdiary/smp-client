@@ -12,15 +12,16 @@ interface PageHeaderProps {
   description?: string
   stats?: PageStat[]
   actions?: ReactNode
+  className?: string
 }
 
 /**
  * PageHeader — replaces ModuleHero.
  * Light, minimal, no gradient. Provides page title, optional stats and actions.
  */
-export function PageHeader({ eyebrow, title, description, stats, actions }: PageHeaderProps) {
+export function PageHeader({ eyebrow, title, description, stats, actions, className }: PageHeaderProps) {
   return (
-    <div className="flex flex-col gap-4 pb-2 sm:flex-row sm:items-start sm:justify-between">
+    <div className={`flex flex-col gap-4 pb-2 sm:flex-row sm:items-start sm:justify-between ${className ?? ''}`}>
       <div className="min-w-0 space-y-1">
         {eyebrow && (
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">

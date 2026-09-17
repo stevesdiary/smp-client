@@ -30,7 +30,7 @@ export default function ClassSelector({
 
   if (error) {
     return (
-      <div className="rounded-3xl bg-[#ffdad6]/40 p-4 text-sm font-medium text-[#93000a]">
+      <div className="rounded-3xl bg-error-container/40 p-4 text-sm font-medium text-error-on">
         Failed to load classes. Please try again.
       </div>
     )

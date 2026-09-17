@@ -20,8 +20,8 @@ type FormData = z.infer<typeof schema>
 const typeTone: Record<string, { chip: string; icon: string }> = {
   sports: { chip: 'bg-primary-fixed/60 text-primary', icon: 'bg-primary text-white' },
   arts: { chip: 'bg-secondary-fixed text-on-secondary-fixed', icon: 'bg-secondary text-white' },
-  music: { chip: 'bg-[#d7e3ff] text-[#0b3b8c]', icon: 'bg-[#3b6fd4] text-white' },
-  clubs: { chip: 'bg-[#ffddb4] text-[#7a4b00]', icon: 'bg-[#c67c1e] text-white' },
+  music: { chip: 'bg-info-container text-on-info-container', icon: 'bg-info-accent text-white' },
+  clubs: { chip: 'bg-tertiary-container text-tertiary-on', icon: 'bg-tertiary text-white' },
 }
 const toneFor = (type?: string) => typeTone[(type ?? '').toLowerCase()] ?? { chip: 'bg-surface-container-high text-on-surface-variant', icon: 'bg-surface-container-high text-on-surface-variant' }
 
@@ -149,11 +149,11 @@ export default function SportsPage() {
                 <div className="mt-4">
                   <div className="mb-1.5 flex items-center justify-between text-xs">
                     <span className="flex items-center gap-1.5 font-bold text-on-surface"><Users className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={1.5} />{enrolled}{cap ? `/${cap}` : ''} enrolled</span>
-                    {cap > 0 && <span className={`font-mono font-bold ${full ? 'text-[#93000a]' : 'text-muted-foreground'}`}>{pct}%</span>}
+                    {cap > 0 && <span className={`font-mono font-bold ${full ? 'text-error-on' : 'text-muted-foreground'}`}>{pct}%</span>}
                   </div>
                   {cap > 0 && (
                     <div className="h-2 w-full overflow-hidden rounded-full bg-surface-container-high">
-                      <div className={`h-full rounded-full ${full ? 'bg-[#ba1a1a]' : 'bg-primary'}`} style={{ width: `${pct}%` }} />
+                      <div className={`h-full rounded-full ${full ? 'bg-error' : 'bg-primary'}`} style={{ width: `${pct}%` }} />
                     </div>
                   )}
                 </div>

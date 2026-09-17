@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { fetchAllPaymentsByStudent } from '@/lib/moduleQueries'
 import { useAuthStore } from '@/store/authStore'
@@ -364,16 +365,13 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Greeting header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{themeByRole.label}</p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-            {greeting}, {firstName}.
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">{today}</p>
-        </div>
-        <Badge variant="secondary" className="hidden sm:flex">{themeByRole.badge}</Badge>
-      </div>
+      <PageHeader
+        eyebrow={themeByRole.label}
+        title={`${greeting}, ${firstName}.`}
+        description={today}
+        actions={<Badge variant="secondary" className="hidden sm:flex">{themeByRole.badge}</Badge>}
+        className="px-0 py-0 pb-2 border-b-0"
+      />
 
       {/* Stat grid */}
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

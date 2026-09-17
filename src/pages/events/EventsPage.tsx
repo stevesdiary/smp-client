@@ -25,8 +25,8 @@ type FormData = z.infer<typeof schema>
 const typeTone: Record<string, { chip: string; rail: string }> = {
   sports: { chip: 'bg-primary-fixed/60 text-primary', rail: 'bg-primary' },
   cultural: { chip: 'bg-secondary-fixed text-on-secondary-fixed', rail: 'bg-secondary' },
-  academic: { chip: 'bg-[#d7e3ff] text-[#0b3b8c]', rail: 'bg-[#3b6fd4]' },
-  meeting: { chip: 'bg-[#ffddb4] text-[#7a4b00]', rail: 'bg-[#c67c1e]' },
+  academic: { chip: 'bg-info-container text-on-info-container', rail: 'bg-info-accent' },
+  meeting: { chip: 'bg-tertiary-container text-tertiary-on', rail: 'bg-tertiary' },
 }
 const toneFor = (type?: string) => typeTone[(type ?? '').toLowerCase()] ?? { chip: 'bg-surface-container-high text-on-surface-variant', rail: 'bg-outline' }
 

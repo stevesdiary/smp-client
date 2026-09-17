@@ -19,7 +19,7 @@ export default function AttendanceSummary({ marks, students, onSave, onGoBack }:
     { label: 'Total', value: students.length, cls: 'bg-surface-container-high text-on-surface' },
     { label: 'Present', value: counts.PRESENT, cls: 'bg-primary-fixed text-on-secondary-fixed' },
     { label: 'Late', value: counts.LATE, cls: 'bg-secondary-fixed text-on-secondary-fixed' },
-    { label: 'Absent', value: counts.ABSENT, cls: 'bg-[#ffdad6] text-[#93000a]' },
+    { label: 'Absent', value: counts.ABSENT, cls: 'bg-error-container text-error-on' },
     { label: 'Excused', value: counts.EXCUSED, cls: 'bg-surface-container-high text-on-surface' },
     { label: 'Unmarked', value: unmarked.length, cls: 'bg-surface-container-low text-muted-foreground' },
   ]

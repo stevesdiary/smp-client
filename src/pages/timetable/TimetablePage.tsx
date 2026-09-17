@@ -218,7 +218,7 @@ export default function TimetablePage() {
           <section className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <SummaryTile label="Periods" value={entries.length} icon={Clock} tone="bg-primary-fixed/40 text-primary" />
             <SummaryTile label="Subjects" value={subjectsScheduled} icon={Layers3} tone="bg-surface-container-high text-primary-container" />
-            <SummaryTile label="Conflicts" value={conflicts} icon={AlertTriangle} tone={conflicts > 0 ? 'bg-[#ffdad6] text-[#93000a]' : 'bg-primary-fixed/40 text-primary'} />
+            <SummaryTile label="Conflicts" value={conflicts} icon={AlertTriangle} tone={conflicts > 0 ? 'bg-error-container text-error-on' : 'bg-primary-fixed/40 text-primary'} />
           </section>
 
           {/* Weekly grid */}
@@ -253,7 +253,7 @@ export default function TimetablePage() {
                                   <div
                                     key={entry.id}
                                     className={`group relative rounded-xl border-l-4 p-3 pr-8 ${
-                                      conflict ? 'border-l-[#ba1a1a] bg-[#ffdad6]/30' : `bg-surface-container-low ${accentFor(entry.subjectId)}`
+                                      conflict ? 'border-l-error bg-error-container/30' : `bg-surface-container-low ${accentFor(entry.subjectId)}`
                                     }`}
                                   >
                                     <p className="truncate text-xs font-bold text-on-surface">{entry.subject?.name ?? 'Subject'}</p>
@@ -262,7 +262,7 @@ export default function TimetablePage() {
                                     </p>
                                     {entry.room && <p className="mt-0.5 text-[10px] font-medium text-outline">{entry.room}</p>}
                                     {conflict && (
-                                      <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-[#93000a]">
+                                      <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-error-on">
                                         <AlertTriangle className="h-3 w-3" strokeWidth={2} /> Double-booked
                                       </span>
                                     )}

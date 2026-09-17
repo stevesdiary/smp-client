@@ -195,7 +195,7 @@ export default function NoticesPage() {
                 {canManage && (
                   <div className="flex shrink-0 gap-2">
                     <button type="button" onClick={() => openEdit(notice)} className="flex items-center gap-1.5 rounded-xl border border-outline-variant/25 bg-surface-container-lowest px-3.5 py-2 text-xs font-bold text-on-surface transition-colors hover:bg-surface-container-high"><Pencil className="h-3.5 w-3.5" strokeWidth={1.5} /> Edit</button>
-                    <button type="button" onClick={() => handleDelete(notice)} className="flex items-center gap-1.5 rounded-xl border border-outline-variant/25 bg-surface-container-lowest px-3.5 py-2 text-xs font-bold text-[#ba1a1a] transition-colors hover:bg-[#ffdad6]/40"><Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} /> Delete</button>
+                    <button type="button" onClick={() => handleDelete(notice)} className="flex items-center gap-1.5 rounded-xl border border-outline-variant/25 bg-surface-container-lowest px-3.5 py-2 text-xs font-bold text-error transition-colors hover:bg-error-container/40"><Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} /> Delete</button>
                   </div>
                 )}
               </div>

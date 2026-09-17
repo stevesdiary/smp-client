@@ -9,6 +9,7 @@ import { getInitials } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { AuditLogSection } from './AuditLogSection'
 import api from '@/lib/api'
 
@@ -117,11 +118,11 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-8">
-      <div>
-        <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Institutional settings</p>
-        <h1 className="mt-1 font-headline text-3xl font-extrabold tracking-tight text-on-surface">General Settings</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage your school identity, grading, and account preferences.</p>
-      </div>
+      <PageHeader
+        eyebrow="Institutional settings"
+        title="General Settings"
+        description="Manage your school identity, grading, and account preferences."
+      />
 
       {isAdmin && <InstitutionSettings />}
 
@@ -154,7 +155,7 @@ export default function SettingsPage() {
               </span>
             </button>
           </div>
-          <button onClick={logout} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-[#ffdad6] bg-[#ffdad6]/30 py-2.5 text-sm font-bold text-[#93000a] transition-colors hover:bg-[#ffdad6]/50">
+          <button onClick={logout} className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-error-container bg-error-container/30 py-2.5 text-sm font-bold text-error-on transition-colors hover:bg-error-container/50">
             <LogOut className="h-4 w-4" strokeWidth={1.5} /> Sign out
           </button>
         </Section>

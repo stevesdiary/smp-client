@@ -24,9 +24,9 @@ type FormData = z.infer<typeof schema>
 
 const SEVERITIES = ['Minor', 'Major', 'Severe'] as const
 const severityChip: Record<string, string> = {
-  Minor: 'bg-[#ffddb4] text-[#7a4b00]',
-  Major: 'bg-[#ffdad6] text-[#93000a]',
-  Severe: 'bg-[#ba1a1a] text-white',
+  Minor: 'bg-tertiary-container text-tertiary-on',
+  Major: 'bg-error-container text-error-on',
+  Severe: 'bg-error text-white',
 }
 
 export default function DisciplinaryPage() {
@@ -56,9 +56,9 @@ export default function DisciplinaryPage() {
 
   const tiles = [
     { label: 'Records', value: records.length, icon: ShieldAlert, tone: 'bg-primary-fixed/40 text-primary' },
-    { label: 'Open', value: openCount, icon: CircleAlert, tone: 'bg-[#ffddb4] text-[#7a4b00]' },
+    { label: 'Open', value: openCount, icon: CircleAlert, tone: 'bg-tertiary-container text-tertiary-on' },
     { label: 'Resolved', value: resolved, icon: CircleCheck, tone: 'bg-primary-container/10 text-primary' },
-    { label: 'Severe', value: severe, icon: TriangleAlert, tone: 'bg-[#ffdad6] text-[#93000a]' },
+    { label: 'Severe', value: severe, icon: TriangleAlert, tone: 'bg-error-container text-error-on' },
   ]
 
   const selectedSeverity = watch('severity')

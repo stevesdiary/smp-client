@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { CsvUploadDialog } from '@/components/shared/CsvUploadDialog'
+import { PageHeader } from '@/components/shared/PageHeader'
 import { formatDate } from '@/lib/utils'
 import api from '@/lib/api'
 import type { Student } from '@/types'
@@ -156,11 +157,11 @@ export default function StudentsPage() {
   return (
     <div className="space-y-8">
       {/* Heading */}
-      <div>
-        <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Student registry</p>
-        <h1 className="mt-1 font-headline text-3xl font-extrabold tracking-tight text-on-surface">Student Directory</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Manage learner records, enrollment, and guardian contacts.</p>
-      </div>
+      <PageHeader
+        eyebrow="Student registry"
+        title="Student Directory"
+        description="Manage learner records, enrollment, and guardian contacts."
+      />
 
       {/* Summary bento */}
       <section className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -179,7 +180,7 @@ export default function StudentsPage() {
       </section>
 
       {/* Filter / action bar */}
-      <section className="rounded-3xl bg-surface-container-low p-5">
+      <section className="rounded-xl bg-surface border border-border p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="relative w-full max-w-md">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-outline" strokeWidth={1.5} />
@@ -189,7 +190,7 @@ export default function StudentsPage() {
               onChange={(e) => onSearch(e.target.value)}
               placeholder="Search by name or Student ID…"
               aria-label="Search students"
-              className="h-11 w-full rounded-xl border border-outline-variant/20 bg-surface-container-lowest pl-11 pr-4 text-sm text-on-surface outline-none transition placeholder:text-muted-foreground focus:ring-2 focus:ring-secondary-container/30"
+              className="h-10 w-full rounded-xl border border-border bg-background pl-11 pr-4 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20"
             />
           </div>
           <div className="flex items-center gap-3">
@@ -202,7 +203,7 @@ export default function StudentsPage() {
             />
             <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditing(undefined) }}>
               <DialogTrigger asChild>
-                <button className="flex items-center gap-2 rounded-xl bg-secondary-fixed px-5 py-2.5 text-sm font-extrabold text-on-secondary-fixed transition-colors hover:bg-secondary-fixed-dim">
+                <button className="flex items-center gap-2 rounded-xl bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
                   <Plus className="h-4 w-4" strokeWidth={2} />
                   New Admission
                 </button>
@@ -219,11 +220,11 @@ export default function StudentsPage() {
       </section>
 
       {/* Data table */}
-      <section className="overflow-hidden rounded-3xl bg-surface-container-lowest shadow-soft">
+      <section className="overflow-hidden rounded-xl bg-surface border border-border shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left">
             <thead>
-              <tr className="bg-surface-container-low text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+              <tr className="bg-muted/40 text-[11px] font-medium uppercase tracking-widest text-muted-foreground border-b border-border">
                 <th className="px-8 py-5">Student Information</th>
                 <th className="px-6 py-5">Parent Contact</th>
                 <th className="px-6 py-5">Date of Birth</th>
@@ -231,7 +232,7 @@ export default function StudentsPage() {
                 <th className="px-8 py-5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-outline-variant/10">
+            <tbody className="divide-y divide-border">
               {isLoading ? (
                 Array.from({ length: 6 }).map((_, i) => (
                   <tr key={i}>
@@ -333,7 +334,7 @@ export default function StudentsPage() {
         </div>
 
         {/* Pagination */}
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-outline-variant/10 bg-surface px-8 py-5 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-border bg-background px-8 py-5 sm:flex-row">
           <p className="text-sm text-muted-foreground">
             Showing <span className="font-bold text-on-surface">{from} - {to}</span> of{' '}
             <span className="font-bold text-on-surface">{filtered.length}</span> students
