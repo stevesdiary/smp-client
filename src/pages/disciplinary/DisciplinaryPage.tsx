@@ -1,21 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Plus } from 'lucide-react'
+import { Plus, ShieldAlert, CircleAlert, CircleCheck, TriangleAlert } from 'lucide-react'
 import { toast } from 'sonner'
-import type { ColumnDef } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { DataTable } from '@/components/shared/DataTable'
-import { formatDate } from '@/lib/utils'
+import { SearchSelect } from '@/components/ui/search-select'
+import { formatDate, getInitials } from '@/lib/utils'
 import api from '@/lib/api'
-import { PageHeader } from '@/components/shared/PageHeader'
 
 const schema = z.object({
   studentId: z.string().min(1, 'Required'),
@@ -26,89 +22,148 @@ const schema = z.object({
 })
 type FormData = z.infer<typeof schema>
 
-const severityVariant: Record<string, any> = { Minor: 'warning', Major: 'destructive', Severe: 'destructive' }
+const SEVERITIES = ['Minor', 'Major', 'Severe'] as const
+const severityChip: Record<string, string> = {
+  Minor: 'bg-[#ffddb4] text-[#7a4b00]',
+  Major: 'bg-[#ffdad6] text-[#93000a]',
+  Severe: 'bg-[#ba1a1a] text-white',
+}
 
 export default function DisciplinaryPage() {
   const [open, setOpen] = useState(false)
   const qc = useQueryClient()
 
-  const { data: records = [], isLoading } = useQuery({
+  const { data: records = [], isLoading } = useQuery<any[]>({
     queryKey: ['disciplinary'],
     queryFn: () => api.get('/disciplinary/records').then(r => r.data),
   })
-  const { data: students = [] } = useQuery({ queryKey: ['students'], queryFn: () => api.get('/students').then(r => r.data) })
+  const { data: students = [] } = useQuery<any[]>({ queryKey: ['students'], queryFn: () => api.get('/students').then(r => r.data) })
 
-  const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const mutation = useMutation({
     mutationFn: (data: FormData) => api.post('/disciplinary/records', data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['disciplinary'] }); toast.success('Record created'); setOpen(false); reset() },
     onError: (err: any) => toast.error(err.response?.data?.error || 'Failed'),
   })
-  const unresolved = records.filter((record: any) => record.status !== 'Resolved').length
 
-  const columns: ColumnDef<any>[] = [
-    { id: 'student', header: 'Student', cell: ({ row }) => {
-      const s = students.find((s: any) => s.id === row.original.studentId) as any
-      return s ? `${s.firstName} ${s.lastName}` : '—'
-    }},
-    { accessorKey: 'incidentDate', header: 'Date', cell: ({ getValue }) => formatDate(getValue() as string) },
-    { accessorKey: 'description', header: 'Description', cell: ({ getValue }) => <span className="line-clamp-1 max-w-xs">{getValue() as string}</span> },
-    { accessorKey: 'severity', header: 'Severity', cell: ({ getValue }) => <Badge variant={severityVariant[getValue() as string] ?? 'secondary'}>{getValue() as string}</Badge> },
-    { accessorKey: 'status', header: 'Status', cell: ({ getValue }) => <Badge variant={(getValue() as string) === 'Resolved' ? 'success' : 'secondary'}>{getValue() as string}</Badge> },
-    { accessorKey: 'actionTaken', header: 'Action', cell: ({ getValue }) => (getValue() as string) || '—' },
+  const { open: openCount, resolved, severe } = useMemo(() => {
+    const open = records.filter(r => r.status !== 'Resolved').length
+    const resolved = records.filter(r => r.status === 'Resolved').length
+    const severe = records.filter(r => r.severity === 'Severe').length
+    return { open, resolved, severe }
+  }, [records])
+
+  const tiles = [
+    { label: 'Records', value: records.length, icon: ShieldAlert, tone: 'bg-primary-fixed/40 text-primary' },
+    { label: 'Open', value: openCount, icon: CircleAlert, tone: 'bg-[#ffddb4] text-[#7a4b00]' },
+    { label: 'Resolved', value: resolved, icon: CircleCheck, tone: 'bg-primary-container/10 text-primary' },
+    { label: 'Severe', value: severe, icon: TriangleAlert, tone: 'bg-[#ffdad6] text-[#93000a]' },
   ]
+
+  const selectedSeverity = watch('severity')
+  const nameFor = (studentId: string) => {
+    const s = students.find(c => c.id === studentId)
+    return s ? { name: `${s.firstName} ${s.lastName}`, first: s.firstName, last: s.lastName } : { name: '—', first: '?', last: '' }
+  }
 
   return (
     <div className="space-y-8">
-      <PageHeader
-        eyebrow="Behaviour desk"
-        title="Disciplinary"
-        description="Track and manage disciplinary incidents and resolutions."
-        stats={[
-          { label: 'Records', value: records.length },
-          { label: 'Open', value: unresolved },
-          { label: 'Students', value: students.length },
-        ]}
-      />
-
-      <div className="flex items-center justify-between">
-        <div><h2 className="text-lg font-semibold">Incident Records</h2><p className="text-sm text-muted-foreground">{records.length} incidents logged</p></div>
+      {/* Heading */}
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">Behaviour desk</p>
+          <h1 className="mt-1 font-headline text-3xl font-extrabold tracking-tight text-on-surface">Disciplinary Records</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Log incidents, track severity and record resolutions.</p>
+        </div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button><Plus className="h-4 w-4" />New Record</Button></DialogTrigger>
-          <DialogContent className="rounded-xl">
+          <DialogTrigger asChild>
+            <button className="flex items-center gap-2 rounded-xl bg-gradient-to-br from-primary to-primary-container px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-md transition-all hover:opacity-90 active:scale-95"><Plus className="h-4 w-4" strokeWidth={2} /> New Record</button>
+          </DialogTrigger>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>Create Disciplinary Record</DialogTitle></DialogHeader>
             <form onSubmit={handleSubmit(d => mutation.mutate(d))} className="space-y-4">
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label>Student</Label>
-                <Select onValueChange={v => setValue('studentId', v)}>
-                  <SelectTrigger className="h-11 rounded-2xl"><SelectValue placeholder="Select student" /></SelectTrigger>
-                  <SelectContent>{students.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.firstName} {s.lastName}</SelectItem>)}</SelectContent>
-                </Select>
+                <SearchSelect value={watch('studentId')} onChange={v => setValue('studentId', v, { shouldValidate: true })}
+                  options={students.map(s => ({ id: s.id, label: `${s.firstName} ${s.lastName}`, sub: s.studentId || s.studentCode }))}
+                  placeholder="Select student" searchPlaceholder="Search students…" emptyText="No students" />
                 {errors.studentId && <p className="text-xs text-destructive">{errors.studentId.message}</p>}
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1"><Label>Incident Date</Label><Input className="h-11 rounded-2xl" type="date" {...register('incidentDate')} /></div>
-                <div className="space-y-1">
-                  <Label>Severity</Label>
-                  <Select onValueChange={v => setValue('severity', v)}>
-                    <SelectTrigger className="h-11 rounded-2xl"><SelectValue placeholder="Select" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Minor">Minor</SelectItem>
-                      <SelectItem value="Major">Major</SelectItem>
-                      <SelectItem value="Severe">Severe</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="space-y-1.5">
+                <Label>Incident Date</Label>
+                <Input type="date" {...register('incidentDate')} />
+                {errors.incidentDate && <p className="text-xs text-destructive">{errors.incidentDate.message}</p>}
               </div>
-              <div className="space-y-1"><Label>Description</Label><Input className="h-11 rounded-2xl" {...register('description')} />{errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}</div>
-              <div className="space-y-1"><Label>Action Taken</Label><Input className="h-11 rounded-2xl" {...register('actionTaken')} placeholder="Suspension, Warning..." /></div>
-              <Button type="submit" className="h-11 w-full rounded-2xl" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save Record'}</Button>
+              <div className="space-y-1.5">
+                <Label>Severity</Label>
+                <div className="flex gap-2">
+                  {SEVERITIES.map(s => (
+                    <button key={s} type="button" onClick={() => setValue('severity', s, { shouldValidate: true })}
+                      className={`flex-1 rounded-xl px-3 py-2.5 text-sm font-bold transition-colors ${selectedSeverity === s ? severityChip[s] : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest'}`}>{s}</button>
+                  ))}
+                </div>
+                {errors.severity && <p className="text-xs text-destructive">{errors.severity.message}</p>}
+              </div>
+              <div className="space-y-1.5"><Label>Description</Label><Input {...register('description')} />{errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}</div>
+              <div className="space-y-1.5"><Label>Action Taken</Label><Input {...register('actionTaken')} placeholder="Suspension, Warning…" /></div>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>{isSubmitting ? 'Saving…' : 'Save Record'}</Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
-      <DataTable data={records} columns={columns} isLoading={isLoading} />
+
+      {/* Stat tiles */}
+      <section className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+        {tiles.map(t => (
+          <div key={t.label} className="flex items-center gap-4 rounded-2xl bg-surface-container-lowest p-5 shadow-soft">
+            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${t.tone}`}><t.icon className="h-5 w-5" strokeWidth={1.5} /></div>
+            <div><p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t.label}</p><p className="font-mono text-2xl font-black text-on-surface">{t.value}</p></div>
+          </div>
+        ))}
+      </section>
+
+      {/* Records table */}
+      <section className="overflow-hidden rounded-3xl bg-surface-container-lowest shadow-soft">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-left">
+            <thead>
+              <tr className="bg-surface-container-low text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                <th className="px-8 py-5">Student</th><th className="px-6 py-5">Date</th><th className="px-6 py-5">Incident</th><th className="px-6 py-5 text-center">Severity</th><th className="px-6 py-5 text-center">Status</th><th className="px-6 py-5">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-outline-variant/10">
+              {isLoading ? (
+                Array.from({ length: 4 }).map((_, i) => <tr key={i}><td colSpan={6} className="px-8 py-5"><div className="h-9 animate-pulse rounded-xl bg-surface-container-low" /></td></tr>)
+              ) : records.length === 0 ? (
+                <tr><td colSpan={6} className="px-8 py-16 text-center"><p className="text-sm font-semibold text-on-surface">No records</p><p className="mt-1 text-xs text-muted-foreground">A clean behaviour log — nothing to report.</p></td></tr>
+              ) : records.map((r) => {
+                const who = nameFor(r.studentId)
+                const isResolved = r.status === 'Resolved'
+                return (
+                  <tr key={r.id} className="transition-colors hover:bg-surface-container-low/40">
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-fixed/50 text-[11px] font-bold text-primary">{getInitials(who.first, who.last)}</span>
+                        <p className="font-bold text-on-surface">{who.name}</p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5 text-sm text-muted-foreground">{r.incidentDate ? formatDate(r.incidentDate) : '—'}</td>
+                    <td className="px-6 py-5 text-sm text-on-surface"><span className="line-clamp-1 max-w-xs">{r.description}</span></td>
+                    <td className="px-6 py-5 text-center"><span className={`rounded-full px-3 py-1 text-[11px] font-bold ${severityChip[r.severity] ?? 'bg-surface-container-high text-on-surface-variant'}`}>{r.severity}</span></td>
+                    <td className="px-6 py-5 text-center">
+                      <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-bold ${isResolved ? 'bg-primary-fixed/60 text-primary' : 'bg-surface-container-high text-on-surface-variant'}`}>
+                        {isResolved ? <CircleCheck className="h-3 w-3" strokeWidth={2} /> : <CircleAlert className="h-3 w-3" strokeWidth={2} />} {r.status || 'Open'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5 text-sm text-on-surface">{r.actionTaken || <span className="text-muted-foreground">—</span>}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   )
 }
