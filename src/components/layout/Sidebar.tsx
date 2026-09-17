@@ -4,7 +4,7 @@ import {
   DollarSign, Calendar, Library, Bus, Package, Trophy,
   Building2, Heart, AlertTriangle, Video, MessageSquare,
   Award, Settings, LogOut, School, UserCheck, Bell,
-  CalendarDays, BookMarked, CalendarRange, Globe, MessageCircle, SquarePen
+  CalendarDays, BookMarked, CalendarRange, Globe, MessageCircle, SquarePen, Shield
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/authStore'
@@ -37,9 +37,12 @@ const allNavItems = [
   { to: '/certificates',    icon: Award,           label: 'Certificates',    section: 'Learning',        roles: ['ADMIN', 'STUDENT'] },
   { to: '/parent',          icon: Users,           label: 'Parent Portal',   section: 'Family',          roles: ['PARENT'] },
   { to: '/billing',         icon: CreditCard,      label: 'Billing',         section: 'System',          roles: ['ADMIN'] },
+  { to: '/billing/templates',icon: CreditCard,      label: 'Fee Templates',   section: 'System',          roles: ['ADMIN'] },
+  { to: '/billing/assignments',icon: CreditCard,     label: 'Assign Fees',     section: 'System',          roles: ['ADMIN'] },
   { to: '/website-editor',  icon: Globe,           label: 'Website Editor',  section: 'System',          roles: ['ADMIN'] },
   { to: '/custom-domain-setup', icon: Globe,       label: 'Custom Domain',   section: 'System',          roles: ['ADMIN'] },
   { to: '/settings',        icon: Settings,        label: 'Settings',        section: 'System',          roles: ['ADMIN', 'PRINCIPAL', 'TEACHER', 'PARENT', 'STUDENT', 'STAFF'] },
+  { to: '/settings/roles',  icon: Shield,          label: 'Roles & Permissions', section: 'System',      roles: ['ADMIN'] },
 ]
 
 interface SidebarProps {
