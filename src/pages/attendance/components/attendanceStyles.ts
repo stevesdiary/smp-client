@@ -1,45 +1,19 @@
 import { AttendanceStatus } from '@/types'
 
-// Status badge and row background colors
-export const ATTENDANCE_STATUS_COLORS: Record<AttendanceStatus, { text: string; bg: string; row: string }> = {
-  PRESENT: {
-    text: '#16a34a',      // green-600
-    bg: '#dcfce7',        // green-100
-    row: '#f0fdf4',       // green-50
-  },
-  ABSENT: {
-    text: '#dc2626',      // red-600
-    bg: '#fee2e2',        // red-100
-    row: '#fef2f2',       // red-50
-  },
-  LATE: {
-    text: '#f59e0b',      // amber-500
-    bg: '#fef9c3',        // amber-100
-    row: '#fffbeb',       // amber-50
-  },
-  EXCUSED: {
-    text: '#64748b',      // slate-500
-    bg: '#f1f5f9',        // slate-100
-    row: '#f8fafc',       // slate-50
-  },
+// Active pill styling per status, mapping to our CSS Variables (Design Tokens)
+export const ATTENDANCE_ACTIVE_PILL: Record<AttendanceStatus, string> = {
+  PRESENT: 'border-primary bg-primary-fixed text-on-secondary-fixed',
+  LATE: 'border-secondary-container bg-secondary-fixed text-on-secondary-fixed',
+  ABSENT: 'border-error-container bg-error-container text-error-on',
+  EXCUSED: 'border-outline-variant bg-surface-container-high text-on-surface',
 }
 
-// Get text color for a status
-export const getStatusTextColor = (status: AttendanceStatus | undefined): string => {
-  if (!status) return '#94a3b8' // slate-400 for unmarked
-  return ATTENDANCE_STATUS_COLORS[status].text
-}
-
-// Get background color for a status
-export const getStatusBgColor = (status: AttendanceStatus | undefined): string => {
-  if (!status) return 'white'
-  return ATTENDANCE_STATUS_COLORS[status].bg
-}
-
-// Get row background color for a status
-export const getRowBgColor = (status: AttendanceStatus | undefined): string => {
-  if (!status) return 'white'
-  return ATTENDANCE_STATUS_COLORS[status].row
+// Background tint styling per status row
+export const ATTENDANCE_ROW_TINT: Record<AttendanceStatus, string> = {
+  PRESENT: 'bg-primary-fixed/10',
+  LATE: 'bg-secondary-fixed/20',
+  ABSENT: 'bg-error-container/25',
+  EXCUSED: 'bg-surface-container-low',
 }
 
 // Format status for display (e.g. "PRESENT" -> "Present")

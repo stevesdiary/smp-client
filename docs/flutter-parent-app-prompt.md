@@ -27,21 +27,21 @@ Apply the three Apple HIG principles throughout:
 
 ```dart
 // Primary — deep indigo (authority, trust)
-primary:          Color(0xFF1C1C6E)   // Deep navy
-primaryLight:     Color(0xFF3B3BA8)   // Interactive blue
-primarySurface:   Color(0xFFF0F0FF)   // Tinted background
+primary:          Color(0xFF050057)   // Deep navy
+primaryLight:     Color(0xFF5051BD)   // Interactive blue
+primarySurface:   Color(0xFFEEEDF3)   // Tinted background
 
 // Semantic
 success:          Color(0xFF34C759)   // Apple green — PRESENT, SUCCESS
 warning:          Color(0xFFFF9F0A)   // Apple amber — LATE, PENDING
-danger:           Color(0xFFFF3B30)   // Apple red — ABSENT, OVERDUE, FAILED
+danger:           Color(0xFFBA1A1A)   // Academic Continuity red — ABSENT, OVERDUE, FAILED
 neutral:          Color(0xFF8E8E93)   // Apple gray — EXCUSED, N/A
 
 // Surface system (light mode)
-background:       Color(0xFFF2F2F7)   // iOS system background
+background:       Color(0xFFFAF9FE)   // Academic Continuity surface
 surfacePrimary:   Color(0xFFFFFFFF)   // Card / sheet surface
-surfaceSecondary: Color(0xFFF2F2F7)   // Grouped table background
-surfaceTertiary:  Color(0xFFE5E5EA)   // Dividers, borders
+surfaceSecondary: Color(0xFFF4F3F8)   // Grouped table background
+surfaceTertiary:  Color(0xFFE9E7ED)   // Dividers, borders
 
 // Typography
 labelPrimary:     Color(0xFF000000)   // Primary text

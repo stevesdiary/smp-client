@@ -92,10 +92,10 @@ export default function CertificatesPage() {
             </Button>
           </div>
           {verified && (
-            <div className="mt-3 flex items-center gap-3 rounded-lg bg-green-50 dark:bg-green-900/20 p-3">
+            <div className="mt-3 flex items-center gap-3 rounded-lg bg-cyan-50 dark:bg-cyan-900/20 p-3">
               <Award className="h-5 w-5 text-success shrink-0" />
               <div>
-                <p className="text-sm font-medium text-success dark:text-green-200">Valid Certificate</p>
+                <p className="text-sm font-medium text-success dark:text-cyan-200">Valid Certificate</p>
                 <p className="text-xs text-success dark:text-success">
                   {verified.course?.title} · Issued {formatDate(verified.issuedAt)}
                 </p>

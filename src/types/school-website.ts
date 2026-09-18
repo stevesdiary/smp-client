@@ -9,7 +9,7 @@
 
 export type TemplateId =
   | 'prestige'    // Deep navy + gold. Formal, established. Best for older private schools.
-  | 'horizon'     // Clean white + forest green. Modern, fresh. Best for newer schools.
+  | 'horizon'     // Clean white + cyan. Modern, fresh. Best for newer schools.
   | 'legacy'      // Warm cream + burgundy. Classic, authoritative. Best for secondary schools.
   | 'bold'        // Black + vibrant orange. Energetic, confident. Best for STEM-focused schools.
   | 'serene'      // Soft blue + white. Calm, trustworthy. Best for nursery/primary schools.
@@ -249,7 +249,7 @@ export const TEMPLATES: Template[] = [
   {
     id: 'horizon',
     name: 'Horizon',
-    description: 'Clean white and forest green. Modern and fresh. Projects growth and ambition.',
+    description: 'Clean white and cyan. Modern and fresh. Projects growth and ambition.',
     previewImageUrl: '/templates/horizon-preview.jpg',
     colors: {
       primary: '#1A4731',

@@ -1,5 +1,5 @@
 import { Student, AttendanceStatus } from '@/types'
-import { formatStatus } from './attendanceStyles'
+import { formatStatus, ATTENDANCE_ACTIVE_PILL, ATTENDANCE_ROW_TINT } from './attendanceStyles'
 
 interface ListMarkingViewProps {
   students: Student[]
@@ -10,20 +10,6 @@ interface ListMarkingViewProps {
 }
 
 const STATUSES: AttendanceStatus[] = ['PRESENT', 'LATE', 'ABSENT', 'EXCUSED']
-
-// Active pill styling per status, using SchoolOS tokens
-const ACTIVE_PILL: Record<AttendanceStatus, string> = {
-  PRESENT: 'border-primary bg-primary-fixed text-on-secondary-fixed',
-  LATE: 'border-secondary-container bg-secondary-fixed text-on-secondary-fixed',
-  ABSENT: 'border-error-container bg-error-container text-error-on',
-  EXCUSED: 'border-outline-variant bg-surface-container-high text-on-surface',
-}
-const ROW_TINT: Record<AttendanceStatus, string> = {
-  PRESENT: 'bg-primary-fixed/10',
-  LATE: 'bg-secondary-fixed/20',
-  ABSENT: 'bg-error-container/25',
-  EXCUSED: 'bg-surface-container-low',
-}
 
 function initials(first?: string, last?: string) {
   return `${first?.[0] ?? ''}${last?.[0] ?? ''}`.toUpperCase() || '?'
@@ -52,7 +38,7 @@ export default function ListMarkingView({ students, marks, onMark, onFinish, isL
             return (
               <div
                 key={student.id}
-                className={`flex items-center justify-between gap-4 px-6 py-4 transition-colors ${current ? ROW_TINT[current] : ''}`}
+                className={`flex items-center justify-between gap-4 px-6 py-4 transition-colors ${current ? ATTENDANCE_ROW_TINT[current] : ''}`}
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-fixed text-xs font-black text-primary-container">
@@ -75,7 +61,7 @@ export default function ListMarkingView({ students, marks, onMark, onFinish, isL
                         aria-pressed={active}
                         aria-label={`Mark ${student.firstName} as ${formatStatus(status)}`}
                         className={`rounded-full border px-3.5 py-1.5 text-xs font-bold transition-colors ${
-                          active ? ACTIVE_PILL[status] : 'border-outline-variant/30 text-muted-foreground hover:bg-surface-container-low'
+                          active ? ATTENDANCE_ACTIVE_PILL[status] : 'border-outline-variant/30 text-muted-foreground hover:bg-surface-container-low'
                         }`}
                       >
                         {formatStatus(status)}

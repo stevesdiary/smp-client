@@ -255,7 +255,7 @@ export default function BillingPage() {
                     </td>
                     <td className="py-3">{formatNaira(tier.ratePerStudent)}</td>
                     <td className="py-3 font-medium">{formatNaira(tier.termAmount)}</td>
-                    <td className="py-3 font-medium text-green-700 dark:text-success">{formatNaira(tier.sessionAmount)}</td>
+                    <td className="py-3 font-medium text-success dark:text-success">{formatNaira(tier.sessionAmount)}</td>
                   </tr>
                 ))}
               </tbody>
